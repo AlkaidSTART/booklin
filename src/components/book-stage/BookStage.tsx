@@ -85,7 +85,6 @@ export default function BookStage() {
   const progressRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
   const interactionRef = useRef<StageInteractionState>({
-    activeLayer: null,
     activeNode: 'page',
     activeEdition: 'pro',
   });
@@ -114,10 +113,6 @@ export default function BookStage() {
   }, []);
 
   useEffect(() => {
-    const onLayer = (event: Event) => {
-      const detail = (event as CustomEvent<{ index: number | null }>).detail;
-      interactionRef.current.activeLayer = detail?.index ?? null;
-    };
     const onNode = (event: Event) => {
       const detail = (event as CustomEvent<{ id: string | null }>).detail;
       interactionRef.current.activeNode = detail?.id ?? 'page';
@@ -129,12 +124,10 @@ export default function BookStage() {
       }
     };
 
-    window.addEventListener('bookln:layer', onLayer);
     window.addEventListener('bookln:node', onNode);
     window.addEventListener('bookln:edition', onEdition);
 
     return () => {
-      window.removeEventListener('bookln:layer', onLayer);
       window.removeEventListener('bookln:node', onNode);
       window.removeEventListener('bookln:edition', onEdition);
     };
@@ -182,8 +175,8 @@ export default function BookStage() {
       // docks into the shelf, then lift to reveal the established chapter 00.
       // Kept in phase units so it stays locked to the 3D beat at any speed.
       const tint = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.4) / 0.2)),
-        Math.min(1, Math.max(0, (0.98 - phase) / 0.12)),
+        Math.min(1, Math.max(0, (phase - 0.4) / 0.16)),
+        Math.min(1, Math.max(0, (0.96 - phase) / 0.1)),
       );
       document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
     };

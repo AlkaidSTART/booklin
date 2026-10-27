@@ -513,80 +513,7 @@ html.is-paper .sx-rail__meta a {
   line-height: 1.65;
 }
 
-/* 02 — six layers */
-.sx-layers {
-  max-width: 430px;
-  border-top: 1px solid var(--line);
-}
-
-.sx-layer {
-  display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  gap: 0 10px;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--line);
-  opacity: 0.32;
-  transition: opacity 0.5s var(--ease-out), padding-left 0.5s var(--ease-out);
-}
-
-.sx-layer .n {
-  color: var(--faint);
-  font-family: var(--font-display);
-  font-size: 12px;
-  line-height: 1.5;
-  letter-spacing: 0.06em;
-}
-
-.sx-layer b {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.09em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-
-.sx-layer b small {
-  margin-left: 8px;
-  color: var(--faint);
-  font-family: var(--font-serif);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-
-.sx-layer .d {
-  grid-column: 2;
-  max-height: 0;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.6;
-  opacity: 0;
-  transition: max-height 0.6s var(--ease-out), opacity 0.5s var(--ease-out), margin-top 0.5s var(--ease-out);
-}
-
-.sx-layer.is-done {
-  opacity: 0.72;
-}
-
-.sx-layer.is-on {
-  padding-left: 6px;
-  opacity: 1;
-}
-
-.sx-layer.is-on .n,
-.sx-layer.is-on b {
-  color: var(--gold);
-}
-
-.sx-layer.is-on .d {
-  max-height: 48px;
-  margin-top: 3px;
-  opacity: 1;
-}
-
-/* 03 — ribbon address */
+/* 02 — ribbon address */
 .sx-ribbon {
   max-width: 440px;
 }
@@ -1183,6 +1110,8 @@ html.is-paper .sx-rail__meta a {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: rgba(14, 13, 11, 0.78);
+  /* Yield to the interlude plate instead of stacking two overlays. */
+  opacity: calc(1 - var(--handoff, 0));
 }
 
 .sx-band__track {
@@ -1248,6 +1177,9 @@ html.is-paper .sx-rail__meta a {
   justify-items: center;
   max-width: 820px;
   text-align: center;
+  /* Type only arrives once the backdrop has mostly taken the stage, so the
+     headline never ghosts across the book while the camera re-frames. */
+  opacity: clamp(0, calc((var(--handoff, 0) - 0.5) / 0.5), 1);
 }
 
 .sx-handoff__kicker {
@@ -1621,7 +1553,6 @@ html:not(.js) .sx-trio figure,
 html:not(.js) .sx-fact,
 html:not(.js) .sx-mark,
 html:not(.js) .sx-body,
-html:not(.js) .sx-layer,
 html:not(.js) .sx-node,
 html:not(.js) .sx-loop-map div,
 html:not(.js) .sx-ribbon__step {

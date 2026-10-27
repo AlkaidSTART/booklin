@@ -23,11 +23,10 @@ const chapters = [
   { id: 'arrival', href: 'arrival', number: 'P' },
   { id: 'shelf', href: 'shelf', number: '00' },
   { id: 'carry', href: 'carry', number: '01' },
-  { id: 'structure', href: 'structure', number: '02' },
-  { id: 'interaction', href: 'interaction', number: '03' },
-  { id: 'binding', href: 'binding', number: '04' },
-  { id: 'loop', href: 'loop', number: '05' },
-  { id: 'return', href: 'return', number: '06' },
+  { id: 'interaction', href: 'interaction', number: '02' },
+  { id: 'binding', href: 'binding', number: '03' },
+  { id: 'loop', href: 'loop', number: '04' },
+  { id: 'return', href: 'return', number: '05' },
   { id: 'benchmark', href: 'benchmark', number: 'A' },
   { id: 'deployment', href: 'deployment', number: 'B' },
   { id: 'chain', href: 'chain', number: 'C' },
@@ -58,15 +57,6 @@ const graphNodes = graph.nodes as Array<{
   labelZh: string;
   detailZh: string;
 }>;
-
-const materialLayers = [
-  { en: 'Cloth cover', zh: '布面', detail: '防眩光，留指纹。' },
-  { en: 'Board', zh: '灰板', detail: '2.4 mm，摔不碎。' },
-  { en: 'Ink', zh: '油墨', detail: '页边藏一枚码。' },
-  { en: 'Fibre sheet', zh: '纤维纸', detail: '自然光，零蓝光。' },
-  { en: 'Sewn spine', zh: '锁线', detail: '180° 摊平。' },
-  { en: 'Endpaper', zh: '环衬', detail: '替书脊挡刀。' },
-];
 
 const pageTitle = 'Bookln / THE BOOK. — 纸书，有魂。';
 const pageDescription =
@@ -242,46 +232,12 @@ const pageDescription =
     </section>
 
     <section
-      id="structure"
-      class="sx-sec"
-      data-chapter="structure"
-      data-number="02"
-      data-label="STRUCTURE"
-      data-telemetry="02 · OPEN 48° · 6 MATERIAL LAYERS"
-      aria-labelledby="structure-title"
-    >
-      <div class="sx-copy">
-        <p class="sx-kicker">
-          <b>{chapterById.structure.number}</b>
-          <span>{chapterById.structure.label} · {chapterById.structure.labelZh}</span>
-        </p>
-        <h2 id="structure-title" class="sx-title">
-          <span>{chapterById.structure.titleA}</span>
-          <em>{chapterById.structure.titleB}</em>
-        </h2>
-        <p class="sx-line">{chapterById.structure.line}</p>
-        <p class="sx-line-en">{chapterById.structure.lineEn}</p>
-        <p class="sx-meta">{chapterById.structure.meta}</p>
-
-        <div class="sx-module sx-layers" data-steps data-dispatch="layer">
-          {materialLayers.map((layer, index) => (
-            <div class="sx-layer" data-step={index}>
-              <span class="n">{String(index + 1).padStart(2, '0')}</span>
-              <b>{layer.en} <small>{layer.zh}</small></b>
-              <span class="d">{layer.detail}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <section
       id="interaction"
       class="sx-sec"
       data-chapter="interaction"
-      data-number="03"
+      data-number="02"
       data-label="INTERACTION"
-      data-telemetry="03 · OPEN 180° · RIBBON → P.042"
+      data-telemetry="02 · OPEN 180° · RIBBON → P.042"
       aria-labelledby="interaction-title"
     >
       <div class="sx-copy">
@@ -321,9 +277,9 @@ const pageDescription =
       id="binding"
       class="sx-sec"
       data-chapter="binding"
-      data-number="04"
+      data-number="03"
       data-label="BINDING"
-      data-telemetry="04 · SCAN ACTIVE · P.042 → 9 NODES"
+      data-telemetry="03 · SCAN ACTIVE · P.042 → 9 NODES"
       aria-labelledby="binding-title"
     >
       <div class="sx-copy">
@@ -367,9 +323,9 @@ const pageDescription =
       id="loop"
       class="sx-sec"
       data-chapter="loop"
-      data-number="05"
+      data-number="04"
       data-label="LOOP"
-      data-telemetry="05 · LOOP ACTIVE · RIBBON P.042 · MIND L.07"
+      data-telemetry="04 · LOOP ACTIVE · RIBBON P.042 · MIND L.07"
       aria-labelledby="loop-title"
     >
       <div class="sx-copy">
@@ -448,9 +404,9 @@ const pageDescription =
       id="return"
       class="sx-sec"
       data-chapter="return"
-      data-number="06"
+      data-number="05"
       data-label="RETURN"
-      data-telemetry="06 · UNBOUND · BACK ON SHELF · 0.00 W"
+      data-telemetry="05 · UNBOUND · BACK ON SHELF · 0.00 W"
       aria-labelledby="return-title"
     >
       <div class="sx-copy">
@@ -769,12 +725,6 @@ const pageDescription =
 
         const item = entry.items[active];
         const kind = entry.group.dataset.dispatch;
-
-        if (kind === 'layer') {
-          window.dispatchEvent(
-            new CustomEvent('bookln:layer', { detail: { index: Number(item.dataset.step ?? active) } }),
-          );
-        }
 
         if (kind === 'node') {
           window.dispatchEvent(

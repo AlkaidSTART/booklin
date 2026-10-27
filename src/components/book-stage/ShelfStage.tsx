@@ -4,7 +4,7 @@ import { RoundedBox, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-export const SHELF_PHASE_COUNT = 9;
+export const SHELF_PHASE_COUNT = 8;
 
 type Vec3 = [number, number, number];
 

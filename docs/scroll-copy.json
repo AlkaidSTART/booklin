@@ -38,19 +38,8 @@
       "meta": "ONE PRICE · TWO BODIES"
     },
     {
-      "id": "structure",
-      "number": "02",
-      "label": "STRUCTURE",
-      "labelZh": "结构",
-      "titleA": "六层，",
-      "titleB": "全是纸。",
-      "line": "没有屏幕，没有电池。",
-      "lineEn": "Paper, all the way down.",
-      "meta": "PAPER ALL THE WAY DOWN"
-    },
-    {
       "id": "interaction",
-      "number": "03",
+      "number": "02",
       "label": "INTERACTION",
       "labelZh": "寻址",
       "titleA": "翻到，",
@@ -61,7 +50,7 @@
     },
     {
       "id": "binding",
-      "number": "04",
+      "number": "03",
       "label": "BINDING",
       "labelZh": "认领",
       "titleA": "扫一次，",
@@ -72,7 +61,7 @@
     },
     {
       "id": "loop",
-      "number": "05",
+      "number": "04",
       "label": "LOOP",
       "labelZh": "伴读",
       "titleA": "卡住时，",
@@ -83,7 +72,7 @@
     },
     {
       "id": "return",
-      "number": "06",
+      "number": "05",
       "label": "RETURN",
       "labelZh": "传承",
       "titleA": "读完，",

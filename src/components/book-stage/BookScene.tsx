@@ -17,7 +17,6 @@ import {
 import type { ShelfPick } from './ShelfStage';
 
 export type StageInteractionState = {
-  activeLayer: number | null;
   activeNode: string | null;
   activeEdition: 'standard' | 'pro' | 'enterprise';
 };
@@ -42,7 +41,7 @@ type CameraKey = {
 type PointerRef = MutableRefObject<{ x: number; y: number }>;
 type InteractionRef = MutableRefObject<StageInteractionState>;
 
-// Unified desk coordinate space across all 10 sections (prologue -> epilogue B)
+// Unified desk coordinate space across all 9 sections (prologue -> epilogue B)
 // so the object never teleports off the oak desk.
 const BOOK_KEYS: BookKey[] = [
   // Prologue — closed, standing on the oak desk, turned toward the reader.
@@ -63,31 +62,25 @@ const BOOK_KEYS: BookKey[] = [
     rotation: [0.03, -0.18, 0.006],
     open: 0,
   },
-  // 02 Structure — half-open (48°) and angled so the 6 material strata fan out clearly.
-  {
-    position: [0.01, 0.768, 0.01],
-    rotation: [0.08, -0.54, 0.025],
-    open: 0.28,
-  },
-  // 03 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
+  // 02 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
   {
     position: [0, 0.772, 0.015],
     rotation: [-Math.PI / 2, 0.06, 0],
     open: 1,
   },
-  // 04 Binding — flat on the desk, lifted slightly as the Page 042 hologram rises above it.
+  // 03 Binding — flat on the desk, lifted slightly as the Page 042 hologram rises above it.
   {
     position: [0.01, 0.785, 0.01],
     rotation: [-Math.PI / 2, 0.14, 0],
     open: 1,
   },
-  // 05 Loop — flat on the night desk, reading posture (asset C4 pending).
+  // 04 Loop — flat on the night desk, reading posture (asset C4 pending).
   {
     position: [0, 0.778, 0.012],
     rotation: [-Math.PI / 2, 0.09, 0],
     open: 1,
   },
-  // 06 Return — closed, back on the shelf; mirrors the 00 shelf composition (ring closure).
+  // 05 Return — closed, back on the shelf; mirrors the 00 shelf composition (ring closure).
   {
     position: [0, 0.765, 0],
     rotation: [0.05, -0.34, 0.01],
@@ -131,35 +124,28 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetX: 0,
     mobileTargetY: 0.77,
   },
-  // 02 Structure
-  {
-    position: [-0.34, 1.01, 0.67],
-    target: [-0.16, 0.85, 0],
-    mobileTargetX: 0,
-    mobileTargetY: 0.74,
-  },
-  // 03 Interaction — higher top-down angle to showcase the 180° spread & ribbon arc
+  // 02 Interaction — higher top-down angle to showcase the 180° spread & ribbon arc
   {
     position: [-0.36, 1.32, 0.55],
     target: [-0.21, 0.79, 0.01],
     mobileTargetX: -0.1,
     mobileTargetY: 0.71,
   },
-  // 04 Binding — framed to show both the open Page 042 and the 3D node constellation above it
+  // 03 Binding — framed to show both the open Page 042 and the 3D node constellation above it
   {
     position: [-0.32, 1.12, 0.68],
     target: [-0.17, 0.88, 0],
     mobileTargetX: -0.05,
     mobileTargetY: 0.8,
   },
-  // 05 Loop — closer, intimate night framing
+  // 04 Loop — closer, intimate night framing
   {
     position: [-0.34, 1.2, 0.6],
     target: [-0.2, 0.82, 0.005],
     mobileTargetX: -0.08,
     mobileTargetY: 0.72,
   },
-  // 06 Return — mirrors the 00 shelf framing (ring closure)
+  // 05 Return — mirrors the 00 shelf framing (ring closure)
   {
     position: [-0.3, 1.0, 0.6],
     target: [-0.14, 0.85, 0],
@@ -536,15 +522,19 @@ function useMorphMesh(scene: THREE.Object3D) {
    The GLB ships three morph targets: closed, half-open (~48° fan) and
    flat (180°). Blending them linearly drags every page along a chord,
    so a page freezes mid-air as a rigid board. Instead we rotate the
-   moving vertices ourselves around the spine, staggered page by page
-   and with a bend at the free edge — the way a hand opens a book.
+   moving vertices ourselves around the spine.
+
+   Every leaf hinges on the spine line and sweeps up and over. Leaves
+   are ordered front-to-back and fan apart mid-turn, then nest together
+   again as the book comes fully flat — the 180° sweep inverts the
+   stack, so the last leaf turned always lands on top.
    ------------------------------------------------------------------ */
 
 const PAGE_SPINE_X = -74; // hinge line in the book's local space
-const PAGE_LAG_START = 0.28; // trailing pages begin this much later
-const PAGE_LAG_LAND = 0.2; // ...and land this much later than the cover
-const PAGE_CURL = 0.42; // radians of bend at the free edge, mid-turn
-const PAGE_BOUNCE = 0.11; // free-edge lift as the sheet settles
+const PAGE_SHEET_STEP = 2; // depth quantisation for leaf ordering
+const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
+const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
+const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
 
 type PageTurnRig = {
   position: THREE.BufferAttribute;
@@ -573,39 +563,41 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
 
   const count = position.count;
   const radius = new Float32Array(count);
-  const angle = new Float32Array(count);
   const lag = new Float32Array(count).fill(-1);
   const bend = new Float32Array(count);
   let maxRadius = 1;
-  let maxLag = 0;
+  let frontDepth = -Infinity;
+  let backDepth = Infinity;
 
   for (let i = 0; i < count; i += 1) {
     const x = positionArray[i * 3] - PAGE_SPINE_X;
     const z = positionArray[i * 3 + 2];
     const r = Math.hypot(x, z);
     radius[i] = r;
-    angle[i] = Math.atan2(z, x);
     if (r > maxRadius) maxRadius = r;
 
+    // Vertices untouched by the half-open key are the boards and spine —
+    // they must not join the turn.
     const dx = halfOpen.getX(i);
     const dz = halfOpen.getZ(i);
     if (Math.hypot(dx, dz) < 0.5) continue;
 
-    let delta = Math.atan2(z + dz, x + dx) - angle[i];
-    if (delta > Math.PI) delta -= Math.PI * 2;
-    if (delta < -Math.PI) delta += Math.PI * 2;
-    const value = clamp01(-delta / (Math.PI / 4));
-    lag[i] = value;
-    if (value > maxLag) maxLag = value;
+    const sheet = Math.round(z / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
+    lag[i] = 0;
+    if (sheet > frontDepth) frontDepth = sheet;
+    if (sheet < backDepth) backDepth = sheet;
   }
 
-  if (maxLag <= 0) return null;
+  if (!Number.isFinite(frontDepth) || !Number.isFinite(backDepth)) return null;
 
+  const span = Math.max(1, frontDepth - backDepth);
   for (let i = 0; i < count; i += 1) {
     if (lag[i] < 0) continue;
-    lag[i] = clamp01(lag[i] / maxLag);
-    // Paper bends; the cloth-covered board at the front stays stiff.
-    bend[i] = Math.pow(1 - lag[i], 0.6);
+    const sheet = Math.round(positionArray[i * 3 + 2] / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
+    // 0 = front cover (leads the turn), 1 = back leaf (trails it).
+    lag[i] = clamp01((frontDepth - sheet) / span);
+    // The cloth board stays stiff; paper curls more the deeper it sits.
+    bend[i] = lag[i];
   }
 
   return {
@@ -629,23 +621,25 @@ function applyPageTurn(rig: PageTurnRig, openness: number) {
   const normals = rig.normal.array as Float32Array;
   const { basePositions, baseNormals, radius, lag, bend, maxRadius } = rig;
 
+  // The turn always lifts the free edge toward +Z: with the book standing
+  // that reads as opening toward the reader, and with the book laid flat
+  // (+Z up) the leaves sweep over the desk instead of through it.
+  const base = Math.PI * smoothstep(openness);
+  const envelope = Math.sin(base);
+  const settle = clamp01((openness - 0.82) / 0.18);
+
   for (let i = 0; i < lag.length; i += 1) {
     const page = lag[i];
     if (page < 0) continue;
 
-    const start = (1 - page) * PAGE_LAG_START;
-    const land = 1 - page * PAGE_LAG_LAND;
-    const local = clamp01((openness - start) / (land - start));
-    const eased = local * local * (3 - 2 * local);
-    const theta = Math.PI * eased;
-
-    // Air drag keeps the free edge trailing through the whole sweep; on
-    // landing it lifts once more before settling flat.
     const reach = radius[i] / maxRadius;
-    const settle = clamp01((local - 0.82) / 0.18);
-    const bounce = PAGE_BOUNCE * Math.sin(settle * Math.PI) * (1 - settle) * reach * reach;
-    const curl = bend[i] * Math.sin(theta) * PAGE_CURL * reach * reach * reach + bounce;
-    const phi = -(theta - curl);
+    // Leaves behind the cover trail through the sweep, then the whole
+    // stack closes the fan and lands together at 180°.
+    const fan = page * PAGE_FAN * envelope;
+    const bounce =
+      PAGE_BOUNCE * Math.sin(settle * Math.PI) * (1 - settle) * page * reach * reach;
+    const curl = bend[i] * envelope * PAGE_CURL * reach * reach * reach + bounce;
+    const phi = base - fan + curl;
     const cos = Math.cos(phi);
     const sin = Math.sin(phi);
 
@@ -770,114 +764,7 @@ function CameraRig({
   return null;
 }
 
-function ExplodedLayers({
-  progressRef,
-  interactionRef,
-}: {
-  progressRef: MutableRefObject<number>;
-  interactionRef: InteractionRef;
-}) {
-  const groupRef = useRef<THREE.Group>(null);
-  const layerRefs = useRef<Array<THREE.Group | null>>([]);
-
-  const edgeGeometry = useMemo(() => {
-    const source = new THREE.BoxGeometry(148, 210, 0.6);
-    const edges = new THREE.EdgesGeometry(source);
-    source.dispose();
-    return edges;
-  }, []);
-
-  const planeGeometry = useMemo(() => new THREE.PlaneGeometry(146, 208), []);
-
-  const lineMaterials = useMemo(
-    () =>
-      Array.from({ length: 6 }, (_, idx) =>
-        new THREE.LineBasicMaterial({
-          color: idx === 4 ? '#d27c65' : '#c8a96d',
-          transparent: true,
-          opacity: 0,
-          depthWrite: false,
-          toneMapped: false,
-        }),
-      ),
-    [],
-  );
-
-  const fillMaterials = useMemo(
-    () =>
-      Array.from({ length: 6 }, (_, idx) =>
-        new THREE.MeshBasicMaterial({
-          color: idx === 4 ? '#d27c65' : '#c8a96d',
-          transparent: true,
-          opacity: 0,
-          depthWrite: false,
-          side: THREE.DoubleSide,
-          toneMapped: false,
-        }),
-      ),
-    [],
-  );
-
-  useEffect(() => {
-    return () => {
-      edgeGeometry.dispose();
-      planeGeometry.dispose();
-      for (const m of lineMaterials) m.dispose();
-      for (const m of fillMaterials) m.dispose();
-    };
-  }, [edgeGeometry, planeGeometry, lineMaterials, fillMaterials]);
-
-  useFrame((_, delta) => {
-    const { phase } = timeline(progressRef.current);
-    const chapterStrength = band(phase, 3.18, 0.72);
-    const activeLayer = interactionRef.current.activeLayer;
-
-    let anyVisible = false;
-    for (let i = 0; i < 6; i += 1) {
-      const isSelected = activeLayer === i;
-      const isDimmed = activeLayer !== null && !isSelected;
-      const lineTarget = chapterStrength * (isSelected ? 0.98 : isDimmed ? 0.22 : 0.56);
-      const fillTarget = chapterStrength * (isSelected ? 0.18 : 0.035);
-
-      lineMaterials[i].opacity = THREE.MathUtils.damp(lineMaterials[i].opacity, lineTarget, 8, delta);
-      fillMaterials[i].opacity = THREE.MathUtils.damp(fillMaterials[i].opacity, fillTarget, 8, delta);
-
-      if (lineMaterials[i].opacity > 0.01) anyVisible = true;
-
-      const layerGroup = layerRefs.current[i];
-      if (layerGroup) {
-        const spread = (-75 + i * 30) * (0.4 + 0.6 * chapterStrength);
-        const lift = isSelected ? 14 : 0;
-        layerGroup.position.x = THREE.MathUtils.damp(layerGroup.position.x, lift, 8, delta);
-        layerGroup.position.z = THREE.MathUtils.damp(layerGroup.position.z, spread, 7, delta);
-      }
-    }
-
-    if (groupRef.current) {
-      groupRef.current.visible = anyVisible;
-    }
-  });
-
-  return (
-    <group ref={groupRef} visible={false}>
-      {Array.from({ length: 6 }, (_, index) => (
-        <group
-          key={index}
-          ref={(el) => {
-            layerRefs.current[index] = el;
-          }}
-          position={[0, 105, -75 + index * 30]}
-          rotation={[0, 0, (index - 2.5) * 0.008]}
-        >
-          <lineSegments geometry={edgeGeometry} material={lineMaterials[index]} />
-          <mesh geometry={planeGeometry} material={fillMaterials[index]} />
-        </group>
-      ))}
-    </group>
-  );
-}
-
-// Chapter 03: Haptic page-turn airflow & 280mm bookmark ribbon landing on Page 042
+// Chapter 02: Haptic page-turn airflow & 280mm bookmark ribbon landing on Page 042
 function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -960,7 +847,7 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const active = band(phase, 4.15, 0.68);
+    const active = band(phase, 3.15, 0.68);
     ribbonMaterial.opacity = THREE.MathUtils.damp(ribbonMaterial.opacity, active * 0.9, 6, delta);
     arcMaterial.opacity = THREE.MathUtils.damp(arcMaterial.opacity, active * 0.48, 6, delta);
     ringMaterial.opacity = THREE.MathUtils.damp(ringMaterial.opacity, active * 0.75, 6, delta);
@@ -987,7 +874,7 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
   );
 }
 
-// Chapter 04 binding (and epilogue B Enterprise mode): True 3D Knowledge Graph rising from Page 042
+// Chapter 03 binding (and epilogue B Enterprise mode): True 3D Knowledge Graph rising from Page 042
 function NeuralGraph3D({
   progressRef,
   interactionRef,
@@ -1105,8 +992,8 @@ function NeuralGraph3D({
     const { phase } = timeline(progressRef.current);
     const activeNode = interactionRef.current.activeNode ?? 'page';
     const enterpriseBoost =
-      phase >= 8.45 && interactionRef.current.activeEdition === 'enterprise' ? 0.78 : 0;
-    const strength = Math.max(band(phase, 5.12, 0.72), enterpriseBoost);
+      phase >= 7.45 && interactionRef.current.activeEdition === 'enterprise' ? 0.78 : 0;
+    const strength = Math.max(band(phase, 4.12, 0.72), enterpriseBoost);
 
     if (pointsMaterialRef.current) {
       pointsMaterialRef.current.opacity = THREE.MathUtils.damp(
@@ -1225,8 +1112,8 @@ function ScanRing({
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
     const standardBoost =
-      phase >= 8.45 && interactionRef.current.activeEdition === 'standard' ? 0.55 : 0;
-    const target = Math.max(band(phase, 5.12, 0.68) * 0.55, standardBoost);
+      phase >= 7.45 && interactionRef.current.activeEdition === 'standard' ? 0.55 : 0;
+    const target = Math.max(band(phase, 4.12, 0.68) * 0.55, standardBoost);
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
     }
@@ -1282,7 +1169,7 @@ function QrCompanionCard({ progressRef }: { progressRef: MutableRefObject<number
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
     const visible = size.width >= 760;
-    const target = visible ? band(phase, 5.15, 0.65) * 0.92 : 0;
+    const target = visible ? band(phase, 4.15, 0.65) * 0.92 : 0;
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
     }
@@ -1502,14 +1389,14 @@ function BookRig({
     // In Epilogue B (Deployment), adapt the book's horizontal position to the chosen edition
     const edition = interactionRef.current.activeEdition;
     const deploymentOffsetX =
-      phase > 8.2
-        ? smoothstep((phase - 8.2) / 0.8) *
+      phase > 7.2
+        ? smoothstep((phase - 7.2) / 0.8) *
           (edition === 'standard' ? 0.085 : edition === 'enterprise' ? 0.055 : 0)
         : 0;
 
     // Gentle turntable rotation on the pedestal during Epilogue A (Benchmark)
     const benchmarkSpin =
-      band(phase, 8.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
+      band(phase, 7.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
 
     if (bookGroupRef.current) {
       const shelfPose = shelfBookPose(phase, pick);
@@ -1557,18 +1444,18 @@ function BookRig({
     }
 
     // Pedestal appears on the desk for Epilogue A (Benchmark)
-    const pedestalTarget = band(phase, 8.0, 0.56) > 0.08 ? 1 : 0.001;
+    const pedestalTarget = band(phase, 7.0, 0.56) > 0.08 ? 1 : 0.001;
     // Slipcase appears on the desk for Epilogue B (Deployment)
-    const slipcaseTarget = phase >= 8.35 && edition !== 'standard' ? 1 : phase >= 8.35 ? 0.65 : 0.001;
+    const slipcaseTarget = phase >= 7.35 && edition !== 'standard' ? 1 : phase >= 7.35 ? 0.65 : 0.001;
 
-    // Shelf (00 Shelf and 06 Return share one composition: ring closure).
+    // Shelf (00 Shelf and 05 Return share one composition: ring closure).
     // Scale is tied to scroll phase rather than time so the establish cannot
     // race ahead of the book when the wheel moves fast; the whole grow happens
     // behind the interlude plate (phase 0.56 → 0.74).
     const shelfIn = smoothstep((phase - 0.56) / 0.18);
     const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
     const shelfReturn =
-      smoothstep((phase - 6.55) / 0.18) * (1 - smoothstep((phase - 7.6) / 0.15));
+      smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
     const shelfScale = Math.max(shelfIn * shelfOut, shelfReturn);
     if (shelfGroupRef.current) {
       shelfGroupRef.current.scale.setScalar(Math.max(0.001, shelfScale));
@@ -1644,7 +1531,6 @@ function BookRig({
             <primitive object={book.scene} dispose={null} />
             <PageTurnRig mesh={bookMorphMesh} progressRef={progressRef} />
             <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} />
-            <ExplodedLayers progressRef={progressRef} interactionRef={interactionRef} />
           </group>
         </group>
       </group>
@@ -1672,7 +1558,7 @@ function BookRig({
 }
 
 /**
- * Day studio light with a night-desk grade for 05 Loop (asset C4).
+ * Day studio light with a night-desk grade for 04 Loop (asset C4).
  * The night HDRI is only requested when the reader approaches the loop chapter.
  */
 function LightRig({
@@ -1697,14 +1583,14 @@ function LightRig({
 
   useFrame((_, delta) => {
     const phase = clamp01(progressRef.current) * PHASE_COUNT;
-    const target = smoothstep(band(phase, 6, 0.9));
+    const target = smoothstep(band(phase, 5, 0.9));
     nightRef.current = THREE.MathUtils.damp(nightRef.current, target, reducedMotion ? 30 : 4, delta);
     const night = nightRef.current;
-    const wantsNightEnv = phase > 4.7 && phase < 7.3;
+    const wantsNightEnv = phase > 3.7 && phase < 6.3;
     setNightEnv((prev) => (prev === wantsNightEnv ? prev : wantsNightEnv));
 
     const shelfOn =
-      (phase > 0.85 && phase < 2.44) || (phase > 6.5 && phase < 7.8) ? 1 : 0;
+      (phase > 0.85 && phase < 2.44) || (phase > 5.5 && phase < 6.8) ? 1 : 0;
     shelfMixRef.current = THREE.MathUtils.damp(shelfMixRef.current, shelfOn, 4, delta);
     const shelf = shelfMixRef.current;
 
@@ -1778,7 +1664,7 @@ function LightRig({
         decay={2}
       />
 
-      {/* Night desk lamp: small warm radius, only live in 05 Loop */}
+      {/* Night desk lamp: small warm radius, only live in 04 Loop */}
       <pointLight
         ref={lampRef}
         position={[-0.42, 1.08, 0.2]}

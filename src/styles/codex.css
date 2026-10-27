@@ -1568,7 +1568,7 @@ main,
 .footer {
   padding: 56px clamp(20px, 5.5vw, 82px) 30px calc(var(--rail-width) + clamp(20px, 4.5vw, 66px));
   border-top: 1px solid var(--line);
-  background: linear-gradient(to bottom, rgba(17, 16, 14, 0.24), var(--ink-0) 38%);
+  background: linear-gradient(to bottom, #15120f 0%, var(--ink-0) 34%);
 }
 
 .footer__grid {

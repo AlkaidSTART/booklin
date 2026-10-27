@@ -235,6 +235,12 @@ html.is-paper .sx-rail__meta a {
   min-height: 136svh;
 }
 
+/* Chapter 00 carries a longer in-scene sequence: shelf establish, take-down,
+   QR close-up, phone scan and cloud uplink. */
+.sx-sec--shelf {
+  min-height: 220svh;
+}
+
 .sx-copy {
   position: relative;
   z-index: 2;
@@ -1543,6 +1549,10 @@ html.is-paper .sx-rail__meta a {
 
   .sx-sec--paper {
     padding-top: calc(var(--header-height) + 10vh);
+  }
+
+  .sx-sec--shelf {
+    min-height: 180svh;
   }
 
   .sx-copy,

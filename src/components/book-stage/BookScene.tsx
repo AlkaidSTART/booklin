@@ -1146,10 +1146,12 @@ function BookRig({
   progressRef,
   interactionRef,
   reducedMotion,
+  pick,
 }: {
   progressRef: MutableRefObject<number>;
   interactionRef: InteractionRef;
   reducedMotion: boolean;
+  pick: ShelfPick;
 }) {
   const mobile = useThree((state) => state.size.width < 760);
   const bookGroupRef = useRef<THREE.Group>(null);
@@ -1293,6 +1295,21 @@ function BookRig({
     }
   }, [bookMorphMesh]);
 
+  useEffect(() => {
+    // The delivered shelf GLB carries flat spine cards. The shelf stage now
+    // rebuilds the books with real depth, so keep only the walnut case.
+    shelf.scene.traverse((object) => {
+      const name = object.name;
+      if (
+        name.includes('Shelf_Books_Sleeping') ||
+        name.includes('Shelf_Hero_Spine') ||
+        name.includes('Shelf_Hero_Glow')
+      ) {
+        object.visible = false;
+      }
+    });
+  }, [shelf.scene]);
+
   useFrame((_, delta) => {
     const { phase, index, t } = timeline(progressRef.current);
     const a = BOOK_KEYS[index];
@@ -1317,20 +1334,35 @@ function BookRig({
       band(phase, 8.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
 
     if (bookGroupRef.current) {
-      const targetX = lerp(a.position[0], b.position[0], t) + deploymentOffsetX;
-      const targetY = lerp(a.position[1], b.position[1], t) + intro * 0.16 + scrollLanding + idle;
-      const targetZ = lerp(a.position[2], b.position[2], t);
+      const shelfPose = shelfBookPose(phase, pick);
 
-      bookGroupRef.current.position.set(
-        THREE.MathUtils.damp(bookGroupRef.current.position.x, targetX, 7, delta),
-        THREE.MathUtils.damp(bookGroupRef.current.position.y, targetY, 7, delta),
-        THREE.MathUtils.damp(bookGroupRef.current.position.z, targetZ, 7, delta),
-      );
-      bookGroupRef.current.rotation.set(
-        lerp(a.rotation[0], b.rotation[0], t) + intro * 0.1,
-        lerp(a.rotation[1], b.rotation[1], t) + benchmarkSpin,
-        lerp(a.rotation[2], b.rotation[2], t),
-      );
+      if (shelfPose) {
+        bookGroupRef.current.position.set(
+          THREE.MathUtils.damp(bookGroupRef.current.position.x, shelfPose.position[0], 8, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.y, shelfPose.position[1] + idle, 8, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.z, shelfPose.position[2], 8, delta),
+        );
+        bookGroupRef.current.rotation.set(
+          shelfPose.rotation[0],
+          shelfPose.rotation[1],
+          shelfPose.rotation[2],
+        );
+      } else {
+        const targetX = lerp(a.position[0], b.position[0], t) + deploymentOffsetX;
+        const targetY = lerp(a.position[1], b.position[1], t) + intro * 0.16 + scrollLanding + idle;
+        const targetZ = lerp(a.position[2], b.position[2], t);
+
+        bookGroupRef.current.position.set(
+          THREE.MathUtils.damp(bookGroupRef.current.position.x, targetX, 7, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.y, targetY, 7, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.z, targetZ, 7, delta),
+        );
+        bookGroupRef.current.rotation.set(
+          lerp(a.rotation[0], b.rotation[0], t) + intro * 0.1,
+          lerp(a.rotation[1], b.rotation[1], t) + benchmarkSpin,
+          lerp(a.rotation[2], b.rotation[2], t),
+        );
+      }
     }
 
     if (bookMorphMesh?.morphTargetInfluences) {
@@ -1349,7 +1381,7 @@ function BookRig({
     // The prologue stays single-book on the desk; the shelf only fades in as
     // chapter 00 begins.
     const shelfTarget =
-      (phase > 0.85 && phase < 1.85) || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
+      (phase > 0.85 && phase < 2.22) || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
     if (shelfGroupRef.current) {
       const next = THREE.MathUtils.damp(shelfGroupRef.current.scale.x, shelfTarget, 5, delta);
       shelfGroupRef.current.scale.setScalar(Math.max(0.001, next));
@@ -1393,6 +1425,8 @@ function BookRig({
       <group ref={shelfGroupRef} position={[0.0, 0, -0.98]} visible={false}>
         <group scale={0.001}>
           <primitive object={shelf.scene} dispose={null} />
+          <ShelfBooks pick={pick} />
+          <ShelfSelection pick={pick} />
         </group>
       </group>
 
@@ -1421,10 +1455,14 @@ function BookRig({
         <group scale={mobile ? 0.84 : 1}>
           <group scale={0.001}>
             <primitive object={book.scene} dispose={null} />
+            <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} />
             <ExplodedLayers progressRef={progressRef} interactionRef={interactionRef} />
           </group>
         </group>
       </group>
+
+      <PhoneScanner progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
+      <CloudSoulPanel progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
 
       <InteractionArcs progressRef={progressRef} />
       <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
@@ -1464,6 +1502,9 @@ function LightRig({
   const rimRef = useRef<THREE.DirectionalLight>(null);
   const spotRef = useRef<THREE.SpotLight>(null);
   const lampRef = useRef<THREE.PointLight>(null);
+  const shelfLightRef = useRef<THREE.PointLight>(null);
+  const shelfFillRef = useRef<THREE.PointLight>(null);
+  const shelfMixRef = useRef(0);
   const sceneRef = useThree((state) => state.scene);
 
   useFrame((_, delta) => {
@@ -1474,6 +1515,11 @@ function LightRig({
     const wantsNightEnv = phase > 4.7 && phase < 7.3;
     setNightEnv((prev) => (prev === wantsNightEnv ? prev : wantsNightEnv));
 
+    const shelfOn =
+      (phase > 0.85 && phase < 2.3) || (phase > 6.5 && phase < 7.8) ? 1 : 0;
+    shelfMixRef.current = THREE.MathUtils.damp(shelfMixRef.current, shelfOn, 4, delta);
+    const shelf = shelfMixRef.current;
+
     const dim = 1 - night * 0.82;
     if (hemiRef.current) hemiRef.current.intensity = 0.3 * (1 - night * 0.75);
     if (keyRef.current) keyRef.current.intensity = 1.35 * dim;
@@ -1481,7 +1527,9 @@ function LightRig({
     if (rimRef.current) rimRef.current.intensity = 0.85 * (1 - night * 0.6);
     if (spotRef.current) spotRef.current.intensity = 5.5 * (1 - night * 0.85);
     if (lampRef.current) lampRef.current.intensity = night * 2.6;
-    sceneRef.environmentIntensity = 0.7 * (1 - night * 0.55);
+    if (shelfLightRef.current) shelfLightRef.current.intensity = shelf * 1.15;
+    if (shelfFillRef.current) shelfFillRef.current.intensity = shelf * 0.42;
+    sceneRef.environmentIntensity = 0.7 * (1 - night * 0.55) + shelf * 0.14;
   });
 
   return (
@@ -1508,6 +1556,24 @@ function LightRig({
 
       {/* Desk bounce: gentle glow simulating light reflecting off the desk */}
       <pointLight position={[0, 0.72, 0.28]} intensity={0.08} color="#c9941e" distance={1.4} decay={2.2} />
+
+      {/* Shelf wash: warm pool that reveals the modelled spines behind the book */}
+      <pointLight
+        ref={shelfLightRef}
+        position={[-0.02, 1.34, -0.42]}
+        intensity={0}
+        color="#ffc987"
+        distance={2.3}
+        decay={2}
+      />
+      <pointLight
+        ref={shelfFillRef}
+        position={[0.5, 0.88, -0.5]}
+        intensity={0}
+        color="#9db4c9"
+        distance={1.9}
+        decay={2.2}
+      />
 
       {/* Spine accent: skims across the spine to reveal cloth texture */}
       <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.1} color="#ffe4b0" distance={1.1} decay={2} />
@@ -1550,6 +1616,8 @@ function SceneContents({
   reducedMotion: boolean;
   onReady: () => void;
 }) {
+  const pick = useShelfPick();
+
   return (
     <>
       {/* ── Scene base ─────────────────────────────────────────────── */}
@@ -1563,6 +1631,7 @@ function SceneContents({
           progressRef={progressRef}
           interactionRef={interactionRef}
           reducedMotion={reducedMotion}
+          pick={pick}
         />
         <ReadySignal onReady={onReady} />
       </Suspense>

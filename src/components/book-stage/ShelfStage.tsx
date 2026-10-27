@@ -1010,8 +1010,8 @@ export function CloudSoulPanel({
   const groupRef = useRef<THREE.Group>(null);
   const panelMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const borderMatRef = useRef<THREE.MeshBasicMaterial>(null);
-  const beamRef = useRef<THREE.Line>(null);
-  const beamMatRef = useRef<THREE.LineBasicMaterial>(null);
+  const beamRef = useRef<THREE.Mesh>(null);
+  const beamMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const motesRef = useRef<THREE.Points>(null);
   const moteMatRef = useRef<THREE.PointsMaterial>(null);
   const moteAttrRef = useRef<THREE.BufferAttribute>(null);
@@ -1053,7 +1053,7 @@ export function CloudSoulPanel({
       new THREE.Vector3(0.16, 0.975, 0.07),
       new THREE.Vector3(0.215, 0.961, 0.079),
     );
-    return new THREE.BufferGeometry().setFromPoints(curve.getPoints(32));
+    return new THREE.TubeGeometry(curve, 32, 0.0011, 6, false);
   }, []);
 
   const motePositions = useMemo(() => {
@@ -1131,8 +1131,8 @@ export function CloudSoulPanel({
         </mesh>
       </group>
 
-      <line ref={beamRef} geometry={beamGeometry as never} position={[0, 0, 0]} visible={false}>
-        <lineBasicMaterial
+      <mesh ref={beamRef} geometry={beamGeometry} visible={false}>
+        <meshBasicMaterial
           ref={beamMatRef}
           color="#c8a96d"
           transparent
@@ -1141,7 +1141,7 @@ export function CloudSoulPanel({
           blending={THREE.AdditiveBlending}
           toneMapped={false}
         />
-      </line>
+      </mesh>
 
       <points ref={motesRef} position={[0, 0, 0]} visible={false}>
         <bufferGeometry>

@@ -1099,43 +1099,6 @@ html.is-paper .sx-rail__meta a {
 }
 
 /* ------------------------------------------------------------------
-   Marquee band
-   ------------------------------------------------------------------ */
-
-.sx-band {
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  padding: 18px 0 16px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  background: rgba(14, 13, 11, 0.78);
-  /* Yield to the interlude plate instead of stacking two overlays. */
-  opacity: calc(1 - var(--handoff, 0));
-}
-
-.sx-band__track {
-  display: flex;
-  gap: 44px;
-  width: max-content;
-  padding-left: 6vw;
-  color: rgba(232, 220, 196, 0.16);
-  font-family: var(--font-display);
-  font-size: clamp(26px, 3.8vw, 52px);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-  transform: translateX(calc(var(--page-progress, 0) * -34vw));
-  will-change: transform;
-}
-
-.sx-band__track em {
-  color: rgba(200, 169, 109, 0.5);
-  font-style: normal;
-}
-
-/* ------------------------------------------------------------------
    Prologue → chapter 00 interlude
    A title plate that the camera re-frames and the book re-shelves behind.
    `--handoff` is written by the stage, so the plate is locked to the 3D beat.
@@ -1508,16 +1471,6 @@ html.is-paper .sx-rail__meta a {
   .sx-ticker,
   .sx-hint {
     display: none;
-  }
-
-  .sx-band {
-    padding: 13px 0;
-  }
-
-  .sx-band__track {
-    gap: 28px;
-    font-size: clamp(22px, 7vw, 30px);
-    transform: translateX(calc(var(--page-progress, 0) * -60vw));
   }
 
   .sx-footer {

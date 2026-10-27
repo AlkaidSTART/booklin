@@ -456,7 +456,7 @@ const pageDescription =
                       <small lang="zh-Hans">{row.labelZh}</small>
                     </th>
                     {row.cells.map((cell: Record<string, any>) => (
-                      <td class={cell.device.id === 'codex-1' ? 'codex-col' : undefined}>
+                      <td class={cell.device.id === 'codex-1' ? 'codex-col' : undefined} data-device={cell.device.name}>
                         <span>{cell.value}</span>
                         <small lang="zh-Hans">{cell.valueZh}</small>
                       </td>

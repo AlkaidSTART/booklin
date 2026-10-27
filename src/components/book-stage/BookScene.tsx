@@ -79,13 +79,13 @@ const CAMERA_KEYS: CameraKey[] = [
   {
     position: [-0.4, 1.34, 0.57],
     target: [-0.24, 0.78, 0.01],
-    mobileTargetX: 0,
+    mobileTargetX: -0.13,
     mobileTargetY: 0.70,
   },
   {
     position: [-0.28, 1.15, 0.61],
     target: [-0.18, 0.8, 0],
-    mobileTargetX: 0,
+    mobileTargetX: -0.09,
     mobileTargetY: 0.70,
   },
   {
@@ -244,16 +244,6 @@ function CameraRig({
     camera.position.lerp(desiredPosition, damping);
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
-    if (typeof window !== 'undefined') {
-      (window as unknown as { __codexCamera?: unknown }).__codexCamera = {
-        position: camera.position.toArray(),
-        target: currentTarget.current.toArray(),
-        desired: desiredPosition.toArray(),
-        index,
-        t,
-        size: [size.width, size.height],
-      };
-    }
 
     const desiredFov = mobile ? 39 : 32;
     if (perspective.isPerspectiveCamera && Math.abs(perspective.fov - desiredFov) > 0.05) {
@@ -527,14 +517,6 @@ function BookRig({
     const idle = reducedMotion ? 0 : Math.sin(performance.now() * 0.00055) * 0.0015;
 
     if (bookGroupRef.current) {
-      if (typeof window !== 'undefined') {
-        (window as unknown as { __codexBook?: unknown }).__codexBook = {
-          position: bookGroupRef.current.position.toArray(),
-          phase,
-          index,
-          t,
-        };
-      }
       bookGroupRef.current.position.set(
         lerp(a.position[0], b.position[0], t),
         lerp(a.position[1], b.position[1], t) + intro * 0.19 + idle,

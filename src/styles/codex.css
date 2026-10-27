@@ -202,6 +202,14 @@ body {
   letter-spacing: 0.08em;
 }
 
+.stage-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .stage-grain {
   position: absolute;
   inset: 0;
@@ -1029,6 +1037,10 @@ main,
 }
 
 .media-card video {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: 100%;
   cursor: pointer;
 }
 
@@ -1044,6 +1056,7 @@ main,
 .video-play {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1804,30 +1817,49 @@ main,
     font-size: 7px;
   }
 
+  .stage-scrim {
+    opacity: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(17, 16, 14, 0) 0%,
+      rgba(17, 16, 14, 0.04) 28%,
+      rgba(17, 16, 14, 0.5) 42%,
+      rgba(17, 16, 14, 0.9) 56%,
+      rgba(17, 16, 14, 0.985) 68%,
+      var(--ink-0) 80%
+    );
+  }
+
   .chapter {
     min-height: 100svh;
-    padding: calc(var(--header-height) + 30svh) 18px 52px;
+    padding: calc(var(--header-height) + 42svh) 18px 52px;
   }
 
   .chapter--hero {
-    padding-top: calc(var(--header-height) + 25svh);
+    padding-top: calc(var(--header-height) + 44svh);
     padding-bottom: 42px;
   }
 
   .chapter--media {
-    padding-top: calc(var(--header-height) + 34svh);
+    padding-top: calc(var(--header-height) + 42svh);
   }
 
   .chapter--deployment {
-    padding-top: calc(var(--header-height) + 27svh);
+    padding-top: calc(var(--header-height) + 42svh);
   }
 
   .chapter__copy::before {
     content: "";
     position: absolute;
     z-index: -1;
-    inset: -22px -10px -16px;
-    background: linear-gradient(to top, rgba(17, 16, 14, 0.97) 0%, rgba(17, 16, 14, 0.83) 58%, rgba(17, 16, 14, 0) 100%);
+    inset: -34px -18px -28px;
+    background: linear-gradient(
+      to bottom,
+      rgba(17, 16, 14, 0) 0%,
+      rgba(17, 16, 14, 0.86) 28px,
+      rgba(17, 16, 14, 0.97) 62px,
+      rgba(17, 16, 14, 0.97) 100%
+    );
     pointer-events: none;
   }
 
@@ -2055,16 +2087,20 @@ main,
 
 @media (max-width: 480px) {
   .chapter {
-    padding-top: calc(var(--header-height) + 27svh);
+    padding-top: calc(var(--header-height) + 42svh);
     padding-bottom: 46px;
   }
 
   .chapter--hero {
-    padding-top: calc(var(--header-height) + 24svh);
+    padding-top: calc(var(--header-height) + 44svh);
   }
 
   .chapter--media {
-    padding-top: calc(var(--header-height) + 32svh);
+    padding-top: calc(var(--header-height) + 42svh);
+  }
+
+  .chapter--deployment {
+    padding-top: calc(var(--header-height) + 42svh);
   }
 
   .section-title {
@@ -2113,5 +2149,94 @@ main,
   .stage-fallback__frame {
     top: 15vh;
     height: 42vh;
+  }
+}
+
+
+/* Mobile benchmark comparison cards */
+@media (max-width: 760px) {
+  .benchmark-panel {
+    padding: 12px;
+  }
+
+  .benchmark-table {
+    display: block;
+    min-width: 0;
+    font-size: 10px;
+  }
+
+  .benchmark-table caption,
+  .benchmark-table thead {
+    display: none;
+  }
+
+  .benchmark-table tbody {
+    display: block;
+  }
+
+  .benchmark-table tbody tr {
+    display: block;
+    padding: 12px 0 10px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .benchmark-table tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .benchmark-table tbody th {
+    display: block;
+    width: auto;
+    padding: 0 0 6px;
+    border: 0;
+    color: var(--paper);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  .benchmark-table tbody th small {
+    display: block;
+    margin-top: 2px;
+    color: var(--faint);
+    font-family: var(--font-serif);
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .benchmark-table tbody td {
+    display: grid;
+    grid-template-columns: 66px minmax(0, 1fr);
+    column-gap: 8px;
+    padding: 4px 0;
+    border: 0;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .benchmark-table tbody td::before {
+    content: attr(data-device);
+    grid-row: 1 / span 2;
+    color: var(--gold);
+    font-family: var(--font-sans);
+    font-size: 7px;
+    letter-spacing: 0.1em;
+    line-height: 1.5;
+    text-transform: uppercase;
+  }
+
+  .benchmark-table tbody td > span,
+  .benchmark-table tbody td > small {
+    grid-column: 2;
+  }
+
+  .benchmark-table tbody td > small {
+    margin-top: 2px;
+  }
+
+  .benchmark-table tbody td.codex-col {
+    margin: 4px 0;
+    padding: 5px 6px;
+    border-left: 1px solid var(--gold-dim);
+    background: rgba(200, 169, 109, 0.06);
   }
 }

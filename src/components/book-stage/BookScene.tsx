@@ -19,6 +19,7 @@ type CameraKey = {
   position: Vec3;
   target: Vec3;
   mobileTargetX: number;
+  mobileTargetY: number;
 };
 
 type PointerRef = MutableRefObject<{ x: number; y: number }>;
@@ -67,31 +68,37 @@ const CAMERA_KEYS: CameraKey[] = [
     position: [-0.38, 1.05, 0.72],
     target: [-0.18, 0.86, 0],
     mobileTargetX: 0,
+    mobileTargetY: 0.76,
   },
   {
     position: [-0.34, 1.0, 0.68],
     target: [-0.17, 0.85, 0],
     mobileTargetX: 0,
+    mobileTargetY: 0.74,
   },
   {
     position: [-0.4, 1.34, 0.57],
     target: [-0.24, 0.78, 0.01],
     mobileTargetX: 0,
+    mobileTargetY: 0.70,
   },
   {
     position: [-0.28, 1.15, 0.61],
     target: [-0.18, 0.8, 0],
     mobileTargetX: 0,
+    mobileTargetY: 0.70,
   },
   {
     position: [-0.3, 0.72, 1.0],
     target: [-0.17, 0.18, 0],
     mobileTargetX: 0,
+    mobileTargetY: 0.08,
   },
   {
     position: [-0.38, 0.6, 1.15],
     target: [-0.22, 0.03, 0],
     mobileTargetX: 0,
+    mobileTargetY: -0.09,
   },
 ];
 
@@ -213,7 +220,9 @@ function CameraRig({
     const targetX = mobile
       ? lerp(a.mobileTargetX, b.mobileTargetX, t)
       : lerp(a.target[0], b.target[0], t);
-    const targetY = lerp(a.target[1], b.target[1], t);
+    const targetY = mobile
+      ? lerp(a.mobileTargetY, b.mobileTargetY, t)
+      : lerp(a.target[1], b.target[1], t);
     const targetZ = lerp(a.target[2], b.target[2], t);
 
     const pointerX = reducedMotion || mobile ? 0 : pointerRef.current.x;
@@ -445,6 +454,7 @@ function BookRig({
   progressRef: MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
+  const mobile = useThree((state) => state.size.width < 760);
   const bookGroupRef = useRef<THREE.Group>(null);
   const deskGroupRef = useRef<THREE.Group>(null);
   const pedestalGroupRef = useRef<THREE.Group>(null);
@@ -587,15 +597,19 @@ function BookRig({
       </group>
 
       <group ref={slipcaseGroupRef} position={[-0.105, 0, 0]} visible={false}>
-        <group scale={0.001}>
-          <primitive object={slipcase.scene} dispose={null} />
+        <group scale={mobile ? 0.84 : 1}>
+          <group scale={0.001}>
+            <primitive object={slipcase.scene} dispose={null} />
+          </group>
         </group>
       </group>
 
       <group ref={bookGroupRef}>
-        <group scale={0.001}>
-          <primitive object={book.scene} dispose={null} />
-          <ExplodedLayers progressRef={progressRef} />
+        <group scale={mobile ? 0.84 : 1}>
+          <group scale={0.001}>
+            <primitive object={book.scene} dispose={null} />
+            <ExplodedLayers progressRef={progressRef} />
+          </group>
         </group>
       </group>
 

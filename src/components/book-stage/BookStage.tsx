@@ -284,6 +284,7 @@ export default function BookStage() {
         </div>
       )}
 
+      <div className="stage-scrim" aria-hidden="true" />
       <div className="stage-grain" aria-hidden="true" />
     </div>
   );

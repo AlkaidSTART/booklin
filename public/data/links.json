@@ -4,8 +4,8 @@
   "replaceBefore": "launch",
   "owner": "brand + commerce",
   "landing": {
-    "url": "https://bookln.example/codex-1",
-    "qrTarget": "https://bookln.example/codex-1?utm_source=print&utm_medium=qr&utm_campaign=codex-1",
+    "url": "https://bookln.example/page-042",
+    "qrTarget": "https://bookln.example/page-042?utm_source=print&utm_medium=qr&utm_campaign=bookln",
     "label": "One-code entry",
     "labelZh": "一码入网"
   },

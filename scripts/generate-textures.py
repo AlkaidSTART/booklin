@@ -313,7 +313,18 @@ def main() -> None:
     oak_normal.save(OUT / "oak-normal.png", optimize=True)
     oak_rough.save(OUT / "oak-roughness.png", optimize=True)
     write_radiance_hdr(ROOT / "public" / "hdri" / "warm-studio.hdr")
-    print("wrote oak textures and warm-studio.hdr")
+
+    # Export standalone 512x768 book cover art for static fallback & previews.
+    base_2k = Image.open(OUT / "book-basecolor.png")
+    cover_rect = face_px(2048, REGIONS["front-cover"], "front")
+    cover_img = base_2k.crop(cover_rect).resize((512, 768), Image.Resampling.LANCZOS)
+    docs_design = ROOT / "docs" / "design"
+    docs_design.mkdir(parents=True, exist_ok=True)
+    cover_img.save(docs_design / "book-cover-art.png", optimize=True)
+    fallback_dir = ROOT / "public" / "fallback"
+    fallback_dir.mkdir(parents=True, exist_ok=True)
+    cover_img.save(fallback_dir / "book-cover-art.webp", "WEBP", quality=88)
+    print("wrote oak textures, warm-studio.hdr, and book-cover-art")
 
 
 if __name__ == "__main__":

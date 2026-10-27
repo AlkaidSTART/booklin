@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import Lenis from 'lenis';
 import { BookScene } from './BookScene';
+import type { StageInteractionState } from './BookScene';
 
 type SceneErrorBoundaryProps = {
   children: ReactNode;
@@ -23,7 +24,7 @@ class SceneErrorBoundary extends Component<SceneErrorBoundaryProps, SceneErrorBo
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('[codex-1] 3D scene failed:', error, info.componentStack);
+    console.error('[bookln] 3D scene failed:', error, info.componentStack);
     this.props.onError();
   }
 
@@ -83,6 +84,11 @@ export default function BookStage() {
 
   const progressRef = useRef(0);
   const pointerRef = useRef({ x: 0, y: 0 });
+  const interactionRef = useRef<StageInteractionState>({
+    activeLayer: null,
+    activeNode: 'page',
+    activeEdition: 'pro',
+  });
   const { progress } = useProgress();
 
   const showCanvas = mounted && webgl && !failed && (!reduced || force3D);
@@ -104,6 +110,33 @@ export default function BookStage() {
 
     return () => {
       motionQuery.removeEventListener('change', handleMotionChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onLayer = (event: Event) => {
+      const detail = (event as CustomEvent<{ index: number | null }>).detail;
+      interactionRef.current.activeLayer = detail?.index ?? null;
+    };
+    const onNode = (event: Event) => {
+      const detail = (event as CustomEvent<{ id: string | null }>).detail;
+      interactionRef.current.activeNode = detail?.id ?? 'page';
+    };
+    const onEdition = (event: Event) => {
+      const detail = (event as CustomEvent<{ id: 'standard' | 'pro' | 'enterprise' }>).detail;
+      if (detail?.id) {
+        interactionRef.current.activeEdition = detail.id;
+      }
+    };
+
+    window.addEventListener('bookln:layer', onLayer);
+    window.addEventListener('bookln:node', onNode);
+    window.addEventListener('bookln:edition', onEdition);
+
+    return () => {
+      window.removeEventListener('bookln:layer', onLayer);
+      window.removeEventListener('bookln:node', onNode);
+      window.removeEventListener('bookln:edition', onEdition);
     };
   }, []);
 
@@ -262,6 +295,7 @@ export default function BookStage() {
                 <BookScene
                   progressRef={progressRef}
                   pointerRef={pointerRef}
+                  interactionRef={interactionRef}
                   reducedMotion={reduced}
                   onReady={handleReady}
                 />
@@ -275,7 +309,7 @@ export default function BookStage() {
         <div className={`stage-loader${ready ? ' is-hidden' : ''}`} role="status" aria-live="polite">
           <img src="/brand/bookln-mark-transparent.svg" alt="" width="28" height="28" />
           <div className="stage-loader__copy">
-            <span>Assembling the object</span>
+            <span>Unfolding the book</span>
             <span className="stage-loader__bar">
               <i style={{ transform: `scaleX(${Math.max(0.04, progress / 100)})` }} />
             </span>

@@ -40,12 +40,99 @@ const benchmarkTitle = titleParts('benchmark.title', 3);
 const deployment = titleParts('deployment.title', 1);
 
 const chapters = [
-  { id: 'arrival', number: '00', en: 'Arrival', zh: '登场' },
-  { id: 'structure', number: '01', en: 'Structure', zh: '结构' },
-  { id: 'interaction', number: '02', en: 'Interaction', zh: '交互' },
-  { id: 'neural-link', number: '03', en: 'Neural link', zh: '云链' },
-  { id: 'benchmark', number: '04', en: 'Benchmark', zh: '基准' },
-  { id: 'deployment', number: '05', en: 'Deployment', zh: '部署' },
+  {
+    id: 'arrival',
+    number: '00',
+    en: 'Arrival',
+    zh: '登场',
+    telemetry: 'CLOSED · 0.00W · ANY BOOK',
+    telemetryZh: '合拢静置 · 零功耗实体书',
+  },
+  {
+    id: 'structure',
+    number: '01',
+    en: 'Structure',
+    zh: '结构',
+    telemetry: 'OPEN 48° · 6 MATERIAL LAYERS',
+    telemetryZh: '48° 展开 · 6 层天然材质',
+  },
+  {
+    id: 'interaction',
+    number: '02',
+    en: 'Interaction',
+    zh: '交互',
+    telemetry: 'OPEN 180° · RIBBON → P.042',
+    telemetryZh: '180° 平摊 · 书签锚定第 042 页',
+  },
+  {
+    id: 'neural-link',
+    number: '03',
+    en: 'Neural link',
+    zh: '云链',
+    telemetry: 'SCAN ACTIVE · P.042 → 9 NODES',
+    telemetryZh: '一码入网 · 第 042 页升起云端图谱',
+  },
+  {
+    id: 'benchmark',
+    number: '04',
+    en: 'Benchmark',
+    zh: '基准',
+    telemetry: 'PEDESTAL 45° · PAPER + CLOUD',
+    telemetryZh: '45° 台座对照 · 纸端与云端兼得',
+  },
+  {
+    id: 'deployment',
+    number: '05',
+    en: 'Deployment',
+    zh: '部署',
+    telemetry: 'SLIPCASE READY · 3 EDITIONS',
+    telemetryZh: '入套交付 · 三种方式接入现实',
+  },
+];
+
+const materialLayers = [
+  {
+    index: 0,
+    en: 'Cloth cover',
+    zh: '触感精装布面',
+    spec: 'Tactile woven outer skin · resists glare and fingerprints.',
+    specZh: '织物纹理外封，温润防眩光，隔绝冷冰冰的金属触感。',
+  },
+  {
+    index: 1,
+    en: 'Board',
+    zh: '高密环保灰板',
+    spec: '2.4 mm rigid core · structural protection without glass.',
+    specZh: '2.4 mm 高密支撑层，耐摔防跌，无碎屏焦虑。',
+  },
+  {
+    index: 2,
+    en: 'Ink',
+    zh: '植物油墨矩阵',
+    spec: 'High-contrast pigment + page-edge Bookln matrix code.',
+    specZh: '高对比植物油墨印刷正文，并在页边印制微型「书链码」。',
+  },
+  {
+    index: 3,
+    en: 'Fibre sheet',
+    zh: '原生木浆纤维纸',
+    spec: '179.9° ambient diffuse reflection · zero blue-light emission.',
+    specZh: '自然光漫反射阅读表面，零频闪、零蓝光辐射。',
+  },
+  {
+    index: 4,
+    en: 'Sewn spine',
+    zh: '锁线阻尼书脊',
+    spec: 'Cotton thread hinge · enables 180° lay-flat reading on the desk.',
+    specZh: '多股棉线锁线装订，为下一章 180° 纯平摊开提供力学基础。',
+  },
+  {
+    index: 5,
+    en: 'Endpaper',
+    zh: '环衬缓冲页',
+    spec: 'Bridges cover board and book block for decades of page turns.',
+    specZh: '连接书壳与书芯的结构缓冲层，经受成千上万次翻阅。',
+  },
 ];
 
 const editions = editionsData.editions as Array<{
@@ -65,6 +152,18 @@ const editions = editionsData.editions as Array<{
   featuresZh: string[];
 }>;
 
+const graphNodes = graph.nodes as Array<{
+  id: string;
+  type: string;
+  label: string;
+  labelZh: string;
+  detail: string;
+  detailZh: string;
+  x: number;
+  y: number;
+  weight: number;
+}>;
+
 const benchmarkRows = benchmark.dimensions.map((dimension: Record<string, any>) => ({
   ...dimension,
   cells: benchmark.devices.map((device: Record<string, any>) => ({
@@ -82,9 +181,9 @@ const landingLabel = links.landing.url.replace(/^https?:\/\//, '');
 const structureZhTitle = fz('structure.title').replace(/^Cellulose Display™\s*/, '');
 const recommendedEdition = editions.find((edition) => edition.recommended);
 
-const pageTitle = 'Bookln / CODEX 1 — The Zero-Watt Cognitive Engine';
+const pageTitle = 'Bookln / THE BOOK. — Every Physical Book, Connected';
 const pageDescription =
-  'A concept preview of CODEX 1: a paper-first reading object with cellulose display architecture, haptic navigation and a scan-to-context companion layer.';
+  'A scrollytelling experience by Bookln (书链): how any physical paper book becomes a connected cognitive engine with page-edge scan-to-context, knowledge graphs, and AI study companions.';
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -92,11 +191,11 @@ const pageDescription =
     <aside class="noscript-banner">
       <picture>
         <source media="(max-width: 760px)" srcset="/fallback/fallback-mobile.webp" />
-        <img src="/fallback/fallback-desktop.webp" alt="Static CODEX 1 fallback poster" width="240" height="167" />
+        <img src="/fallback/fallback-desktop.webp" alt="Static Bookln fallback poster" width="240" height="167" />
       </picture>
       <div>
         <strong>JavaScript is off.</strong>
-        <p>The interactive object is replaced by a static cover. All copy, benchmark notes and edition data remain available below.</p>
+        <p>The interactive 3D book is replaced by a static cover. All narrative chapters, benchmark notes and edition data remain available below.</p>
         <a href="/fallback/fallback-desktop.webp">Open the static poster</a>
       </div>
     </aside>
@@ -105,22 +204,23 @@ const pageDescription =
   <BookStage client:load />
 
   <header class="topbar">
-    <a class="brand" href="#arrival" aria-label="Bookln / CODEX 1">
+    <a class="brand" href="#arrival" aria-label="Bookln / THE BOOK.">
       <img src="/brand/bookln-wordmark.svg" alt="Bookln" width="320" height="93" />
     </a>
 
-    <div class="topbar__status" aria-label="Build status">
+    <div class="topbar__status" aria-label="Live object telemetry">
       <span class="status-dot" aria-hidden="true"></span>
-      <span>Concept build</span>
+      <span id="topbar-telemetry">00 · CLOSED · 0.00W · ANY BOOK</span>
       <span class="topbar__status-sep" aria-hidden="true">/</span>
-      <span>2026-10-26</span>
+      <span id="topbar-telemetry-zh" lang="zh-Hans">合拢静置 · 零功耗实体书</span>
     </div>
 
     <nav class="topbar__nav" aria-label="Primary navigation">
-      <a href="#structure">Object</a>
+      <a href="#structure">Structure</a>
+      <a href="#interaction">Page 042</a>
       <a href="#neural-link">Neural link</a>
       <a href="#benchmark">Benchmark</a>
-      <a class="button button--ghost button--small" href="#editions">Reserve</a>
+      <a class="button button--ghost button--small" href="#editions">Deploy</a>
     </nav>
 
     <div class="scroll-progress" aria-hidden="true">
@@ -130,7 +230,13 @@ const pageDescription =
 
   <nav class="chapter-rail" aria-label="Chapter navigation">
     {chapters.map((chapter) => (
-      <a class="rail-link" href={`#${chapter.id}`} data-nav={chapter.id}>
+      <a
+        class="rail-link"
+        href={`#${chapter.id}`}
+        data-nav={chapter.id}
+        data-telemetry={`${chapter.number} · ${chapter.telemetry}`}
+        data-telemetry-zh={chapter.telemetryZh}
+      >
         <span class="rail-link__num">{chapter.number}</span>
         <span class="rail-link__text">
           <span class="rail-link__label">{chapter.en}</span>
@@ -145,7 +251,16 @@ const pageDescription =
   </div>
 
   <main id="story">
-    <section id="arrival" data-number="00" class="chapter chapter--hero" data-chapter="arrival" data-label="Arrival" aria-labelledby="arrival-title">
+    <section
+      id="arrival"
+      data-number="00"
+      class="chapter chapter--hero"
+      data-chapter="arrival"
+      data-label="Arrival"
+      data-telemetry="00 · CLOSED · 0.00W · ANY BOOK"
+      data-telemetry-zh="合拢静置 · 零功耗实体书"
+      aria-labelledby="arrival-title"
+    >
       <div class="chapter__grid">
         <div class="chapter__copy hero">
           <p class="eyebrow reveal">
@@ -168,17 +283,23 @@ const pageDescription =
             <span class="zh-block" lang="zh-Hans">{fz('arrival.annotation')}</span>
           </p>
 
+          <div class="story-thread-pill reveal" style="--reveal-delay: 350ms">
+            <span class="story-thread-pill__tag">ACT I · THE OBJECT</span>
+            <span>Not a new gadget — it is every physical book on your desk, re-examined and connected by Bookln.</span>
+            <span class="zh-block" lang="zh-Hans">不是另一台需要充电的电子设备——而是你书桌上任意一本实体纸书，由书链 Bookln 赋予云端伴读能力。</span>
+          </div>
+
           <div class="hero__actions reveal" style="--reveal-delay: 390ms">
             <a class="button" href="#structure">
-              Explore the object
+              Unfold the book
               <span aria-hidden="true">↓</span>
             </a>
-            <a class="text-link" href="#editions">Editions</a>
+            <a class="text-link" href="#neural-link">Jump to Page 042</a>
           </div>
 
           <dl class="spec-strip reveal" style="--reveal-delay: 470ms">
             <div>
-              <dt>Format / 开本</dt>
+              <dt>Format / 通用开本</dt>
               <dd>148 × 210 × 30 <small>mm</small></dd>
             </div>
             <div>
@@ -186,8 +307,8 @@ const pageDescription =
               <dd>0 <small>†</small></dd>
             </div>
             <div>
-              <dt>Objects / 实体</dt>
-              <dd>1 <small>object</small></dd>
+              <dt>Compatibility / 适用</dt>
+              <dd>∞ <small>books</small></dd>
             </div>
           </dl>
 
@@ -204,9 +325,23 @@ const pageDescription =
       </div>
     </section>
 
-    <section id="structure" data-number="01" class="chapter" data-chapter="structure" data-label="Structure" aria-labelledby="structure-title">
+    <section
+      id="structure"
+      data-number="01"
+      class="chapter"
+      data-chapter="structure"
+      data-label="Structure"
+      data-telemetry="01 · OPEN 48° · 6 MATERIAL LAYERS"
+      data-telemetry-zh="48° 展开 · 6 层天然材质"
+      aria-labelledby="structure-title"
+    >
       <div class="chapter__grid">
         <div class="chapter__copy">
+          <div class="story-bridge reveal">
+            <span class="story-bridge__step">00 → 01 · WHY PAPER ENDURES</span>
+            <span class="story-bridge__zh" lang="zh-Hans">承接上章：为什么实体书能做到零功耗、零眼疲劳？剥开书壳看它的 6 层物理结构。</span>
+          </div>
+
           <p class="eyebrow reveal">
             <span>{f('structure.eyebrow')}</span>
             <span class="eyebrow__zh" lang="zh-Hans">{fz('structure.eyebrow')}</span>
@@ -246,13 +381,27 @@ const pageDescription =
             <span class="zh-block" lang="zh-Hans">{fz('structure.microcopy')}</span>
           </p>
 
-          <div class="material-layers reveal" aria-label="Six material layers">
-            <span>Cloth cover</span>
-            <span>Board</span>
-            <span>Ink</span>
-            <span>Fibre sheet</span>
-            <span>Sewn spine</span>
-            <span>Endpaper</span>
+          <div class="material-inspector reveal" aria-label="Interactive six material layers">
+            <div class="material-layers" role=" list">
+              {materialLayers.map((layer) => (
+                <button
+                  type="button"
+                  class={`layer-pill${layer.index === 2 ? ' is-active' : ''}`}
+                  data-layer-btn={layer.index}
+                  data-layer-en={`${String(layer.index + 1).padStart(2, '0')} · ${layer.en} — ${layer.spec}`}
+                  data-layer-zh={`${layer.zh}：${layer.specZh}`}
+                >
+                  <small>{String(layer.index + 1).padStart(2, '0')}</small>
+                  <span>{layer.en}</span>
+                </button>
+              ))}
+            </div>
+            <div class="layer-readout" id="layer-readout" aria-live="polite">
+              <strong id="layer-readout-en">03 · Ink — High-contrast pigment + page-edge Bookln matrix code.</strong>
+              <span id="layer-readout-zh" class="zh-block" lang="zh-Hans">
+                植物油墨矩阵：高对比植物油墨印刷正文，并在页边印制微型「书链码」。
+              </span>
+            </div>
           </div>
         </div>
 
@@ -260,9 +409,23 @@ const pageDescription =
       </div>
     </section>
 
-    <section id="interaction" data-number="02" class="chapter" data-chapter="interaction" data-label="Interaction" aria-labelledby="interaction-title">
+    <section
+      id="interaction"
+      data-number="02"
+      class="chapter"
+      data-chapter="interaction"
+      data-label="Interaction"
+      data-telemetry="02 · OPEN 180° · RIBBON → P.042"
+      data-telemetry-zh="180° 平摊 · 书签锚定第 042 页"
+      aria-labelledby="interaction-title"
+    >
       <div class="chapter__grid">
         <div class="chapter__copy">
+          <div class="story-bridge reveal">
+            <span class="story-bridge__step">01 → 02 · FROM STRUCTURE TO GESTURE</span>
+            <span class="story-bridge__zh" lang="zh-Hans">承接上章：锁线装订让整本书 180° 纯平摊开在桌面；现在，用指尖与书签翻到第 042 页。</span>
+          </div>
+
           <p class="eyebrow reveal">
             <span>{f('interaction.eyebrow')}</span>
             <span class="eyebrow__zh" lang="zh-Hans">{fz('interaction.eyebrow')}</span>
@@ -297,10 +460,24 @@ const pageDescription =
             <span class="zh-block" lang="zh-Hans">{fz('interaction.microcopy')}</span>
           </blockquote>
 
-          <div class="interaction-note reveal">
-            <span class="interaction-note__line" aria-hidden="true"></span>
-            <span>One object. No onboarding. The gesture is the manual.</span>
-            <span class="zh-block" lang="zh-Hans">一件实体，无需教程。手势就是说明书。</span>
+          <div class="page-anchor-strip reveal" aria-label="Bookmark trajectory to Page 042">
+            <div class="page-anchor-strip__item">
+              <small>STEP 01</small>
+              <span>Thumb fan</span>
+              <em lang="zh-Hans">指尖肌肉寻址</em>
+            </div>
+            <span class="page-anchor-strip__arrow" aria-hidden="true">→</span>
+            <div class="page-anchor-strip__item">
+              <small>STEP 02</small>
+              <span>Ribbon arc</span>
+              <em lang="zh-Hans">280mm 织物书签落位</em>
+            </div>
+            <span class="page-anchor-strip__arrow" aria-hidden="true">→</span>
+            <a class="page-anchor-strip__item is-highlight" href="#neural-link">
+              <small>ANCHORED</small>
+              <span>Page 042 · Matrix mark</span>
+              <em lang="zh-Hans">停在第 042 页 · 准备扫码 ↓</em>
+            </a>
           </div>
         </div>
 
@@ -308,9 +485,23 @@ const pageDescription =
       </div>
     </section>
 
-    <section id="neural-link" data-number="03" class="chapter chapter--media" data-chapter="neural-link" data-label="Neural link" aria-labelledby="neural-title">
+    <section
+      id="neural-link"
+      data-number="03"
+      class="chapter chapter--media"
+      data-chapter="neural-link"
+      data-label="Neural link"
+      data-telemetry="03 · SCAN ACTIVE · P.042 → 9 NODES"
+      data-telemetry-zh="一码入网 · 第 042 页升起云端图谱"
+      aria-labelledby="neural-title"
+    >
       <div class="chapter__grid chapter__grid--media">
         <div class="chapter__copy">
+          <div class="story-bridge reveal">
+            <span class="story-bridge__step">02 → 03 · THE TURNING POINT (PAGE 042)</span>
+            <span class="story-bridge__zh" lang="zh-Hans">全片转折点：书签停在第 042 页。扫描页边「书链码」，3D 书页上方直接升起 9 节点云端知识图谱。</span>
+          </div>
+
           <p class="eyebrow reveal">
             <span class="desktop-only">{f('neural-link.eyebrow')}</span>
             <span class="mobile-only">{fm('neural-link.eyebrow')}</span>
@@ -345,79 +536,166 @@ const pageDescription =
             </article>
           </div>
 
+          <div class="node-explorer reveal" aria-label="Interactive 3D knowledge graph nodes for Page 042">
+            <div class="node-explorer__header">
+              <span>3D HOLOGRAM NODES · PAGE 042 ({graphStats.nodes} NODES / {graphStats.links} LINKS)</span>
+              <span lang="zh-Hans">点击或悬停节点，联动右侧 3D 书页全息图谱</span>
+            </div>
+            <div class="node-pills">
+              {graphNodes.map((node, index) => (
+                <button
+                  type="button"
+                  class={`node-pill${index === 0 ? ' is-active' : ''}`}
+                  data-node-btn={node.id}
+                  data-node-label={`${node.label} · ${node.type.toUpperCase()}`}
+                  data-node-label-zh={node.labelZh}
+                  data-node-detail={node.detail}
+                  data-node-detail-zh={node.detailZh}
+                >
+                  <span class="node-pill__dot" data-type={node.type}></span>
+                  <span>{node.label}</span>
+                  <small lang="zh-Hans">{node.labelZh}</small>
+                </button>
+              ))}
+            </div>
+            <div class="node-readout" id="node-readout" aria-live="polite">
+              <div class="node-readout__title">
+                <strong id="node-readout-label">Page 042 · PAGE</strong>
+                <span id="node-readout-label-zh" lang="zh-Hans">第 042 页</span>
+              </div>
+              <p id="node-readout-detail">The physical page that anchors the whole layer.</p>
+              <p id="node-readout-detail-zh" class="zh-block" lang="zh-Hans">触发整层数字上下文的实体纸页。</p>
+            </div>
+          </div>
+
           <p class="microcopy reveal">
             {f('neural-link.microcopy')}
             <span class="zh-block" lang="zh-Hans">{fz('neural-link.microcopy')}</span>
           </p>
         </div>
 
-        <div class="neural-media">
-          <figure class="media-card media-card--graph reveal">
-            <span class="media-card__label">Knowledge layer / 知识层</span>
-            <img
-              src="/design/knowledge-graph.webp"
-              alt="Deterministic concept preview of a page-linked knowledge graph with nine nodes: current page, concept, citation, lesson, discussion, glossary, author note, related chapter and AI companion."
-              width="1600"
-              height="1143"
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption>
-              Deterministic concept preview · {graphStats.nodes} nodes / {graphStats.links} links · not a live AI output.
-            </figcaption>
-          </figure>
+        <div class="neural-companion-column">
+          <div class="neural-stage-window" aria-hidden="true">
+            <span class="neural-stage-window__badge">LIVE 3D STAGE · PAGE 042 HOLOGRAM</span>
+          </div>
 
-          <figure class="media-card media-card--qr reveal" style="--reveal-delay: 100ms">
-            <span class="media-card__label">One-code entry / 一码入网</span>
-            <img
-              src="/qr/one-code-entry-card.webp"
-              alt="Concept QR card for the CODEX 1 one-code entry."
-              width="960"
-              height="1280"
-              loading="lazy"
-              decoding="async"
-            />
-            <figcaption>
-              Preview destination <code>{landingLabel}</code> · placeholder until the production host is supplied.
-            </figcaption>
-          </figure>
-
-          <figure
-            class="media-card media-card--video reveal"
-            style="--reveal-delay: 180ms"
-            data-video
-            data-src="/video/lesson-preview.mp4"
-            data-poster="/video/lesson-preview-poster.webp"
-            data-vtt="/video/lesson-preview.vtt"
-          >
-            <span class="media-card__label">Lesson preview / 课程预览</span>
-            <div class="video-frame">
-              <img
-                class="video-poster"
-                src="/video/lesson-preview-poster.webp"
-                alt="Concept lesson preview poster for CODEX 1"
-                width="1280"
-                height="720"
-                loading="lazy"
-                decoding="async"
-              />
-              <button type="button" class="video-play" data-video-play aria-label="Play concept lesson preview">
-                <span class="video-play__icon" aria-hidden="true"></span>
-                <span class="video-play__label">Play preview</span>
+          <div class="companion-dock reveal" style="--reveal-delay: 140ms">
+            <div class="companion-dock__tabs" role="tablist" aria-label="Page 042 companion views">
+              <button
+                type="button"
+                role="tab"
+                aria-selected="true"
+                class="companion-tab is-active"
+                data-companion-tab="video"
+              >
+                Lesson 01 Video / 名师精讲
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                class="companion-tab"
+                data-companion-tab="qr"
+              >
+                One-Code QR / 一码入网
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected="false"
+                class="companion-tab"
+                data-companion-tab="map"
+              >
+                2D Graph Map / 拓扑全图
               </button>
             </div>
-            <figcaption>
-              Concept preview · silent 15-second sequence · not final instructor footage.
-              <a class="media-card__file" href="/video/lesson-preview.mp4">Open file</a>
-            </figcaption>
-          </figure>
+
+            <div class="companion-panel is-active" data-companion-panel="video">
+              <figure
+                class="media-card media-card--video"
+                data-video
+                data-src="/video/lesson-preview.mp4"
+                data-poster="/video/lesson-preview-poster.webp"
+                data-vtt="/video/lesson-preview.vtt"
+              >
+                <span class="media-card__label">Margin lesson / 页边伴读视频</span>
+                <div class="video-frame">
+                  <img
+                    class="video-poster"
+                    src="/video/lesson-preview-poster.webp"
+                    alt="Concept lesson preview poster for Page 042"
+                    width="1280"
+                    height="720"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <button type="button" class="video-play" data-video-play aria-label="Play concept lesson preview">
+                    <span class="video-play__icon" aria-hidden="true"></span>
+                    <span class="video-play__label">Play 15s margin preview</span>
+                  </button>
+                </div>
+                <figcaption>
+                  Opened directly from Page 042 · silent 15-second sequence · not final instructor footage.
+                  <a class="media-card__file" href="/video/lesson-preview.mp4">Open file</a>
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="companion-panel" data-companion-panel="qr">
+              <figure class="media-card media-card--qr">
+                <span class="media-card__label">One-code entry / 一码入网</span>
+                <img
+                  src="/qr/one-code-entry-card.webp"
+                  alt="Concept QR card for the Bookln Page 042 one-code entry."
+                  width="960"
+                  height="1280"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>
+                  Preview destination <code>{landingLabel}</code> · binds any physical page to its cloud layer.
+                </figcaption>
+              </figure>
+            </div>
+
+            <div class="companion-panel" data-companion-panel="map">
+              <figure class="media-card media-card--graph">
+                <span class="media-card__label">Knowledge layer / 2D 拓扑视图</span>
+                <img
+                  src="/design/knowledge-graph.webp"
+                  alt="Deterministic concept preview of a page-linked knowledge graph with nine nodes."
+                  width="1600"
+                  height="1143"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <figcaption>
+                  Deterministic concept preview · {graphStats.nodes} nodes / {graphStats.links} links · not a live AI output.
+                </figcaption>
+              </figure>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="benchmark" data-number="04" class="chapter" data-chapter="benchmark" data-label="Benchmark" aria-labelledby="benchmark-title">
+    <section
+      id="benchmark"
+      data-number="04"
+      class="chapter"
+      data-chapter="benchmark"
+      data-label="Benchmark"
+      data-telemetry="04 · PEDESTAL 45° · PAPER + CLOUD"
+      data-telemetry-zh="45° 台座对照 · 纸端与云端兼得"
+      aria-labelledby="benchmark-title"
+    >
       <div class="chapter__grid chapter__grid--benchmark">
         <div class="chapter__copy chapter__copy--wide">
+          <div class="story-bridge reveal">
+            <span class="story-bridge__step">03 → 04 · WHY NOT A SCREEN?</span>
+            <span class="story-bridge__zh" lang="zh-Hans">承接上章：当一本普通纸书拥有了云端知识层，它与平板或电子阅读器相比意味着什么？</span>
+          </div>
+
           <p class="eyebrow reveal">
             <span>04 · Field notes</span>
             <span class="eyebrow__zh" lang="zh-Hans">语境对照</span>
@@ -430,20 +708,20 @@ const pageDescription =
           </h2>
 
           <p class="section-subtitle reveal">
-            A concept object measured against the habits of the devices it refuses to become.
-            <span class="zh-block" lang="zh-Hans">一件概念实体，对照它所拒绝成为的那些设备习惯。</span>
+            A physical book connected by Bookln — measured against the habits of the screen devices it refuses to become.
+            <span class="zh-block" lang="zh-Hans">一本接入书链 Bookln 的实体纸书，对照它所拒绝成为的那些屏幕设备习惯。</span>
           </p>
 
           <div class="benchmark-panel reveal">
             <table class="benchmark-table">
-              <caption class="sr-only">CODEX 1 concept comparison table</caption>
+              <caption class="sr-only">Paper Book + Bookln concept comparison table</caption>
               <thead>
                 <tr>
                   <th scope="col">Dimension</th>
                   {benchmark.devices.map((device: Record<string, any>) => (
                     <th scope="col" class={device.id === 'codex-1' ? 'codex-col' : undefined}>
                       {device.name}
-                      <small>{device.role === 'concept' ? 'concept' : device.vendor}</small>
+                      <small>{device.role === 'concept' ? 'paper + cloud' : device.vendor}</small>
                     </th>
                   ))}
                 </tr>
@@ -501,9 +779,23 @@ const pageDescription =
       </div>
     </section>
 
-    <section id="deployment" data-number="05" class="chapter chapter--deployment" data-chapter="deployment" data-label="Deployment" aria-labelledby="deployment-title">
+    <section
+      id="deployment"
+      data-number="05"
+      class="chapter chapter--deployment"
+      data-chapter="deployment"
+      data-label="Deployment"
+      data-telemetry="05 · SLIPCASE READY · 3 EDITIONS"
+      data-telemetry-zh="入套交付 · 三种方式接入现实"
+      aria-labelledby="deployment-title"
+    >
       <div class="chapter__grid chapter__grid--deployment">
         <div class="chapter__copy chapter__copy--wide">
+          <div class="story-bridge reveal">
+            <span class="story-bridge__step">04 → 05 · CLOSE & DEPLOY</span>
+            <span class="story-bridge__zh" lang="zh-Hans">终章收束：书本合拢滑入定制函套。点击下方三种版本卡片，实时预览对应的 3D 交付形态。</span>
+          </div>
+
           <p class="eyebrow reveal">
             <span>{f('deployment.eyebrow')}</span>
             <span class="eyebrow__zh" lang="zh-Hans">{fz('deployment.eyebrow')}</span>
@@ -526,16 +818,28 @@ const pageDescription =
               <span class="mobile-only">{fm('deployment.cta')}</span>
             </a>
             {recommendedEdition && (
-              <span class="cta-note">Pro is the recommended concept configuration.</span>
+              <span class="cta-note" id="edition-stage-status">
+                3D Stage: Pro Edition (Clothbound volume inside custom slipcase) · 正在预览：专业典藏版（含定制函套）
+              </span>
             )}
           </div>
 
-          <div class="editions" id="editions">
+          <div class="editions" id="editions" role="radiogroup" aria-label="Select a Bookln edition to preview in 3D">
             {editions.map((edition) => (
-              <article class={`edition reveal${edition.recommended ? ' is-recommended' : ''}`} data-edition={edition.id}>
+              <article
+                class={`edition reveal${edition.recommended ? ' is-recommended is-selected' : ''}`}
+                data-edition={edition.id}
+                tabindex="0"
+                role="radio"
+                aria-checked={edition.recommended ? 'true' : 'false'}
+              >
                 <div class="edition__top">
                   <span>{String(edition.order).padStart(2, '0')}</span>
-                  {edition.recommended ? <span class="edition__badge">Recommended</span> : <span>Edition</span>}
+                  {edition.recommended ? (
+                    <span class="edition__badge">Recommended · Previewing</span>
+                  ) : (
+                    <span class="edition__badge">Click to preview 3D</span>
+                  )}
                 </div>
 
                 <h3>
@@ -591,13 +895,13 @@ const pageDescription =
       </div>
 
       <div>
-        <h3>Explore</h3>
-        <a href="#arrival">Arrival / 登场</a>
-        <a href="#structure">Structure / 结构</a>
-        <a href="#interaction">Interaction / 交互</a>
-        <a href="#neural-link">Neural link / 云链</a>
-        <a href="#benchmark">Benchmark / 基准</a>
-        <a href="#deployment">Deployment / 部署</a>
+        <h3>Storyline</h3>
+        <a href="#arrival">00 · Arrival / 登场</a>
+        <a href="#structure">01 · Structure / 结构</a>
+        <a href="#interaction">02 · Interaction (P.042) / 交互</a>
+        <a href="#neural-link">03 · Neural link / 云链</a>
+        <a href="#benchmark">04 · Benchmark / 基准</a>
+        <a href="#deployment">05 · Deployment / 部署</a>
       </div>
 
       <div>
@@ -611,7 +915,7 @@ const pageDescription =
     </div>
 
     <div class="footer__meta">
-      <span>© 2026 Bookln · Concept preview</span>
+      <span>© 2026 Bookln · Every Physical Book, Connected</span>
       <span>No live checkout · No audio assets · Price and host pending</span>
     </div>
   </footer>
@@ -626,6 +930,8 @@ const pageDescription =
       ]),
     );
     const status = document.querySelector<HTMLElement>('#chapter-status');
+    const telemetryEn = document.querySelector<HTMLElement>('#topbar-telemetry');
+    const telemetryZh = document.querySelector<HTMLElement>('#topbar-telemetry-zh');
     const reveals = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
 
     const revealObserver = new IntersectionObserver(
@@ -668,6 +974,13 @@ const pageDescription =
         const label = current.dataset.label ?? 'Arrival';
         status.textContent = `${number} · ${label}`;
       }
+
+      if (telemetryEn && current.dataset.telemetry) {
+        telemetryEn.textContent = current.dataset.telemetry;
+      }
+      if (telemetryZh && current.dataset.telemetryZh) {
+        telemetryZh.textContent = current.dataset.telemetryZh;
+      }
     };
 
     const schedule = () => {
@@ -680,19 +993,127 @@ const pageDescription =
     window.addEventListener('resize', schedule);
     window.addEventListener('load', schedule);
 
+    // Chapter 01: Interactive 6-layer material inspector -> 3D ExplodedLayers
+    const layerButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-layer-btn]'));
+    const layerReadoutEn = document.querySelector<HTMLElement>('#layer-readout-en');
+    const layerReadoutZh = document.querySelector<HTMLElement>('#layer-readout-zh');
+
+    const activateLayer = (btn: HTMLButtonElement | null) => {
+      for (const item of layerButtons) {
+        item.classList.toggle('is-active', item === btn);
+      }
+      if (!btn) {
+        window.dispatchEvent(new CustomEvent('bookln:layer', { detail: { index: null } }));
+        return;
+      }
+      const index = Number(btn.dataset.layerBtn ?? 0);
+      if (layerReadoutEn && btn.dataset.layerEn) layerReadoutEn.textContent = btn.dataset.layerEn;
+      if (layerReadoutZh && btn.dataset.layerZh) layerReadoutZh.textContent = btn.dataset.layerZh;
+      window.dispatchEvent(new CustomEvent('bookln:layer', { detail: { index } }));
+    };
+
+    for (const btn of layerButtons) {
+      btn.addEventListener('mouseenter', () => activateLayer(btn));
+      btn.addEventListener('focus', () => activateLayer(btn));
+      btn.addEventListener('click', () => activateLayer(btn));
+    }
+
+    const materialInspector = document.querySelector<HTMLElement>('.material-inspector');
+    materialInspector?.addEventListener('mouseleave', () => {
+      window.dispatchEvent(new CustomEvent('bookln:layer', { detail: { index: null } }));
+    });
+
+    // Chapter 03: Interactive 3D Knowledge Graph Node Explorer
+    const nodeButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-node-btn]'));
+    const nodeLabel = document.querySelector<HTMLElement>('#node-readout-label');
+    const nodeLabelZh = document.querySelector<HTMLElement>('#node-readout-label-zh');
+    const nodeDetail = document.querySelector<HTMLElement>('#node-readout-detail');
+    const nodeDetailZh = document.querySelector<HTMLElement>('#node-readout-detail-zh');
+
+    const activateNode = (btn: HTMLButtonElement) => {
+      for (const item of nodeButtons) {
+        item.classList.toggle('is-active', item === btn);
+      }
+      const id = btn.dataset.nodeBtn ?? 'page';
+      if (nodeLabel && btn.dataset.nodeLabel) nodeLabel.textContent = btn.dataset.nodeLabel;
+      if (nodeLabelZh && btn.dataset.nodeLabelZh) nodeLabelZh.textContent = btn.dataset.nodeLabelZh;
+      if (nodeDetail && btn.dataset.nodeDetail) nodeDetail.textContent = btn.dataset.nodeDetail;
+      if (nodeDetailZh && btn.dataset.nodeDetailZh) nodeDetailZh.textContent = btn.dataset.nodeDetailZh;
+      window.dispatchEvent(new CustomEvent('bookln:node', { detail: { id } }));
+    };
+
+    for (const btn of nodeButtons) {
+      btn.addEventListener('mouseenter', () => activateNode(btn));
+      btn.addEventListener('focus', () => activateNode(btn));
+      btn.addEventListener('click', () => activateNode(btn));
+    }
+
+    // Chapter 03: Companion Dock Tabs (Lesson Video / QR / 2D Graph)
+    const companionTabs = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-companion-tab]'));
+    const companionPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-companion-panel]'));
+
+    for (const tab of companionTabs) {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.companionTab;
+        for (const item of companionTabs) {
+          const active = item === tab;
+          item.classList.toggle('is-active', active);
+          item.setAttribute('aria-selected', active ? 'true' : 'false');
+        }
+        for (const panel of companionPanels) {
+          panel.classList.toggle('is-active', panel.dataset.companionPanel === target);
+        }
+      });
+    }
+
+    // Chapter 05: Interactive Edition Switcher -> 3D Slipcase & Book Pose
+    const editionCards = Array.from(document.querySelectorAll<HTMLElement>('[data-edition]'));
+    const editionStatus = document.querySelector<HTMLElement>('#edition-stage-status');
+    const editionDescriptions: Record<string, string> = {
+      standard:
+        '3D Stage: Standard Edition (Single bound volume + page-edge scan ring) · 正在预览：标配版（单书实体 + 页边扫码入网）',
+      pro: '3D Stage: Pro Edition (Clothbound volume inside custom slipcase) · 正在预览：专业典藏版（含定制函套与封签）',
+      enterprise:
+        '3D Stage: Enterprise Edition (Shared reading constellation active) · 正在预览：机构共读版（同步点亮全息共读网络）',
+    };
+
+    const selectEdition = (card: HTMLElement) => {
+      const id = (card.dataset.edition ?? 'pro') as 'standard' | 'pro' | 'enterprise';
+      for (const item of editionCards) {
+        const active = item === card;
+        item.classList.toggle('is-selected', active);
+        item.setAttribute('aria-checked', active ? 'true' : 'false');
+      }
+      if (editionStatus && editionDescriptions[id]) {
+        editionStatus.textContent = editionDescriptions[id];
+      }
+      window.dispatchEvent(new CustomEvent('bookln:edition', { detail: { id } }));
+    };
+
+    for (const card of editionCards) {
+      card.addEventListener('click', () => selectEdition(card));
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          selectEdition(card);
+        }
+      });
+    }
+
+    // Video player
     const videoFrames = Array.from(document.querySelectorAll<HTMLElement>('[data-video]'));
-    for (const frame of videoFrames) {
-      const button = frame.querySelector<HTMLButtonElement>('[data-video-play]');
+    for (const frameEl of videoFrames) {
+      const button = frameEl.querySelector<HTMLButtonElement>('[data-video-play]');
       const label = button?.querySelector<HTMLElement>('.video-play__label');
-      const videoFrame = frame.querySelector<HTMLElement>('.video-frame');
+      const videoFrame = frameEl.querySelector<HTMLElement>('.video-frame');
       if (!button || !videoFrame) continue;
 
       let video: HTMLVideoElement | null = null;
 
       const setPlaying = (playing: boolean) => {
-        frame.classList.toggle('is-playing', playing);
+        frameEl.classList.toggle('is-playing', playing);
         button.setAttribute('aria-label', playing ? 'Pause concept lesson preview' : 'Play concept lesson preview');
-        if (label) label.textContent = playing ? 'Pause preview' : 'Play preview';
+        if (label) label.textContent = playing ? 'Pause preview' : 'Play 15s margin preview';
       };
 
       const ensureVideo = () => {
@@ -703,17 +1124,17 @@ const pageDescription =
         element.loop = true;
         element.playsInline = true;
         element.preload = 'metadata';
-        element.poster = frame.dataset.poster ?? '';
-        element.setAttribute('aria-label', 'Concept lesson preview for CODEX 1');
+        element.poster = frameEl.dataset.poster ?? '';
+        element.setAttribute('aria-label', 'Concept lesson preview for Page 042');
 
         const source = document.createElement('source');
-        source.src = frame.dataset.src ?? '';
+        source.src = frameEl.dataset.src ?? '';
         source.type = 'video/mp4';
         element.append(source);
 
         const track = document.createElement('track');
         track.kind = 'captions';
-        track.src = frame.dataset.vtt ?? '';
+        track.src = frameEl.dataset.vtt ?? '';
         track.srclang = 'en';
         track.label = 'English';
         track.default = true;

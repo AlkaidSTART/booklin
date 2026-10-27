@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-26T13:55:13.176Z",
+  "generatedAt": "2026-10-27T03:45:50.984Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 12,
@@ -10,7 +10,7 @@
   "totals": {
     "groups": 15,
     "files": 84,
-    "bytes": 19160416,
+    "bytes": 19168929,
     "missing": 0
   },
   "assets": [
@@ -282,8 +282,8 @@
         },
         {
           "path": "docs/design/book-cover-art.png",
-          "bytes": 88311,
-          "sha256": "ec727f196fcf270c98ae41daea3a9555d2c53a01314df4404c1417d377d7b974",
+          "bytes": 64831,
+          "sha256": "ce9b50dd65fef53e43889bbeb71097e6da2d97c1b90c1005906403da49284cf2",
           "missing": false
         },
         {
@@ -311,7 +311,7 @@
           "missing": false
         }
       ],
-      "bytes": 6066976,
+      "bytes": 6043496,
       "missing": []
     },
     {
@@ -323,24 +323,24 @@
       "files": [
         {
           "path": "docs/script-final.md",
-          "bytes": 7496,
-          "sha256": "1ac9860cf1849f972b754ce34877406bef77a28ed60fa9b369fca57c18401d4b",
+          "bytes": 7577,
+          "sha256": "187b1c28a3b255a26371d8e572f0ea28b03ec7a2b1b27095531435f879305b14",
           "missing": false
         },
         {
           "path": "docs/script.md",
-          "bytes": 7626,
-          "sha256": "8df2f9f00b4f0a25cad8e24006dd93c9dd5855c9386b6abad6e244bdebec3029",
+          "bytes": 7707,
+          "sha256": "8d560301c997927ac38e106c6df8da515dd512e6328aa44b86bb2d7739889059",
           "missing": false
         },
         {
           "path": "docs/copy-fields.json",
-          "bytes": 15108,
-          "sha256": "537608739e02c8cf4a3996aec9cd2eb26077d27403e5b000b0ba8d9867fe5e76",
+          "bytes": 15191,
+          "sha256": "21f4185e86f165bfd85dd392c516fecb1e196789cb4e35a9d8eb1b7d8afcb3e7",
           "missing": false
         }
       ],
-      "bytes": 30230,
+      "bytes": 30475,
       "missing": []
     },
     {
@@ -352,42 +352,42 @@
       "files": [
         {
           "path": "public/data/links.json",
-          "bytes": 946,
-          "sha256": "878f4a8928f166b72a347740404378636f5070a905733463e587a4dc3951327f",
+          "bytes": 947,
+          "sha256": "3921aae3b020ee63a4937c3e090bc2982d4f1b150c0d38ecc47b07894c2172dc",
           "missing": false
         },
         {
           "path": "public/qr/one-code-entry.svg",
-          "bytes": 9852,
-          "sha256": "52416ac4513499c364b0eca606a17762a3bfb35cce478d020904452d60b1a8e3",
+          "bytes": 10161,
+          "sha256": "9654f3a083735f0563edd25324f2217fceab106ce914722d28c51b605a1d4fc2",
           "missing": false
         },
         {
           "path": "public/qr/one-code-entry.png",
-          "bytes": 15266,
-          "sha256": "6128cd102def2a9d857e796156c021f84a50e255b59e18b01500423b725cd05c",
+          "bytes": 15201,
+          "sha256": "872541220e2bcd00aae27ab4fd143a3ecdd9264304f5be22196f630b23118642",
           "missing": false
         },
         {
           "path": "public/qr/one-code-entry-card.svg",
-          "bytes": 63413,
-          "sha256": "3c3891e4c47aa1b3d0dc80334208ee7ae05cbcb7669988762b03b1c23d8f33c0",
+          "bytes": 65302,
+          "sha256": "aa3c471988e6cf309fd4e645ce2d0b10130d1933244dddded8d7cc6938a2a391",
           "missing": false
         },
         {
           "path": "public/qr/one-code-entry-card.png",
-          "bytes": 35520,
-          "sha256": "9549e572dd74f02b92c178f8f008acb8b46a0ab9f40f048aeb519d71af901e04",
+          "bytes": 36423,
+          "sha256": "95b0d9a84c7902558754bd2a5860192d19cb884f573b8c5872e3b17109168919",
           "missing": false
         },
         {
           "path": "public/qr/one-code-entry-card.webp",
-          "bytes": 29752,
-          "sha256": "8129b740eb84dfdbb2f011b2703a794cc4f4bfa2998825d7d5b1bd94c8116aea",
+          "bytes": 29576,
+          "sha256": "c0354b5f9dca4fb6290b1d55bc28dd7e64c2964e996fc361ff29980d6195b48d",
           "missing": false
         }
       ],
-      "bytes": 154749,
+      "bytes": 157610,
       "missing": []
     },
     {
@@ -469,8 +469,8 @@
         },
         {
           "path": "public/design/knowledge-graph.svg",
-          "bytes": 11660,
-          "sha256": "7733279f6340f48a98b781b20818a2effeb2ae53ab34cbb631619df8584d04a7",
+          "bytes": 11659,
+          "sha256": "9276c233e1d6a56c85b42d9cb4452c5fa8078b8155fad390ac094cdd7d431d53",
           "missing": false
         },
         {
@@ -486,7 +486,7 @@
           "missing": false
         }
       ],
-      "bytes": 618854,
+      "bytes": 618853,
       "missing": []
     },
     {
@@ -622,42 +622,42 @@
       "files": [
         {
           "path": "public/fallback/book-cover-art.webp",
-          "bytes": 10666,
-          "sha256": "bc3d1ede494e10e5d34515fc2a895420ddf0e39717517f79966543f15a2e13ed",
+          "bytes": 12644,
+          "sha256": "50110deb1e453bcbeb61f5fa804f06b37b024f45080ace67e1ea02b3c6ba3fd4",
           "missing": false
         },
         {
           "path": "public/fallback/fallback-desktop.webp",
-          "bytes": 36874,
-          "sha256": "12fe81b479e05a6c49e5f8acf4e45ecb81af024f02864fe0f77d4b1ec32e89dc",
+          "bytes": 41430,
+          "sha256": "022dee0285b4bc6a2c305865ce1b92968b1b07783f091d2b2dfa0999735e39c1",
           "missing": false
         },
         {
           "path": "public/fallback/fallback-mobile.webp",
-          "bytes": 16650,
-          "sha256": "9de92861bab4ba41c88a3707d445620dcf98ae2d938686289f01f20ba8d890a9",
+          "bytes": 19148,
+          "sha256": "4047df2a8ee1999c3b166c6082cfb9b6ee9d664c9a83469deda47e837c658fff",
           "missing": false
         },
         {
           "path": "docs/design/fallback-poster.html",
-          "bytes": 10429,
-          "sha256": "9e95141e80ae49fa91f5350720d072769a65027d6a3f0f9b0120cad6c3f3cf95",
+          "bytes": 10490,
+          "sha256": "60b83ccd985e130360f6d7a024f1e2acd62d743c23f2b0ad2dbc1f5227c2b114",
           "missing": false
         },
         {
           "path": "docs/design/fallback-desktop.png",
-          "bytes": 965197,
-          "sha256": "0c1a087c68a8ed166b225dd8b9929203a49ed96cb7fdf3f657335830ce9747cb",
+          "bytes": 979151,
+          "sha256": "aba088bea49629fc144989da15594cdfadbccd5430636ac66c30a4ddbd633338",
           "missing": false
         },
         {
           "path": "docs/design/fallback-mobile.png",
-          "bytes": 322374,
-          "sha256": "40658a365627b47535ce02045f3c8b6490c2d192b3ed7786fe38621dc5bf3183",
+          "bytes": 328196,
+          "sha256": "af0ac67e5d939b1dd6ee7a894131c1c61f66b7ec6cbd0e4cf8e88188eba083eb",
           "missing": false
         }
       ],
-      "bytes": 1362190,
+      "bytes": 1391059,
       "missing": []
     },
     {
@@ -669,8 +669,8 @@
       "files": [
         {
           "path": "public/data/benchmark.json",
-          "bytes": 7710,
-          "sha256": "611d14a3e786479d29037b75aea3ef56937523fa46788408b5db537f030091a2",
+          "bytes": 7729,
+          "sha256": "0d24c94ee93fd26d59e309a68df35d9331735f632f7df9fcf6ffd024fd7b165c",
           "missing": false
         },
         {
@@ -680,7 +680,7 @@
           "missing": false
         }
       ],
-      "bytes": 16420,
+      "bytes": 16439,
       "missing": []
     }
   ]

@@ -17,6 +17,16 @@ const LINE_HEIGHT = 16;
 const ANCHOR_SPEED = 3.2;
 const ANCHOR_MIN_DURATION = 0.4;
 const ANCHOR_MAX_DURATION = 1.3;
+const SCROLL_KEYS = new Set([
+  'ArrowUp',
+  'ArrowDown',
+  'PageUp',
+  'PageDown',
+  'Home',
+  'End',
+  ' ',
+  'Spacebar',
+]);
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
 
@@ -47,6 +57,7 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
     if (frame) window.cancelAnimationFrame(frame);
     frame = 0;
     lastTime = 0;
+    tween = null;
   };
 
   const tick = (now: number) => {
@@ -94,7 +105,7 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
   };
 
   const handleWheel = (event: WheelEvent) => {
-    if (event.ctrlKey || event.metaKey) return;
+    if (event.defaultPrevented || event.ctrlKey || event.metaKey) return;
     if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
 
     let delta = event.deltaY;
@@ -106,9 +117,12 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
 
     event.preventDefault();
 
-    tween = null;
-
     const current = window.scrollY;
+
+    // A running wheel loop already holds a live target; anything else
+    // (idle, anchor tween) restarts from the position on screen.
+    if (!frame || tween) target = current;
+    tween = null;
     scroll = current;
 
     if ((target - current) * delta < 0) target = current;
@@ -120,22 +134,21 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
     start();
   };
 
-  const handleScroll = () => {
-    const actual = window.scrollY;
-    if (Math.abs(actual - scroll) < 1) return;
-
-    if (tween) console.log('[wheel] cancel tween', { actual, scroll, target, tween });
-    scroll = actual;
-    target = actual;
-    tween = null;
-    stop();
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (SCROLL_KEYS.has(event.key)) stop();
   };
 
+  const handlePointerDown = (event: PointerEvent) => {
+    if (event.clientX >= root.clientWidth) stop();
+  };
+
+  const handleTouchStart = () => stop();
+
   const handleResize = () => {
+    stop();
     scroll = window.scrollY;
     target = scroll;
-    tween = null;
-    stop();
   };
 
   const scrollToElement = (element: Element, { offset = 0 } = {}) => {
@@ -148,14 +161,21 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
       from,
       to,
       start: performance.now(),
-      duration: clamp(Math.abs(to - from) / (window.innerHeight * ANCHOR_SPEED), ANCHOR_MIN_DURATION, ANCHOR_MAX_DURATION) * 1000,
+      duration:
+        clamp(
+          Math.abs(to - from) / (window.innerHeight * ANCHOR_SPEED),
+          ANCHOR_MIN_DURATION,
+          ANCHOR_MAX_DURATION,
+        ) * 1000,
     };
 
     start();
   };
 
   window.addEventListener('wheel', handleWheel, { passive: false });
-  window.addEventListener('scroll', handleScroll, { passive: true });
+  window.addEventListener('keydown', handleKeyDown);
+  window.addEventListener('pointerdown', handlePointerDown);
+  window.addEventListener('touchstart', handleTouchStart, { passive: true });
   window.addEventListener('resize', handleResize);
 
   return {
@@ -164,7 +184,9 @@ export function createWheelScroll(options: WheelScrollOptions = {}): WheelScroll
       stop();
       root.style.scrollBehavior = previousBehavior;
       window.removeEventListener('wheel', handleWheel);
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('touchstart', handleTouchStart);
       window.removeEventListener('resize', handleResize);
     },
   };

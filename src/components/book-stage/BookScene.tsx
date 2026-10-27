@@ -249,8 +249,8 @@ function band(value: number, center: number, halfWidth: number) {
    Chapter 00 — shelf take-down / scan / uplink beat
    ------------------------------------------------------------------ */
 
-const SHELF_RETURN_START = 0.82;
-const SHELF_RETURN_END = 1.05;
+const SHELF_RETURN_START = 0.55;
+const SHELF_RETURN_END = 0.8;
 const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;
@@ -755,10 +755,15 @@ function CameraRig({
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
 
+    // Ease the field of view with the same damping as the dolly. Snapping it
+    // reads as a zoom punch on every framing change (32 → 46 → 34 → 31 → 40).
     const desiredFov = mobile ? (custom ? pose.fov + 8 : 39) : pose.fov;
-    if (perspective.isPerspectiveCamera && Math.abs(perspective.fov - desiredFov) > 0.05) {
-      perspective.fov = desiredFov;
-      perspective.updateProjectionMatrix();
+    if (perspective.isPerspectiveCamera) {
+      const nextFov = THREE.MathUtils.damp(perspective.fov, desiredFov, 5.5, delta);
+      if (Math.abs(nextFov - perspective.fov) > 0.001) {
+        perspective.fov = nextFov;
+        perspective.updateProjectionMatrix();
+      }
     }
   });
 
@@ -1515,10 +1520,23 @@ function BookRig({
           THREE.MathUtils.damp(bookGroupRef.current.position.y, shelfPose.position[1] + idle, 8, delta),
           THREE.MathUtils.damp(bookGroupRef.current.position.z, shelfPose.position[2], 8, delta),
         );
-        bookGroupRef.current.rotation.set(
+        bookGroupRef.current.rotation.x = THREE.MathUtils.damp(
+          bookGroupRef.current.rotation.x,
           shelfPose.rotation[0],
+          8,
+          delta,
+        );
+        bookGroupRef.current.rotation.y = THREE.MathUtils.damp(
+          bookGroupRef.current.rotation.y,
           shelfPose.rotation[1],
+          8,
+          delta,
+        );
+        bookGroupRef.current.rotation.z = THREE.MathUtils.damp(
+          bookGroupRef.current.rotation.z,
           shelfPose.rotation[2],
+          8,
+          delta,
         );
       } else {
         const targetX = lerp(a.position[0], b.position[0], t) + deploymentOffsetX;
@@ -1544,14 +1562,17 @@ function BookRig({
     const slipcaseTarget = phase >= 8.35 && edition !== 'standard' ? 1 : phase >= 8.35 ? 0.65 : 0.001;
 
     // Shelf (00 Shelf and 06 Return share one composition: ring closure).
-    // The prologue stays single-book on the desk; the shelf only fades in as
-    // chapter 00 begins.
-    const shelfTarget =
-      (phase > 0.85 && phase < 2.42) || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
+    // Scale is tied to scroll phase rather than time so the establish cannot
+    // race ahead of the book when the wheel moves fast; the whole grow happens
+    // behind the interlude plate (phase 0.56 → 0.74).
+    const shelfIn = smoothstep((phase - 0.56) / 0.18);
+    const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
+    const shelfReturn =
+      smoothstep((phase - 6.55) / 0.18) * (1 - smoothstep((phase - 7.6) / 0.15));
+    const shelfScale = Math.max(shelfIn * shelfOut, shelfReturn);
     if (shelfGroupRef.current) {
-      const next = THREE.MathUtils.damp(shelfGroupRef.current.scale.x, shelfTarget, 5, delta);
-      shelfGroupRef.current.scale.setScalar(Math.max(0.001, next));
-      shelfGroupRef.current.visible = next > 0.005;
+      shelfGroupRef.current.scale.setScalar(Math.max(0.001, shelfScale));
+      shelfGroupRef.current.visible = shelfScale > 0.005;
     }
     const glowMaterial = shelfGlowRef.current;
     if (glowMaterial) {

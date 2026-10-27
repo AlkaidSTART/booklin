@@ -13,12 +13,7 @@
       "titleB": "BOOK.",
       "line": "纸书，有魂。",
       "lineEn": "Paper, with a cloud soul.",
-      "meta": "0.00 W · 0 SCREENS · ∞ TITLES",
-      "pops": [
-        { "kind": "tape", "x": 84, "y": 16, "rot": -4, "lines": ["0.00 W", "NO BATTERY"] },
-        { "kind": "ticket", "x": 64, "y": 78, "rot": 3, "lines": ["ISSUE 042", "SCROLL, DON’T CLICK", "∞ BOOKS"] },
-        { "kind": "mono", "x": 52, "y": 8, "rot": 2, "lines": ["SCAN → WAKE", "0.4 s · 9 nodes"] }
-      ]
+      "meta": "0.00 W · 0 SCREENS · ∞ TITLES"
     },
     {
       "id": "shelf",
@@ -29,11 +24,7 @@
       "titleB": "沉睡。",
       "line": "任何一本书，都在等第一个读者。",
       "lineEn": "Every book is waiting for its first reader.",
-      "meta": "NO ACCOUNT · NO POWER · 0.00 W",
-      "pops": [
-        { "kind": "ticket", "x": 78, "y": 20, "rot": -3, "lines": ["BOOKLN HAVEN", "停泊单 NO. 0001", "到期：永不"] },
-        { "kind": "stamp", "x": 66, "y": 80, "rot": -8, "lines": ["DORMANT", "0.00 W"] }
-      ]
+      "meta": "NO ACCOUNT · NO POWER · 0.00 W"
     },
     {
       "id": "carry",
@@ -44,11 +35,7 @@
       "titleB": "两个身体。",
       "line": "纸身进包，云魂跟着回家。",
       "lineEn": "One price. Two bodies.",
-      "meta": "ONE PRICE · TWO BODIES",
-      "pops": [
-        { "kind": "receipt", "x": 76, "y": 22, "rot": 2, "lines": ["PAPER BODY × 1", "CLOUD SOUL × 1", "TOTAL 1 BOOK", "PAID · 已封签"] },
-        { "kind": "stamp", "x": 60, "y": 82, "rot": 6, "lines": ["SEALED", "两个身体"] }
-      ]
+      "meta": "ONE PRICE · TWO BODIES"
     },
     {
       "id": "structure",
@@ -59,11 +46,7 @@
       "titleB": "全是纸。",
       "line": "没有屏幕，没有电池。",
       "lineEn": "Paper, all the way down.",
-      "meta": "PAPER ALL THE WAY DOWN",
-      "pops": [
-        { "kind": "mono", "x": 72, "y": 18, "rot": 2, "lines": ["MATERIAL PASSPORT", "6 LAYERS · 2048² PBR", "NOT TO SCALE"] },
-        { "kind": "note", "x": 62, "y": 82, "rot": -4, "lines": ["手感是真的", "spec 是概念"] }
-      ]
+      "meta": "PAPER ALL THE WAY DOWN"
     },
     {
       "id": "interaction",
@@ -74,11 +57,7 @@
       "titleB": "第 42 页。",
       "line": "书签落下，纸就有了地址。",
       "lineEn": "The ribbon lands. The page has an address.",
-      "meta": "0 MENUS · 280 MM",
-      "pops": [
-        { "kind": "note", "x": 78, "y": 22, "rot": -3, "lines": ["P.042", "从这里开始 ↓"] },
-        { "kind": "tape", "x": 62, "y": 82, "rot": 4, "lines": ["0 MENUS", "NO UI"] }
-      ]
+      "meta": "0 MENUS · 280 MM"
     },
     {
       "id": "binding",
@@ -89,11 +68,7 @@
       "titleB": "书醒了。",
       "line": "九页之外，长出一张图谱。",
       "lineEn": "One scan. Nine nodes wake up.",
-      "meta": "ONE SCAN · 9 NODES",
-      "pops": [
-        { "kind": "quote", "x": 76, "y": 20, "rot": 2, "lines": ["“It’s paper. It works.”", "— Anonymous reviewer", "WoodenBench 2026"] },
-        { "kind": "mono", "x": 60, "y": 82, "rot": -3, "lines": ["9 NODES", "0.4 s · 0.00 W"] }
-      ]
+      "meta": "ONE SCAN · 9 NODES"
     },
     {
       "id": "loop",
@@ -104,11 +79,7 @@
       "titleB": "抬头。",
       "line": "视频、图谱、问答，都在页边。",
       "lineEn": "Video, graph, answers — all in the margin.",
-      "meta": "AUTOPLAYS · MUTED",
-      "pops": [
-        { "kind": "note", "x": 76, "y": 18, "rot": 3, "lines": ["23:47", "NIGHT SHIFT"] },
-        { "kind": "stamp", "x": 62, "y": 82, "rot": -5, "lines": ["MUTED", "自动播放"] }
-      ]
+      "meta": "AUTOPLAYS · MUTED"
     },
     {
       "id": "return",
@@ -119,11 +90,7 @@
       "titleB": "放回架上。",
       "line": "书不记名。下一位，重新开始。",
       "lineEn": "No reader data. Next reader starts clean.",
-      "meta": "0 READER DATA",
-      "pops": [
-        { "kind": "stamp", "x": 78, "y": 22, "rot": -7, "lines": ["RETURNED", "归架"] },
-        { "kind": "note", "x": 62, "y": 82, "rot": 4, "lines": ["前一位读者", "无记录"] }
-      ]
+      "meta": "0 READER DATA"
     },
     {
       "id": "benchmark",
@@ -134,11 +101,7 @@
       "titleB": "赢在哪。",
       "line": "不比功能，比注意力。",
       "lineEn": "Not features. Attention.",
-      "meta": "WOODENBENCH 2026 · n = 1 DESK",
-      "pops": [
-        { "kind": "ticket", "x": 78, "y": 18, "rot": 3, "lines": ["PAPER 1", "SCREEN 0", "评分由我们自评"] },
-        { "kind": "note", "x": 60, "y": 84, "rot": -4, "lines": ["可能被调过参", "measured on one desk"] }
-      ]
+      "meta": "WOODENBENCH 2026 · n = 1 DESK"
     },
     {
       "id": "deployment",
@@ -149,11 +112,7 @@
       "titleB": "带走。",
       "line": "三个版本。都是纸。",
       "lineEn": "Three editions. All paper.",
-      "meta": "3 EDITIONS · 0 BATTERIES",
-      "pops": [
-        { "kind": "stamp", "x": 76, "y": 20, "rot": -6, "lines": ["CHECKOUT PENDING", "结算待接入"] },
-        { "kind": "note", "x": 60, "y": 84, "rot": 3, "lines": ["不编价格", "no fake prices"] }
-      ]
+      "meta": "3 EDITIONS · 0 BATTERIES"
     },
     {
       "id": "chain",
@@ -164,11 +123,7 @@
       "titleB": "是机器。",
       "line": "书链已经连了 2,600+ 家出版社。",
       "lineEn": "The myth runs on a real network.",
-      "meta": "BOOKLN.CN · LIVE",
-      "pops": [
-        { "kind": "stamp", "x": 74, "y": 26, "rot": -5, "lines": ["2,600+", "PUBLISHERS"] },
-        { "kind": "mono", "x": 58, "y": 84, "rot": 3, "lines": ["1M+ TITLES", "250M+ READERS"] }
-      ]
+      "meta": "BOOKLN.CN · LIVE"
     }
   ]
 }

@@ -71,8 +71,6 @@ const materialLayers = [
 const pageTitle = 'Bookln / THE BOOK. — 纸书，有魂。';
 const pageDescription =
   'Bookln (书链) 概念体验：一本普通纸书，扫一次页边码，就连上云端知识图谱与伴读。滚动即展开，无需点击。';
-
-const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="zh-Hans">
@@ -137,19 +135,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
         <p class="sx-line-en">{chapterById.arrival.lineEn}</p>
         <p class="sx-meta">{chapterById.arrival.meta}</p>
       </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.arrival).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
 
     <div class="sx-band" aria-hidden="true">
@@ -169,6 +154,18 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
         <span>SCROLL TO UNFOLD</span>
       </div>
     </div>
+
+    <section class="sx-handoff" aria-hidden="true">
+      <span class="sx-handoff__numeral">00</span>
+      <div class="sx-handoff__plate">
+        <p class="sx-handoff__kicker">INTERLUDE · 停泊</p>
+        <p class="sx-handoff__line">放回架上。</p>
+        <p class="sx-handoff__en">Back to the shelf. It will remember the page.</p>
+        <p class="sx-handoff__meta">0.00 W · NO ACCOUNT · ∞ BOOKS</p>
+      </div>
+    </section>
+
+    <div class="sx-handoff-gap" aria-hidden="true"></div>
 
     <section
       id="shelf"
@@ -204,19 +201,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
             <p>扫一下，云魂归你。书不记名。</p>
           </div>
         </div>
-      </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.shelf).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
       </div>
     </section>
 
@@ -255,19 +239,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           </div>
         </div>
       </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.carry).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
 
     <section
@@ -301,19 +272,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
             </div>
           ))}
         </div>
-      </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.structure).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
       </div>
     </section>
 
@@ -356,19 +314,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.interaction).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
       </div>
     </section>
 
@@ -415,19 +360,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
             <span data-readout-detail>{graphNodes[0].detailZh}</span>
           </div>
         </div>
-      </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.binding).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
       </div>
     </section>
 
@@ -510,19 +442,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           </figure>
         </div>
       </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.loop).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
 
     <section
@@ -561,19 +480,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
             <small>等下一位读者</small>
           </div>
         </div>
-      </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.return).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
       </div>
     </section>
 
@@ -638,19 +544,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           </p>
         </div>
       </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.benchmark).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
 
     <section
@@ -698,19 +591,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           ))}
         </div>
       </div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.deployment).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
 
     <section
@@ -752,19 +632,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
       </div>
 
       <div class="sx-paper-mark" aria-hidden="true">BOOKLN</div>
-
-      <div class="sx-notes" aria-hidden="true">
-        {popMarkup(chapterById.chain).map((pop: Record<string, any>, index: number) => (
-          <div
-            class={`sx-pop sx-pop--${pop.kind}`}
-            style={`--x:${pop.x}%; --y:${pop.y}%; --rot:${pop.rot}deg; --pop-delay:${index * 110}ms`}
-          >
-            {pop.lines.map((line: string, lineIndex: number) =>
-              lineIndex === 0 ? <b>{line}</b> : <span>{line}</span>,
-            )}
-          </div>
-        ))}
-      </div>
     </section>
   </main>
 
@@ -824,7 +691,7 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
       { rootMargin: '0px 0px -6% 0px', threshold: 0.12 },
     );
 
-    for (const element of document.querySelectorAll('.sx-pop, .sx-rise')) {
+    for (const element of document.querySelectorAll('.sx-rise')) {
       popObserver.observe(element);
     }
 

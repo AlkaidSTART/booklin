@@ -177,6 +177,15 @@ export default function BookStage() {
       }
 
       progressRef.current = Math.min(1, phase / Math.max(1, starts.length - 1));
+
+      // Interlude plate: fade up over the hero's exit, hold while the book
+      // docks into the shelf, then lift to reveal the established chapter 00.
+      // Kept in phase units so it stays locked to the 3D beat at any speed.
+      const tint = Math.min(
+        Math.min(1, Math.max(0, (phase - 0.4) / 0.2)),
+        Math.min(1, Math.max(0, (0.98 - phase) / 0.12)),
+      );
+      document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
     };
 
     const schedule = () => {

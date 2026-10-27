@@ -24,6 +24,9 @@ public/models/source/*-raw.glb
 .env
 .env.production
 
+# personal agent preferences (taste files are local-only)
+.commandcode/taste/
+
 # scratch / temporary scripts and dumps
 .tmp-*
 *.tmp

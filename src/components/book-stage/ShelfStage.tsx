@@ -80,25 +80,25 @@ function makePageTexture() {
 }
 
 const CLOTH_PALETTE = [
-  '#2a211a',
-  '#241c17',
-  '#1e2426',
-  '#2e2318',
-  '#331f1c',
-  '#1d2220',
-  '#3a2c1f',
-  '#3f241d',
-  '#232323',
-  '#2a2a1e',
-  '#4a3524',
-  '#1a1d21',
-  '#5b4630',
-  '#6b5338',
+  '#241b16',
+  '#1e1714',
+  '#1a2022',
+  '#2a2016',
+  '#2c1a18',
+  '#191e1c',
+  '#33261a',
+  '#341d19',
+  '#1f1f1f',
+  '#242419',
+  '#3d2b1d',
+  '#15181b',
+  '#42311f',
+  '#4a3722',
 ];
 
-const GOLD = '#b58a4c';
+const GOLD = '#8a6a3e';
 
-const pageBlockBase = '#cdbb96';
+const pageBlockBase = '#bfa87f';
 
 /* ------------------------------------------------------------------
    Procedural shelf books
@@ -143,7 +143,7 @@ function buildShelfBooks(gapX: number): BookSpec[] {
       const h = Math.min(row.maxH, 176 + rand() * (row.maxH - 176));
       const d = 132 + rand() * 54;
       const color = CLOTH_PALETTE[Math.floor(rand() * CLOTH_PALETTE.length)];
-      const lean = rand() > 0.88 ? (rand() > 0.5 ? 1 : -1) * (0.025 + rand() * 0.045) : 0;
+      const lean = rand() > 0.94 ? (rand() > 0.5 ? 1 : -1) * (0.012 + rand() * 0.02) : 0;
       const spec: BookSpec = {
         x,
         rowY: row.y,
@@ -152,10 +152,10 @@ function buildShelfBooks(gapX: number): BookSpec[] {
         d,
         lean,
         color,
-        pageTint: rand() > 0.5 ? '#d8c7a2' : pageBlockBase,
-        bands: rand() > 0.45 ? 2 : 0,
-        label: rand() > 0.58,
-        labelTint: rand() > 0.55 ? '#c8b48a' : '#8d6f45',
+        pageTint: rand() > 0.5 ? '#c8b48c' : pageBlockBase,
+        bands: rand() > 0.68 ? 2 : 0,
+        label: rand() > 0.78,
+        labelTint: rand() > 0.55 ? '#8a7350' : '#6e5a3f',
       };
 
       if (row.gap) {
@@ -185,10 +185,15 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
   const pageRef = useRef<THREE.InstancedMesh>(null);
   const coverRef = useRef<THREE.InstancedMesh>(null);
   const spineRef = useRef<THREE.InstancedMesh>(null);
+  const roundedSpineRef = useRef<THREE.InstancedMesh>(null);
   const bandRef = useRef<THREE.InstancedMesh>(null);
   const labelRef = useRef<THREE.InstancedMesh>(null);
 
   const geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
+  const roundedSpineGeometry = useMemo(
+    () => new THREE.CylinderGeometry(1, 1, 1, 10, 1, false, -Math.PI / 2, Math.PI),
+    [],
+  );
 
   const pageMaterial = useMemo(() => {
     return new THREE.MeshStandardMaterial({
@@ -204,9 +209,9 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
     () =>
       new THREE.MeshStandardMaterial({
         color: '#ffffff',
-        roughness: 0.84,
+        roughness: 0.78,
         metalness: 0.02,
-        envMapIntensity: 0.36,
+        envMapIntensity: 0.3,
       }),
     [],
   );
@@ -215,9 +220,9 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
     () =>
       new THREE.MeshStandardMaterial({
         color: GOLD,
-        roughness: 0.38,
-        metalness: 0.82,
-        envMapIntensity: 0.72,
+        roughness: 0.52,
+        metalness: 0.62,
+        envMapIntensity: 0.42,
       }),
     [],
   );
@@ -226,9 +231,9 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
     () =>
       new THREE.MeshStandardMaterial({
         color: '#ffffff',
-        roughness: 0.72,
+        roughness: 0.8,
         metalness: 0,
-        envMapIntensity: 0.24,
+        envMapIntensity: 0.16,
       }),
     [],
   );
@@ -236,13 +241,22 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
   useEffect(() => {
     return () => {
       geometry.dispose();
+      roundedSpineGeometry.dispose();
       pageTexture?.dispose();
       pageMaterial.dispose();
       clothMaterial.dispose();
       goldMaterial.dispose();
       labelMaterial.dispose();
     };
-  }, [geometry, pageTexture, pageMaterial, clothMaterial, goldMaterial, labelMaterial]);
+  }, [
+    geometry,
+    roundedSpineGeometry,
+    pageTexture,
+    pageMaterial,
+    clothMaterial,
+    goldMaterial,
+    labelMaterial,
+  ]);
 
   useLayoutEffect(() => {
     const dummy = new THREE.Object3D();
@@ -283,22 +297,54 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
       write(spineRef.current, index, spec.x, spec.rowY + h / 2, -0.6, w + 0.4, h + 2, 4, spec.lean);
       spineRef.current?.setColorAt(index, color.set(spec.color));
 
+      write(
+        roundedSpineRef.current,
+        index,
+        spec.x,
+        spec.rowY + h / 2,
+        0.35,
+        w / 2,
+        h,
+        Math.max(1.4, w * 0.12),
+        spec.lean,
+      );
+      roundedSpineRef.current?.setColorAt(index, color.set(spec.color));
+
+      const surfaceZ = 0.35 + Math.max(1.4, w * 0.12) + 0.25;
+
       if (spec.bands > 0) {
         const bandIndex = specs.slice(0, index).filter((item) => item.bands > 0).length * 2;
-        write(bandRef.current, bandIndex, spec.x, spec.rowY + h * 0.72, 1.75, w + 0.6, 2.2, 0.9, spec.lean);
-        write(bandRef.current, bandIndex + 1, spec.x, spec.rowY + h * 0.3, 1.75, w + 0.6, 2.2, 0.9, spec.lean);
+        write(bandRef.current, bandIndex, spec.x, spec.rowY + h * 0.72, surfaceZ, w + 0.6, 1.5, 0.8, spec.lean);
+        write(bandRef.current, bandIndex + 1, spec.x, spec.rowY + h * 0.3, surfaceZ, w + 0.6, 1.5, 0.8, spec.lean);
       }
     });
 
     let labelIndex = 0;
     specs.forEach((spec) => {
       if (!spec.label) return;
-      write(labelRef.current, labelIndex, spec.x, spec.rowY + spec.h * 0.55, 1.7, Math.max(8, spec.w * 0.58), 10, 0.7, spec.lean);
+      write(
+        labelRef.current,
+        labelIndex,
+        spec.x,
+        spec.rowY + spec.h * 0.55,
+        0.35 + Math.max(1.4, spec.w * 0.12) + 0.2,
+        Math.max(7, spec.w * 0.5),
+        8,
+        0.6,
+        spec.lean,
+      );
       labelRef.current?.setColorAt(labelIndex, color.set(spec.labelTint));
       labelIndex += 1;
     });
 
-    for (const mesh of [pageRef.current, coverRef.current, spineRef.current, bandRef.current, labelRef.current]) {
+    for (const mesh of [
+      pageRef.current,
+      coverRef.current,
+      spineRef.current,
+      roundedSpineRef.current,
+      bandRef.current,
+      labelRef.current,
+    ]) {
       if (!mesh) continue;
       mesh.instanceMatrix.needsUpdate = true;
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -311,6 +357,11 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
       <instancedMesh ref={pageRef} args={[geometry, pageMaterial, specs.length]} frustumCulled={false} />
       <instancedMesh ref={coverRef} args={[geometry, clothMaterial, specs.length * 2]} frustumCulled={false} />
       <instancedMesh ref={spineRef} args={[geometry, clothMaterial, specs.length]} frustumCulled={false} />
+      <instancedMesh
+        ref={roundedSpineRef}
+        args={[roundedSpineGeometry, clothMaterial, specs.length]}
+        frustumCulled={false}
+      />
       <instancedMesh
         ref={bandRef}
         args={[geometry, goldMaterial, specs.filter((spec) => spec.bands > 0).length * 2]}
@@ -728,16 +779,16 @@ export function PhoneScanner({
     const phase = progressRef.current * SHELF_PHASE_COUNT;
     const rise = Math.min(1, Math.max(0, (phase - 1.56) / 0.18));
     const fadeIn = Math.min(1, Math.max(0, (phase - 1.56) / 0.1));
-    const fadeOut = 1 - Math.min(1, Math.max(0, (phase - 2.06) / 0.14));
+    const fadeOut = 1 - Math.min(1, Math.max(0, (phase - 2.18) / 0.14));
     const vis = fadeIn * fadeOut;
     const eased = rise * rise * (3 - 2 * rise);
 
     if (groupRef.current) {
       groupRef.current.visible = vis > 0.01;
-      groupRef.current.position.x = 0.285;
+      groupRef.current.position.x = 0.265;
       groupRef.current.position.y = 0.862 - (1 - eased) * 0.2 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0011) * 0.003);
       groupRef.current.position.z = 0.19;
-      groupRef.current.rotation.set(0.02, -0.4, 0.015);
+      groupRef.current.rotation.set(0.02, -0.52, 0.015);
       const scale = 0.86 + eased * 0.14;
       groupRef.current.scale.setScalar(scale);
     }
@@ -749,14 +800,14 @@ export function PhoneScanner({
     }
 
     if (scanRef.current) {
-      const scanning = phase > 1.64 && phase < 1.83;
-      const progress = ((phase - 1.64) / 0.19) % 1;
+      const scanning = phase > 1.66 && phase < 1.9;
+      const progress = ((phase - 1.66) / 0.22) % 1;
       scanRef.current.visible = scanning;
       scanRef.current.position.y = 0.066 - Math.max(0, Math.min(1, progress)) * 0.132;
       if (scanMatRef.current) scanMatRef.current.opacity = scanning ? 0.8 : 0;
     }
 
-    const shouldFound = phase > 1.82;
+    const shouldFound = phase > 1.84;
     if (shouldFound !== foundRef.current) {
       foundRef.current = shouldFound;
       setFound(shouldFound);
@@ -766,7 +817,7 @@ export function PhoneScanner({
   });
 
   return (
-    <group ref={groupRef} position={[0.285, 0.862, 0.19]} rotation={[0.02, -0.4, 0.015]} visible={false}>
+    <group ref={groupRef} position={[0.265, 0.862, 0.19]} rotation={[0.02, -0.52, 0.015]} visible={false}>
       <mesh position={[0, 0, -0.012]}>
         <planeGeometry args={[0.16, 0.27]} />
         <meshBasicMaterial
@@ -1050,8 +1101,8 @@ export function CloudSoulPanel({
   const beamGeometry = useMemo(() => {
     const curve = new THREE.QuadraticBezierCurve3(
       new THREE.Vector3(0.043, 0.815, 0.034),
-      new THREE.Vector3(0.16, 0.975, 0.07),
-      new THREE.Vector3(0.215, 0.961, 0.079),
+      new THREE.Vector3(0.145, 0.955, 0.058),
+      new THREE.Vector3(0.178, 0.958, 0.06),
     );
     return new THREE.TubeGeometry(curve, 32, 0.0011, 6, false);
   }, []);
@@ -1070,20 +1121,20 @@ export function CloudSoulPanel({
 
   useFrame((_, delta) => {
     const phase = progressRef.current * SHELF_PHASE_COUNT;
-    const inAmount = Math.min(1, Math.max(0, (phase - 1.8) / 0.12));
-    const outAmount = 1 - Math.min(1, Math.max(0, (phase - 2.08) / 0.12));
+    const inAmount = Math.min(1, Math.max(0, (phase - 1.82) / 0.12));
+    const outAmount = 1 - Math.min(1, Math.max(0, (phase - 2.2) / 0.14));
     const vis = inAmount * outAmount;
     const mobile = size.width < 760;
 
     if (groupRef.current) {
       groupRef.current.visible = vis > 0.01;
       groupRef.current.position.set(
-        mobile ? 0.14 : 0.255,
-        1.055 - (1 - vis) * 0.035 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0009) * 0.002),
-        0.08,
+        mobile ? 0.13 : 0.225,
+        1.045 - (1 - vis) * 0.035 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0009) * 0.002),
+        0.06,
       );
-      groupRef.current.rotation.set(0.02, mobile ? -0.12 : -0.2, 0.008);
-      const scale = (mobile ? 0.72 : 0.86) + vis * (mobile ? 0.14 : 0.14);
+      groupRef.current.rotation.set(0.02, mobile ? -0.16 : -0.26, 0.008);
+      const scale = (mobile ? 0.68 : 0.86) + vis * (mobile ? 0.12 : 0.14);
       groupRef.current.scale.setScalar(scale);
     }
 
@@ -1105,9 +1156,9 @@ export function CloudSoulPanel({
 
   return (
     <>
-      <group ref={groupRef} position={[0.255, 1.055, 0.08]} rotation={[0.02, -0.2, 0.008]} visible={false}>
+      <group ref={groupRef} position={[0.225, 1.045, 0.06]} rotation={[0.02, -0.26, 0.008]} visible={false}>
         <mesh position={[0, 0, -0.004]}>
-          <planeGeometry args={[0.318, 0.204]} />
+          <planeGeometry args={[0.298, 0.19]} />
           <meshBasicMaterial
             ref={borderMatRef}
             color="#c8a96d"
@@ -1119,7 +1170,7 @@ export function CloudSoulPanel({
           />
         </mesh>
         <mesh>
-          <planeGeometry args={[0.3, 0.188]} />
+          <planeGeometry args={[0.28, 0.175]} />
           <meshBasicMaterial
             ref={panelMatRef}
             map={texture ?? undefined}

@@ -7,19 +7,27 @@
     <script>
       import * as THREE from 'three';
       import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+      import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+      import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(1440, 900);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      document.body.appendChild(renderer.domElement);
       const loader = new GLTFLoader();
+      const draco = new DRACOLoader();
+      draco.setDecoderPath('/decoders/draco/');
+      loader.setDRACOLoader(draco);
+      const ktx2 = new KTX2Loader();
+      ktx2.setTranscoderPath('/decoders/basis/');
+      ktx2.detectSupport(renderer);
+      loader.setKTX2Loader(ktx2);
       loader.load('/models/book-transformed.glb', (gltf) => {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color('#151312');
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(1440, 900);
-        renderer.outputColorSpace = THREE.SRGBColorSpace;
-        document.body.appendChild(renderer.domElement);
-
         const camera = new THREE.PerspectiveCamera(35, 1440 / 900, 0.1, 5000);
-        camera.position.set(260, 190, 420);
-        camera.lookAt(0, 100, 0);
+        camera.position.set(0, 420, 1050);
+        camera.lookAt(0, 40, 0);
 
         scene.add(new THREE.AmbientLight(0xffffff, 1.4));
         const d = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -53,7 +61,7 @@
           g.add(mesh ? mesh : clone);
           const col = i % 3;
           const row = Math.floor(i / 3);
-          g.position.set((col - 1) * 420, 240 - row * 320, 0);
+          g.position.set((col - 1) * 360, -row * 300, 0);
           g.scale.setScalar(1);
           scene.add(g);
         });
@@ -65,7 +73,7 @@
         };
         tick();
         (window as any).__ready = true;
-      });
+      }, undefined, (err) => { console.error('GLB FAIL', err); document.title = 'FAIL ' + err.message; });
     </script>
   </body>
 </html>

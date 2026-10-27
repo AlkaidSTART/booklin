@@ -1,6 +1,6 @@
 # Bookln / CODEX 1.
 
-A concept product page for **CODEX 1.**, a paper-first reading object by Bookln. The experience is a single-page 3D scrollytelling build: a physical book, an exploded material study, a haptic interaction sequence, and a page-edge bridge into a companion knowledge layer.
+A concept product page for **THE BOOK.**, a paper-first reading object by Bookln. The homepage is a sparse, scroll-driven 3D narrative: a physical book, an exploded material study, a haptic interaction sequence, and a page-edge bridge into a companion knowledge layer. Every reveal is driven by scroll position — there are no tabs, buttons or click-to-expand panels. The previous long-form spec edition is preserved at `/spec`.
 
 > **Status:** concept build. Product claims, prices, availability, third-party comparisons and legal language are illustrative and require review before launch. See [`docs/benchmark-sources.md`](docs/benchmark-sources.md).
 
@@ -45,6 +45,7 @@ src/                  Astro application
 | [`docs/TDD.md`](docs/TDD.md) | Technical design and performance targets |
 | [`docs/script-final.md`](docs/script-final.md) | Bilingual concept copy |
 | [`docs/copy-fields.json`](docs/copy-fields.json) | Machine-readable copy and length limits |
+| [`docs/scroll-copy.json`](docs/scroll-copy.json) | Short-form copy deck for the scroll edition (one headline, one line, one telemetry strip per chapter) |
 | [`docs/assets.md`](docs/assets.md) | Asset checklist and delivery status |
 | [`docs/asset-manifest.md`](docs/asset-manifest.md) | Generated inventory with sizes and hashes |
 | [`docs/benchmark-sources.md`](docs/benchmark-sources.md) | Comparison claim register and disclaimers |

@@ -5,4 +5,9 @@
 - Readily supplies supporting business context and hard numbers (partner relationships, market data) when asked to ground a design discussion. Confidence: 0.55
 - Treats the worldview/spec document as the source of truth: new business and interaction work should be derived from and consistent with it ("按照世界观文档补充业务和交互"), and the spec/copy docs are expected to stay in sync with the implementation. Confidence: 0.75
 - Hands over terse one-line feature directives ("根据相关的文档，补充相关材质，完善相关网页内容") and expects the agent to locate the relevant docs, implement, verify, and summarize end-to-end without further back-and-forth. Confidence: 0.65
+- Insists temporary or unrelated files never be committed, keeping the workspace/repo structure clean and legible ("临时文件或其他无关文件不允许被提交，保持工作区架构清晰明了"). Confidence: 0.75
+- Prefers very short on-page copy: one headline, one line, one meta strip per section — long descriptive paragraphs should be trimmed rather than expanded. Confidence: 0.7
+- Dislikes click-driven UI (tabs, buttons, click-to-expand cards); wants everything to unfold automatically as the user scrolls ("尽量不要出现用户自己点击的那种东西，往下滚动就会自动展开"). Confidence: 0.7
+- Wants layout-breaking, playful extras beyond the core content — decorative elements that "jump out" of the grid ("可以跳出设计一些其他的东西"), e.g. tickets, receipts, stamps, notes. Confidence: 0.6
+- Directs visual/narrative redesign by pointing at a reference site ("像这个这种" + URL) and expecting the agent to study its design language and adapt it. Confidence: 0.6
 - Sets an explicit "确保高质量交付" quality bar: contribution is expected to be verified before being called done — builds and validation scripts pass, and the rendered result is checked (e.g. headless screenshots of each section) rather than assumed from code. Confidence: 0.65

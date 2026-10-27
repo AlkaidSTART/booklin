@@ -10,4 +10,5 @@
 - Dislikes click-driven UI (tabs, buttons, click-to-expand cards); wants everything to unfold automatically as the user scrolls ("尽量不要出现用户自己点击的那种东西，往下滚动就会自动展开"). Confidence: 0.7
 - Wants layout-breaking, playful extras beyond the core content — decorative elements that "jump out" of the grid ("可以跳出设计一些其他的东西"), e.g. tickets, receipts, stamps, notes. Confidence: 0.6
 - Directs visual/narrative redesign by pointing at a reference site ("像这个这种" + URL) and expecting the agent to study its design language and adapt it. Confidence: 0.6
+- Wants minimal page chrome: no fixed top header bar (brand/status/nav strip should be cut), and global indicators like the scroll progress belong in the side rail rather than across the top. Confidence: 0.55
 - Sets an explicit "确保高质量交付" quality bar: contribution is expected to be verified before being called done — builds and validation scripts pass, and the rendered result is checked (e.g. headless screenshots of each section) rather than assumed from code. Confidence: 0.65

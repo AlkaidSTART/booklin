@@ -78,32 +78,27 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
 <Layout title={pageTitle} description={pageDescription} lang="zh-Hans">
   <BookStage client:load />
 
-  <header class="topbar">
-    <a class="brand" href="#arrival" aria-label="Bookln / THE BOOK.">
-      <img src="/brand/bookln-wordmark.svg" alt="Bookln" width="320" height="93" />
-    </a>
-
-    <div class="topbar__status" aria-label="Live object telemetry">
-      <span class="status-dot" aria-hidden="true"></span>
-      <span id="topbar-telemetry">P · CLOSED · 0.00 W</span>
-    </div>
-
-    <nav class="topbar__nav" aria-label="Secondary">
-      <a href="#chain">Network</a>
-      <a href="/spec">Spec 原版</a>
-    </nav>
-
-    <div class="scroll-progress" aria-hidden="true">
-      <span></span>
-    </div>
-  </header>
+  <div class="sx-progress-edge" aria-hidden="true">
+    <i></i>
+  </div>
 
   <nav class="sx-rail" aria-label="Chapters">
-    {chapters.map((chapter) => (
-      <a href={`#${chapter.href}`} data-nav={chapter.id}>
-        {chapter.number}
-      </a>
-    ))}
+    <span class="sx-rail__progress" aria-hidden="true">
+      <i></i>
+    </span>
+
+    <div class="sx-rail__links">
+      {chapters.map((chapter) => (
+        <a href={`#${chapter.href}`} data-nav={chapter.id}>
+          {chapter.number}
+        </a>
+      ))}
+    </div>
+
+    <div class="sx-rail__meta">
+      <a href="#chain">Network</a>
+      <a href="/spec">Spec 原版</a>
+    </div>
   </nav>
 
   <div class="sx-ticker" aria-hidden="true">
@@ -798,13 +793,12 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
 
     const sections = Array.from(document.querySelectorAll<HTMLElement>('.sx-sec[data-chapter]'));
     const railLinks = new Map(
-      Array.from(document.querySelectorAll<HTMLAnchorElement>('.sx-rail a')).map((link) => [
+      Array.from(document.querySelectorAll<HTMLAnchorElement>('.sx-rail__links a')).map((link) => [
         link.dataset.nav ?? '',
         link,
       ]),
     );
     const ticker = document.querySelector<HTMLElement>('#sx-ticker-label');
-    const telemetry = document.querySelector<HTMLElement>('#topbar-telemetry');
 
     const liveObserver = new IntersectionObserver(
       (entries) => {
@@ -885,9 +879,6 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
 
       if (ticker) {
         ticker.textContent = `${current.dataset.number ?? 'P'} — ${current.dataset.label ?? 'PROLOGUE'}`;
-      }
-      if (telemetry && current.dataset.telemetry) {
-        telemetry.textContent = current.dataset.telemetry;
       }
 
       for (const entry of stepGroups) {

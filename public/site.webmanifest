@@ -1,0 +1,29 @@
+{
+  "name": "Bookln / CODEX 1.",
+  "short_name": "Bookln",
+  "description": "CODEX 1. The Zero-Watt Cognitive Engine. A concept reading object by Bookln.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#11100E",
+  "theme_color": "#11100E",
+  "icons": [
+    {
+      "src": "/brand/bookln-mark-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/bookln-mark-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/bookln-mark-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

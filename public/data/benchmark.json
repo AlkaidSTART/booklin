@@ -1,0 +1,198 @@
+{
+  "version": "2026-10-26",
+  "status": "concept",
+  "source": "docs/script-final.md#04--benchmark--a-different-kind-of-engine--另一种引擎",
+  "method": "Manufacturer-published specifications and product descriptions only. No comparative lab testing was performed by Bookln.",
+  "disclaimer": "Third-party devices are referenced for context only. Their names and marks belong to their respective owners. CODEX 1 values marked † are forward-looking concept claims and must be validated before launch.",
+  "devices": [
+    {
+      "id": "ipad-pro",
+      "name": "iPad Pro",
+      "vendor": "Apple",
+      "role": "reference",
+      "sourceIds": ["apple-ipad-pro-specs", "apple-ipados"]
+    },
+    {
+      "id": "kindle",
+      "name": "Kindle",
+      "vendor": "Amazon",
+      "role": "reference",
+      "sourceIds": ["amazon-kindle-paperwhite"]
+    },
+    {
+      "id": "codex-1",
+      "name": "CODEX 1",
+      "vendor": "Bookln",
+      "role": "concept",
+      "sourceIds": []
+    }
+  ],
+  "dimensions": [
+    {
+      "id": "power",
+      "label": "Power",
+      "labelZh": "供电",
+      "claimType": "mixed",
+      "cells": {
+        "ipad-pro": {
+          "value": "Rechargeable",
+          "valueZh": "可充电",
+          "evidence": "Apple lists a built-in rechargeable lithium-polymer battery and up to 10 hours of web browsing or video playback."
+        },
+        "kindle": {
+          "value": "Weeks-class battery*",
+          "valueZh": "数周级续航*",
+          "evidence": "Amazon's Kindle Paperwhite listing describes weeks of battery life; actual results vary with use, wireless settings and light level."
+        },
+        "codex-1": {
+          "value": "No battery chemistry†",
+          "valueZh": "无电池化学体系†",
+          "evidence": "Concept claim for the paper-first object; no production unit or test report exists yet."
+        }
+      },
+      "sourceIds": ["apple-ipad-pro-specs", "amazon-kindle-paperwhite"]
+    },
+    {
+      "id": "focus",
+      "label": "Focus",
+      "labelZh": "专注",
+      "claimType": "descriptive",
+      "cells": {
+        "ipad-pro": {
+          "value": "General-purpose apps",
+          "valueZh": "通用应用",
+          "evidence": "iPadOS ships with built-in apps and access to the App Store, so the device is not limited to reading."
+        },
+        "kindle": {
+          "value": "Reading-first",
+          "valueZh": "阅读优先",
+          "evidence": "Amazon positions Kindle as a dedicated reading device; this is a product-category description, not a measured attention test."
+        },
+        "codex-1": {
+          "value": "Reading-only by design",
+          "valueZh": "为阅读而生",
+          "evidence": "Bookln design intent. No feed, notifications or general-purpose app surface is planned."
+        }
+      },
+      "sourceIds": ["apple-ipados", "amazon-kindle-paperwhite"]
+    },
+    {
+      "id": "durability",
+      "label": "Durability",
+      "labelZh": "耐用性",
+      "claimType": "mixed",
+      "cells": {
+        "ipad-pro": {
+          "value": "Glass display",
+          "valueZh": "玻璃显示屏",
+          "evidence": "Apple lists a glass-fronted Ultra Retina XDR display with a nano-texture glass option. No drop-test comparison is claimed."
+        },
+        "kindle": {
+          "value": "E-reader construction",
+          "valueZh": "电子阅读器结构",
+          "evidence": "Amazon describes Kindle Paperwhite as a glare-free e-reader. Bookln has not tested drop performance."
+        },
+        "codex-1": {
+          "value": "Paper-first construction†",
+          "valueZh": "纸张优先结构†",
+          "evidence": "Concept claim. Structural and drop testing must be completed before any durability statement is published."
+        }
+      },
+      "sourceIds": ["apple-ipad-pro-specs", "amazon-kindle-paperwhite"]
+    },
+    {
+      "id": "knowledge-layer",
+      "label": "Knowledge layer",
+      "labelZh": "知识层",
+      "claimType": "descriptive",
+      "cells": {
+        "ipad-pro": {
+          "value": "App ecosystem",
+          "valueZh": "应用生态",
+          "evidence": "Apps are installed and opened through iPadOS and the App Store."
+        },
+        "kindle": {
+          "value": "Dictionary / store",
+          "valueZh": "词典 / 书店",
+          "evidence": "Kindle devices provide built-in reading tools and access to Amazon's Kindle store."
+        },
+        "codex-1": {
+          "value": "Scan-to-context companion layer",
+          "valueZh": "扫码上下文伴读层",
+          "evidence": "Concept capability. The page-edge mark and companion layer are represented by the deterministic knowledge-graph preview."
+        }
+      },
+      "sourceIds": ["apple-ipados", "amazon-kindle-paperwhite"]
+    },
+    {
+      "id": "sensory-character",
+      "label": "Sensory character",
+      "labelZh": "感官特征",
+      "claimType": "editorial",
+      "cells": {
+        "ipad-pro": {
+          "value": "Metal and glass",
+          "valueZh": "金属与玻璃",
+          "evidence": "Material description based on Apple's published enclosure and display materials."
+        },
+        "kindle": {
+          "value": "Polymer",
+          "valueZh": "聚合物",
+          "evidence": "Material description, not a measured tactile study."
+        },
+        "codex-1": {
+          "value": "Fibre, ink and cloth",
+          "valueZh": "纤维、油墨与布面",
+          "evidence": "Concept art direction for the physical object."
+        }
+      },
+      "sourceIds": ["apple-ipad-pro-specs", "amazon-kindle-paperwhite"]
+    }
+  ],
+  "sources": [
+    {
+      "id": "apple-ipad-pro-specs",
+      "title": "iPad Pro — Technical Specifications",
+      "publisher": "Apple",
+      "url": "https://www.apple.com/ipad-pro/specs/",
+      "accessedAt": "2026-10-26",
+      "supports": [
+        "Built-in rechargeable lithium-polymer battery",
+        "Up to 10 hours of surfing the web on Wi-Fi or watching video",
+        "Ultra Retina XDR display with tandem OLED",
+        "Nano-texture display glass option"
+      ],
+      "note": "Manufacturer specification page. Battery figures are Apple's own test results and are not comparable to a Bookln test."
+    },
+    {
+      "id": "apple-ipados",
+      "title": "iPadOS",
+      "publisher": "Apple",
+      "url": "https://www.apple.com/ipados/",
+      "accessedAt": "2026-10-26",
+      "supports": [
+        "General-purpose apps and built-in apps",
+        "App Store distribution"
+      ],
+      "note": "Used only to support the descriptive statement that iPad Pro is a general-purpose app device."
+    },
+    {
+      "id": "amazon-kindle-paperwhite",
+      "title": "Kindle Paperwhite — product listing",
+      "publisher": "Amazon",
+      "url": "https://www.amazon.com/clp/B0CTMS64NT",
+      "accessedAt": "2026-10-26",
+      "supports": [
+        "Weeks of battery life",
+        "Glare-free reading display",
+        "Dedicated reading device positioning"
+      ],
+      "note": "Amazon product listings can be region-gated and may change. The quoted phrases are from the public listing title/description captured on the access date. No independent battery or durability test was run."
+    }
+  ],
+  "legal": {
+    "thirdPartyDisclaimer": "iPad Pro and iPadOS are trademarks of Apple Inc. Kindle is a trademark of Amazon.com, Inc. or its affiliates. Bookln is not affiliated with Apple or Amazon.",
+    "conceptClaimDisclaimer": "† Forward-looking concept claim. Validate with a technical evidence pack and legal review before launch.",
+    "comparisonDisclaimer": "* Context only; no comparative lab testing was performed by Bookln."
+  }
+}

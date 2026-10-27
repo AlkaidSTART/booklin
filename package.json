@@ -9,7 +9,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "validate:copy": "node scripts/validate-copy.mjs",
+    "assets:qr": "node scripts/build-qr.mjs",
+    "assets:graph": "node scripts/build-knowledge-graph.mjs",
+    "assets:media": "node scripts/render-media.mjs",
+    "assets:video": "node scripts/render-lesson-preview.mjs",
+    "assets:manifest": "node scripts/build-asset-manifest.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.1",
@@ -26,10 +32,13 @@
     "troika-three-text": "^0.52.5"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "4.2.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.186.0",
+    "puppeteer-core": "24.28.0",
+    "qrcode-generator": "1.4.4",
     "tailwindcss": "^4.3.3"
   }
 }

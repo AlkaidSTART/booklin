@@ -1,0 +1,85 @@
+{
+  "version": "2026-10-26",
+  "status": "pending-commerce-data",
+  "source": "docs/script-final.md#editions",
+  "currency": null,
+  "pricePolicy": "Prices and checkout URLs are intentionally not invented. The commerce owner must supply final values before launch.",
+  "updatedAt": "2026-10-26",
+  "editions": [
+    {
+      "id": "standard",
+      "order": 1,
+      "name": "Standard",
+      "nameZh": "标配版",
+      "summary": "Single bound volume + lifetime companion access.",
+      "summaryZh": "单书实体 + 终身云端伴读资源接入。",
+      "price": null,
+      "priceDisplay": "Price pending",
+      "priceDisplayZh": "价格待定",
+      "checkoutUrl": null,
+      "available": false,
+      "recommended": false,
+      "features": [
+        "Single bound volume",
+        "Lifetime companion access",
+        "Page-edge scan entry"
+      ],
+      "featuresZh": [
+        "单书实体",
+        "终身云端伴读资源",
+        "页边扫码入口"
+      ]
+    },
+    {
+      "id": "pro",
+      "order": 2,
+      "name": "Pro",
+      "nameZh": "专业版",
+      "summary": "Clothbound volume + AI study pack + metal place marker.",
+      "summaryZh": "精装布面版 + 专属 AI 伴读算力包 + 实体金属定位书签。",
+      "price": null,
+      "priceDisplay": "Price pending",
+      "priceDisplayZh": "价格待定",
+      "checkoutUrl": null,
+      "available": false,
+      "recommended": true,
+      "features": [
+        "Clothbound volume",
+        "AI study pack",
+        "Metal place marker",
+        "Lifetime companion access"
+      ],
+      "featuresZh": [
+        "精装布面版",
+        "专属 AI 伴读算力包",
+        "实体金属定位书签",
+        "终身云端伴读资源"
+      ]
+    },
+    {
+      "id": "enterprise",
+      "order": 3,
+      "name": "Enterprise",
+      "nameZh": "企业 / 师生特选",
+      "summary": "Classroom dashboard + shared reading permissions.",
+      "summaryZh": "班级互动学情看板 + 群组共读权限。",
+      "price": null,
+      "priceDisplay": "Contact sales",
+      "priceDisplayZh": "联系商务",
+      "checkoutUrl": null,
+      "available": false,
+      "recommended": false,
+      "features": [
+        "Classroom dashboard",
+        "Shared reading permissions",
+        "Group discussion layer"
+      ],
+      "featuresZh": [
+        "班级互动学情看板",
+        "群组共读权限",
+        "小组讨论层"
+      ]
+    }
+  ],
+  "legal": "Bookln is a concept in development. Product appearance, capabilities, availability and specifications are illustrative and may change. Third-party names are trademarks of their respective owners."
+}

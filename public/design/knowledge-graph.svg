@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 1000 720" width="1000" height="720">
+  <title id="title">CODEX 1 page 042 knowledge layer</title>
+  <desc id="desc">A deterministic concept graph with nine nodes: the physical page, a concept, a citation, a lesson, margin discussion, glossary, author note, a related chapter and an AI companion.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="72%">
+      <stop offset="0" stop-color="#211B15"/>
+      <stop offset=".58" stop-color="#16130F"/>
+      <stop offset="1" stop-color="#11100E"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1000" height="720" fill="url(#bg)"/>
+  <g stroke="#E8DCC4" stroke-opacity=".045">
+    <path d="M0 180h1000M0 360h1000M0 540h1000M250 0v720M500 0v720M750 0v720"/>
+  </g>
+  <circle cx="500" cy="370" r="250" fill="none" stroke="#C8A96D" stroke-opacity=".12"/>
+  <circle cx="500" cy="370" r="168" fill="none" stroke="#C8A96D" stroke-opacity=".08"/>
+  <text x="64" y="58" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" letter-spacing="2.4" fill="#C8A96D">PAGE 042 / KNOWLEDGE LAYER</text>
+  <text x="64" y="78" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="8" letter-spacing="1.5" fill="#968D80">CONCEPT PREVIEW · DETERMINISTIC DATA · NOT A LIVE AI OUTPUT</text>
+  <g filter="url(#glow)">
+    <path d="M500.00 370.56 Q600.69 326.00 679.52 249.12" fill="none" stroke="#C8A96D" stroke-opacity="0.56" stroke-width="1.83"/>
+    <path d="M500.00 370.56 Q603.34 406.47 687.68 476.16" fill="none" stroke="#C8A96D" stroke-opacity="0.52" stroke-width="1.72"/>
+    <path d="M500.00 370.56 Q485.27 452.40 500.00 534.24" fill="none" stroke="#C8A96D" stroke-opacity="0.47" stroke-width="1.60"/>
+    <path d="M500.00 370.56 Q419.27 436.88 320.48 470.88" fill="none" stroke="#C8A96D" stroke-opacity="0.43" stroke-width="1.49"/>
+    <path d="M500.00 370.56 Q355.02 333.56 206.24 349.44" fill="none" stroke="#C8A96D" stroke-opacity="0.41" stroke-width="1.43"/>
+    <path d="M500.00 370.56 Q399.31 326.00 320.48 249.12" fill="none" stroke="#C8A96D" stroke-opacity="0.41" stroke-width="1.43"/>
+    <path d="M500.00 370.56 Q518.06 270.24 500.00 169.92" fill="none" stroke="#C8A96D" stroke-opacity="0.47" stroke-width="1.60"/>
+    <path d="M679.52 249.12 Q745.19 286.36 793.76 344.16" fill="none" stroke="#C8A96D" stroke-opacity="0.45" stroke-width="1.55"/>
+    <path d="M679.52 249.12 Q500.00 216.81 320.48 249.12" fill="none" stroke="#C8A96D" stroke-opacity="0.37" stroke-width="1.32"/>
+    <path d="M687.68 476.16 Q566.28 339.93 500.00 169.92" fill="none" stroke="#C8A96D" stroke-opacity="0.35" stroke-width="1.26"/>
+    <path d="M500.00 534.24 Q415.94 486.40 320.48 470.88" fill="none" stroke="#C8A96D" stroke-opacity="0.33" stroke-width="1.20"/>
+  </g>
+  <g opacity="1">
+    <circle cx="500.00" cy="370.56" r="27.00" fill="none" stroke="#E8DCC4" stroke-opacity=".22"/>
+    <circle cx="500.00" cy="370.56" r="20.00" fill="#E8DCC4" stroke="#E8DCC4" stroke-width="0" fill-opacity="1"/>
+    <circle cx="500.00" cy="370.56" r="4.80" fill="#11100E"/>
+    <text x="500.00" y="409.56" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="14" fill="#F3EAD8">Page 042</text>
+    <text x="500.00" y="422.56" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">第 042 页</text>
+    <text x="500.00" y="434.56" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#E8DCC4" fill-opacity=".8">PAGE</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="679.52" cy="249.12" r="24.84" fill="none" stroke="#C8A96D" stroke-opacity=".22"/>
+    <circle cx="679.52" cy="249.12" r="17.84" fill="#11100E" stroke="#C8A96D" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="679.52" cy="249.12" r="4.28" fill="#C8A96D"/>
+    <text x="679.52" y="285.96" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Cellulose Display</text>
+    <text x="679.52" y="298.96" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">纤维视网膜</text>
+    <text x="679.52" y="310.96" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#C8A96D" fill-opacity=".8">CONCEPT</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="793.76" cy="344.16" r="22.20" fill="none" stroke="#D27C65" stroke-opacity=".22"/>
+    <circle cx="793.76" cy="344.16" r="15.20" fill="#11100E" stroke="#D27C65" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="793.76" cy="344.16" r="3.65" fill="#D27C65"/>
+    <text x="793.76" y="378.36" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Fibre optics paper</text>
+    <text x="793.76" y="391.36" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">纤维光学论文</text>
+    <text x="793.76" y="403.36" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#D27C65" fill-opacity=".8">CITATION</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="687.68" cy="476.16" r="24.12" fill="none" stroke="#A78750" stroke-opacity=".22"/>
+    <circle cx="687.68" cy="476.16" r="17.12" fill="#11100E" stroke="#A78750" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="687.68" cy="476.16" r="4.11" fill="#A78750"/>
+    <text x="687.68" y="442.04" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Lesson 01</text>
+    <text x="687.68" y="429.04" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">名师讲解 01</text>
+    <text x="687.68" y="417.04" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#A78750" fill-opacity=".8">VIDEO</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="500.00" cy="534.24" r="21.96" fill="none" stroke="#B9AF9E" stroke-opacity=".22"/>
+    <circle cx="500.00" cy="534.24" r="14.96" fill="#11100E" stroke="#B9AF9E" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="500.00" cy="534.24" r="3.59" fill="#B9AF9E"/>
+    <text x="500.00" y="502.28" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Margin notes</text>
+    <text x="500.00" y="489.28" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">页边讨论</text>
+    <text x="500.00" y="477.28" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#B9AF9E" fill-opacity=".8">DISCUSSION</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="320.48" cy="470.88" r="21.24" fill="none" stroke="#968D80" stroke-opacity=".22"/>
+    <circle cx="320.48" cy="470.88" r="14.24" fill="#11100E" stroke="#968D80" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="320.48" cy="470.88" r="3.42" fill="#968D80"/>
+    <text x="320.48" y="439.64" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Glossary</text>
+    <text x="320.48" y="426.64" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">术语表</text>
+    <text x="320.48" y="414.64" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#968D80" fill-opacity=".8">GLOSSARY</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="206.24" cy="349.44" r="21.00" fill="none" stroke="#F3EAD8" stroke-opacity=".22"/>
+    <circle cx="206.24" cy="349.44" r="14.00" fill="#11100E" stroke="#F3EAD8" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="206.24" cy="349.44" r="3.36" fill="#F3EAD8"/>
+    <text x="206.24" y="382.44" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Author note</text>
+    <text x="206.24" y="395.44" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">作者手记</text>
+    <text x="206.24" y="407.44" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#F3EAD8" fill-opacity=".8">AUTHOR</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="320.48" cy="249.12" r="21.72" fill="none" stroke="#C8A96D" stroke-opacity=".22"/>
+    <circle cx="320.48" cy="249.12" r="14.72" fill="#11100E" stroke="#C8A96D" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="320.48" cy="249.12" r="3.53" fill="#C8A96D"/>
+    <text x="320.48" y="282.84" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">Chapter 02</text>
+    <text x="320.48" y="295.84" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">关联章节</text>
+    <text x="320.48" y="307.84" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#C8A96D" fill-opacity=".8">CHAPTER</text>
+  </g>
+  <g opacity="0.9">
+    <circle cx="500.00" cy="169.92" r="23.16" fill="none" stroke="#9C3F2F" stroke-opacity=".22"/>
+    <circle cx="500.00" cy="169.92" r="16.16" fill="#11100E" stroke="#9C3F2F" stroke-width="1.5" fill-opacity="0.86"/>
+    <circle cx="500.00" cy="169.92" r="3.88" fill="#9C3F2F"/>
+    <text x="500.00" y="205.08" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="12" fill="#F3EAD8">AI companion</text>
+    <text x="500.00" y="218.08" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" fill="#B9AF9E">AI 伴读</text>
+    <text x="500.00" y="230.08" text-anchor="middle" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="7" letter-spacing="1.3" fill="#9C3F2F" fill-opacity=".8">AI</text>
+  </g>
+  <line x1="64" y1="650" x2="936" y2="650" stroke="#E8DCC4" stroke-opacity=".14"/>
+    <circle cx="64" cy="674" r="4" fill="#E8DCC4"/>
+    <text x="76" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">Current page</text>
+    <circle cx="176" cy="674" r="4" fill="#C8A96D"/>
+    <text x="188" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">Concept</text>
+    <circle cx="288" cy="674" r="4" fill="#D27C65"/>
+    <text x="300" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">Citation</text>
+    <circle cx="400" cy="674" r="4" fill="#A78750"/>
+    <text x="412" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">Lesson</text>
+    <circle cx="512" cy="674" r="4" fill="#B9AF9E"/>
+    <text x="524" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">Discussion</text>
+    <circle cx="624" cy="674" r="4" fill="#9C3F2F"/>
+    <text x="636" y="678" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" fill="#B9AF9E">AI companion</text>
+  <text x="936" y="678" text-anchor="end" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="9" letter-spacing="1.5" fill="#968D80">BOOKLN / ONE-CODE ENTRY</text>
+</svg>

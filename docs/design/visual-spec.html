@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookln / CODEX 1. — Visual Spec</title>
+  <style>
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-semibold.woff2") format("woff2");
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSerifSC";
+      src: url("../../public/fonts/noto-serif-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-regular.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+
+    :root {
+      --ink-0: #11100e;
+      --ink-1: #181613;
+      --ink-2: #211d18;
+      --ink-3: #2b251e;
+      --paper: #e8dcc4;
+      --text: #f3ead8;
+      --muted: #b9af9e;
+      --faint: #968d80;
+      --gold: #c8a96d;
+      --gold-2: #a78750;
+      --rust: #9c3f2f;
+      --rust-text: #d27c65;
+      --line: rgba(232, 220, 196, 0.17);
+      --line-strong: rgba(232, 220, 196, 0.34);
+      --sans: "NotoSansSC", "PingFang SC", sans-serif;
+      --serif: "NotoSerifSC", "Songti SC", serif;
+      --display: "Cormorant", "Bodoni 72", serif;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--ink-0); }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(90rem 54rem at 84% 2%, rgba(133, 93, 48, 0.13), transparent 58%),
+        radial-gradient(52rem 40rem at 4% 35%, rgba(125, 58, 38, 0.08), transparent 62%),
+        var(--ink-0);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; }
+    .board { width: 100%; max-width: 1440px; margin: 0 auto; padding: 40px clamp(22px, 4.45vw, 64px) 100px; }
+    .topline {
+      display: flex; align-items: center; justify-content: space-between; gap: 32px;
+      padding-bottom: 20px; border-bottom: 1px solid var(--line);
+      color: var(--muted); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    }
+    .wordmark { display: inline-flex; align-items: center; gap: 12px; color: var(--text); font: 500 25px/1 var(--display); letter-spacing: 0.01em; text-transform: none; }
+    .wordmark::before { content: ""; width: 12px; height: 27px; border-left: 1px solid var(--gold); border-right: 1px solid var(--gold-2); }
+    .tiny { font-size: 10px; line-height: 1.6; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+    .micro { font-size: 12px; line-height: 1.6; color: var(--muted); }
+    .eyebrow { display: flex; align-items: center; gap: 12px; color: var(--gold); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 30px; height: 1px; background: var(--gold); }
+    .rule { height: 1px; background: var(--line); }
+
+    .hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(330px, 0.85fr); gap: clamp(40px, 7vw, 100px); align-items: center; min-height: 800px; padding: 80px 0 92px; }
+    .hero-copy { max-width: 740px; }
+    .hero h1 { margin: 25px 0 28px; font: 500 clamp(68px, 9vw, 142px)/0.78 var(--display); letter-spacing: -0.045em; }
+    .hero h1 span { display: block; color: var(--gold); }
+    .hero-sub { max-width: 610px; margin: 0 0 42px; font: 500 clamp(23px, 2.2vw, 38px)/1.4 var(--serif); letter-spacing: -0.02em; color: var(--text); }
+    .hero-sub em { color: var(--rust-text); font-style: normal; }
+    .hero-meta { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; width: min(100%, 660px); padding-top: 20px; border-top: 1px solid var(--line); }
+    .hero-meta strong { display: block; margin-bottom: 4px; color: var(--text); font-size: 12px; font-weight: 500; }
+    .hero-meta span { color: var(--muted); font-size: 11px; }
+    .hero-art { position: relative; display: grid; place-items: center; min-height: 560px; }
+    .hero-art::before { content: ""; position: absolute; inset: 9% 9%; border-radius: 50%; background: radial-gradient(circle, rgba(200, 169, 109, 0.12), transparent 66%); filter: blur(12px); }
+    .book-wrap { position: relative; width: min(72%, 430px); transform: perspective(1500px) rotateY(-11deg) rotateX(3deg); filter: drop-shadow(26px 34px 36px rgba(0,0,0,0.65)); }
+    .book-cover { position: relative; aspect-ratio: 148 / 210; overflow: hidden; border-radius: 1px 5px 5px 1px; background: var(--ink-2) url("book-cover-art.png") center / cover no-repeat; border: 1px solid rgba(200,169,109,0.25); }
+    .book-cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(255,255,255,.06), transparent 22%, transparent 73%, rgba(0,0,0,.18)); }
+    .book-edge { position: absolute; top: 2%; right: -16px; width: 18px; height: 96%; border-radius: 0 4px 4px 0; background: repeating-linear-gradient(90deg, #b8a887 0 1px, #e0d4ba 1px 3px); box-shadow: 8px 0 22px rgba(0,0,0,.28); }
+    .orbit { position: absolute; width: 90%; aspect-ratio: 1; border: 1px solid rgba(200,169,109,.19); border-radius: 50%; }
+    .orbit::before, .orbit::after { content: ""; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 18px var(--gold); }
+    .orbit::before { top: 18%; left: 10%; }
+    .orbit::after { right: 5%; bottom: 24%; }
+    .art-caption { position: absolute; right: 1%; bottom: 3%; writing-mode: vertical-rl; color: var(--faint); font-size: 9px; letter-spacing: .18em; text-transform: uppercase; }
+
+    .section { padding: 76px 0; border-top: 1px solid var(--line); }
+    .section-head { display: grid; grid-template-columns: 130px minmax(0, 1fr) minmax(220px, 0.55fr); gap: 24px; align-items: start; margin-bottom: 44px; }
+    .section-index { padding-top: 7px; color: var(--gold); font: 500 14px/1 var(--display); letter-spacing: .12em; }
+    .section-head h2 { margin: 0; font: 500 clamp(32px, 4.4vw, 62px)/1.04 var(--serif); letter-spacing: -0.035em; }
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+
+    .directions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .direction { position: relative; min-height: 260px; padding: 22px; overflow: hidden; border: 1px solid var(--line); background: rgba(24,22,19,.72); }
+    .direction.selected { border-color: rgba(200,169,109,.58); background: linear-gradient(145deg, rgba(200,169,109,.11), rgba(24,22,19,.86) 48%); }
+    .direction .tag { display: flex; justify-content: space-between; color: var(--muted); font-size: 10px; letter-spacing: .13em; text-transform: uppercase; }
+    .direction h3 { margin: 28px 0 12px; font: 500 30px/1.05 var(--display); }
+    .direction p { max-width: 290px; margin: 0; color: var(--muted); font-size: 12px; }
+    .direction .swatches { position: absolute; left: 22px; right: 22px; bottom: 22px; display: flex; height: 5px; }
+    .direction .swatches i { flex: 1; }
+    .d-a i:nth-child(1) { background: #e9e6df; } .d-a i:nth-child(2) { background: #a5a098; } .d-a i:nth-child(3) { background: #272522; }
+    .d-b i:nth-child(1) { background: #11100e; } .d-b i:nth-child(2) { background: #c8a96d; } .d-b i:nth-child(3) { background: #e8dcc4; }
+    .d-c i:nth-child(1) { background: #5b241c; } .d-c i:nth-child(2) { background: #d27c65; } .d-c i:nth-child(3) { background: #d5c4a1; }
+    .selected-mark { position: absolute; top: 0; right: 0; padding: 6px 9px; background: var(--gold); color: var(--ink-0); font-size: 8px; font-weight: 500; letter-spacing: .14em; }
+    .direction-note { margin-top: 16px; color: var(--faint); font-size: 10px; letter-spacing: .03em; }
+
+    .token-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
+    .panel { padding: 24px; border: 1px solid var(--line); background: rgba(24,22,19,.7); }
+    .panel-label { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 22px; color: var(--muted); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; }
+    .swatch-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .swatch { min-height: 122px; padding: 12px; display: flex; flex-direction: column; justify-content: flex-end; border: 1px solid rgba(255,255,255,.08); }
+    .swatch strong { font-size: 11px; font-weight: 500; }
+    .swatch span { font-size: 9px; opacity: .7; }
+    .swatch.light { color: #2a241d; }
+    .swatch.ink0 { background: var(--ink-0); } .swatch.ink1 { background: var(--ink-1); } .swatch.ink2 { background: var(--ink-2); } .swatch.ink3 { background: var(--ink-3); }
+    .swatch.gold { background: var(--gold); } .swatch.paper { background: var(--paper); } .swatch.rust { background: var(--rust); } .swatch.rusttext { background: var(--rust-text); }
+    .contrast-list { display: grid; gap: 14px; }
+    .contrast-row { display: grid; grid-template-columns: 18px 1fr auto; gap: 10px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+    .contrast-row:last-child { border-bottom: 0; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--gold); }
+    .contrast-row code { color: var(--muted); font: 11px/1.4 ui-monospace, monospace; }
+    .ratio { color: var(--gold); font: 500 14px/1 var(--display); }
+    .type-spec { display: grid; gap: 22px; margin-top: 18px; }
+    .type-row { display: grid; grid-template-columns: 88px 1fr 120px; gap: 18px; align-items: baseline; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .type-row:last-child { border-bottom: 0; padding-bottom: 0; }
+    .type-row .meta { color: var(--faint); font-size: 9px; letter-spacing: .12em; text-transform: uppercase; }
+    .type-row .value { color: var(--muted); font: 10px/1.5 ui-monospace, monospace; text-align: right; }
+    .display-sample { font: 500 60px/.86 var(--display); letter-spacing: -.03em; }
+    .serif-sample { font: 500 32px/1.2 var(--serif); }
+    .sans-sample { font: 400 16px/1.65 var(--sans); }
+
+    .components { display: grid; grid-template-columns: 1.05fr .95fr; gap: 18px; }
+    .button-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
+    .btn { min-height: 46px; padding: 0 19px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid transparent; color: var(--ink-0); background: var(--paper); font: 500 12px/1 var(--sans); text-decoration: none; }
+    .btn:hover { background: var(--gold); }
+    .btn.ghost { border-color: var(--line-strong); background: transparent; color: var(--text); }
+    .btn.ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .btn.disabled { background: var(--ink-3); color: var(--faint); pointer-events: none; }
+    .state-line { display: flex; gap: 20px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--faint); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+    .state-line b { color: var(--gold); font-weight: 500; }
+    .edition-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .edition { min-height: 206px; padding: 16px; display: flex; flex-direction: column; border: 1px solid var(--line); }
+    .edition.recommended { border-color: rgba(200,169,109,.6); background: rgba(200,169,109,.06); }
+    .edition .no { color: var(--gold); font: 500 12px/1 var(--display); }
+    .edition h4 { margin: 28px 0 8px; font: 500 25px/1 var(--display); }
+    .edition p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .edition .price { margin-top: auto; padding-top: 22px; color: var(--faint); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; }
+    .table-wrap { width: 100%; max-width: 100%; overflow-x: auto; border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th, td { padding: 13px 14px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { color: var(--faint); font-size: 9px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td:last-child, th:last-child { background: rgba(200,169,109,.07); color: var(--text); }
+    .table-note { margin-top: 10px; color: var(--faint); font-size: 9px; }
+
+    .chapters { padding-bottom: 20px; }
+    .chapter { position: relative; min-height: 760px; display: grid; grid-template-columns: 120px minmax(0, 1.08fr) minmax(310px, .92fr); gap: 38px; align-items: center; padding: 84px 0; border-top: 1px solid var(--line); }
+    .chapter:first-child { border-top: 0; }
+    .chapter-rail { align-self: stretch; display: flex; flex-direction: column; justify-content: space-between; padding-top: 2px; }
+    .chapter-no { color: var(--gold); font: 500 42px/1 var(--display); letter-spacing: -.04em; }
+    .chapter-progress { display: grid; gap: 7px; color: var(--faint); font: 9px/1 ui-monospace, monospace; }
+    .chapter-progress span { display: flex; align-items: center; gap: 8px; }
+    .chapter-progress span::before { content: ""; width: 25px; height: 1px; background: var(--line-strong); }
+    .chapter-progress span.active { color: var(--gold); }
+    .chapter-progress span.active::before { background: var(--gold); }
+    .chapter-copy { max-width: 650px; }
+    .chapter h3 { margin: 24px 0 22px; font: 500 clamp(55px, 7.2vw, 110px)/0.83 var(--display); letter-spacing: -.048em; }
+    .chapter h3 em { display: block; color: var(--gold); font-style: normal; }
+    .chapter-sub { max-width: 560px; margin: 0 0 32px; font: 500 clamp(20px, 2.2vw, 31px)/1.36 var(--serif); letter-spacing: -.025em; }
+    .chapter-copy p { max-width: 560px; color: var(--muted); font-size: 13px; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 34px; }
+    .metric { min-height: 104px; padding: 14px; border-top: 1px solid var(--line-strong); }
+    .metric strong { display: block; color: var(--gold); font: 500 25px/1 var(--display); }
+    .metric span { display: block; margin-top: 13px; color: var(--muted); font-size: 9px; line-height: 1.45; }
+    .chapter-art { position: relative; min-height: 470px; display: grid; place-items: center; overflow: hidden; }
+    .chapter-art::after { content: attr(data-caption); position: absolute; right: 0; bottom: 2%; color: var(--faint); font-size: 8px; letter-spacing: .14em; text-transform: uppercase; }
+    .layer-stack { position: relative; width: 76%; height: 360px; transform: rotate(-8deg); }
+    .layer { position: absolute; inset: 0; border: 1px solid rgba(200,169,109,.26); background: linear-gradient(160deg, rgba(232,220,196,.12), rgba(232,220,196,.015)); }
+    .layer:nth-child(1) { transform: translate(70px, -70px) rotate(3deg); }
+    .layer:nth-child(2) { transform: translate(52px, -48px) rotate(2deg); }
+    .layer:nth-child(3) { transform: translate(34px, -26px) rotate(1deg); }
+    .layer:nth-child(4) { transform: translate(17px, -9px); }
+    .layer:nth-child(5) { background: repeating-linear-gradient(0deg, rgba(20,18,15,.9) 0 2px, transparent 2px 6px); }
+    .hinge { position: absolute; left: 24%; top: 4%; bottom: 4%; border-left: 1px solid var(--gold); box-shadow: -8px 0 28px rgba(200,169,109,.15); }
+    .fan { position: relative; width: 82%; height: 400px; }
+    .leaf { position: absolute; left: 45%; top: 13%; width: 49%; height: 73%; transform-origin: 0 50%; border: 1px solid rgba(232,220,196,.25); background: linear-gradient(100deg, #d8cab0, #9f927d); opacity: .84; }
+    .leaf:nth-child(1) { transform: rotate(-24deg); }
+    .leaf:nth-child(2) { transform: rotate(-12deg); background: linear-gradient(100deg, #e5d7bc, #b9a98e); }
+    .leaf:nth-child(3) { transform: rotate(0deg); background: linear-gradient(100deg, #efe2ca, #cbb99a); }
+    .leaf:nth-child(4) { transform: rotate(13deg); background: linear-gradient(100deg, #d7c8ad, #a7987f); }
+    .ribbon { position: absolute; left: 44%; top: 4%; width: 8px; height: 79%; background: var(--rust); transform: rotate(7deg); transform-origin: top; box-shadow: 0 12px 22px rgba(0,0,0,.35); }
+    .node-map { position: relative; width: 92%; aspect-ratio: 1; border: 1px solid var(--line); border-radius: 50%; background: radial-gradient(circle, rgba(200,169,109,.13), transparent 58%); }
+    .node-map::before { content: ""; position: absolute; inset: 11% 18%; border: 1px solid rgba(200,169,109,.22); transform: rotate(19deg); border-radius: 50%; }
+    .node { position: absolute; width: 9px; height: 9px; border: 1px solid var(--gold); border-radius: 50%; background: var(--ink-0); box-shadow: 0 0 14px rgba(200,169,109,.5); }
+    .node.a { left: 14%; top: 45%; } .node.b { left: 38%; top: 24%; } .node.c { left: 63%; top: 43%; } .node.d { left: 48%; top: 70%; } .node.e { left: 79%; top: 22%; }
+    .node-line { position: absolute; height: 1px; transform-origin: left center; background: rgba(200,169,109,.44); }
+    .nl1 { left: 15%; top: 46%; width: 27%; transform: rotate(-36deg); } .nl2 { left: 39%; top: 26%; width: 27%; transform: rotate(37deg); } .nl3 { left: 64%; top: 44%; width: 22%; transform: rotate(-36deg); } .nl4 { left: 49%; top: 71%; width: 17%; transform: rotate(-52deg); }
+    .qr-card { position: absolute; right: 7%; bottom: 16%; width: 96px; padding: 10px; background: var(--paper); color: #1d1a16; transform: rotate(3deg); box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+    .qr-grid { display: grid; grid-template-columns: repeat(7, 1fr); aspect-ratio: 1; gap: 2px; }
+    .qr-grid i:nth-child(3n), .qr-grid i:nth-child(5n+1), .qr-grid i:nth-child(11n) { background: #17140f; }
+    .qr-card small { display: block; margin-top: 8px; font-size: 6px; letter-spacing: .1em; text-transform: uppercase; }
+    .pedestal-wrap { position: relative; width: 92%; height: 430px; display: grid; place-items: end center; }
+    .plinth { width: 54%; height: 28%; background: linear-gradient(90deg, #17130f, #49321f 50%, #140f0c); box-shadow: 0 28px 60px rgba(0,0,0,.55); }
+    .plinth::before { content: ""; display: block; width: 108%; height: 8px; margin-left: -4%; background: #755126; transform: translateY(-4px); }
+    .floating-book { position: absolute; top: 9%; width: 40%; aspect-ratio: 148/210; transform: rotate(-18deg) perspective(1000px) rotateY(17deg); background: var(--ink-2) url("book-cover-art.png") center/cover; border: 1px solid rgba(200,169,109,.34); box-shadow: 22px 24px 42px rgba(0,0,0,.5); }
+    .floating-book::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, rgba(255,255,255,.08), transparent 28%); }
+    .chapter.deployment .chapter-art { align-items: start; }
+    .edition-tower { width: 92%; display: grid; gap: 10px; transform: rotate(2deg); }
+    .edition-tower .edition { min-height: 118px; background: rgba(24,22,19,.8); }
+    .edition-tower .edition:nth-child(2) { margin-left: 12%; }
+    .edition-tower .edition:nth-child(3) { margin-left: 24%; }
+    .foot { display: flex; justify-content: space-between; gap: 28px; padding-top: 26px; border-top: 1px solid var(--line); color: var(--faint); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; padding-top: 64px; }
+      .hero-art { min-height: 470px; order: -1; }
+      .book-wrap { width: min(52%, 320px); }
+      .section-head { grid-template-columns: 70px 1fr; }
+      .section-head p { grid-column: 2; }
+      .directions { grid-template-columns: 1fr; }
+      .direction { min-height: 210px; }
+      .token-grid, .components { grid-template-columns: 1fr; }
+      .chapter { grid-template-columns: 74px 1fr; min-height: 680px; }
+      .chapter-art { grid-column: 2; min-height: 380px; }
+      .chapter-rail { grid-row: span 2; }
+      .chapter-progress { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      body { font-size: 15px; }
+      .board { padding: 22px 18px 64px; }
+      .topline { align-items: flex-start; gap: 16px; }
+      .topline .tiny { text-align: right; }
+      .hero { padding: 44px 0 60px; gap: 36px; }
+      .hero-art { min-height: 390px; }
+      .book-wrap { width: 58%; }
+      .hero h1 { margin: 20px 0 22px; font-size: 78px; }
+      .hero-sub { margin-bottom: 30px; font-size: 21px; }
+      .hero-meta { grid-template-columns: 1fr 1fr; }
+      .hero-meta > div:last-child { grid-column: 1 / -1; }
+      .section { padding: 58px 0; }
+      .section-head { grid-template-columns: 1fr; gap: 10px; margin-bottom: 30px; }
+      .section-head h2 { font-size: 38px; }
+      .section-head p { grid-column: auto; }
+      .section-index { padding-top: 0; }
+      .panel { padding: 18px; }
+      .swatch-list { grid-template-columns: 1fr 1fr; }
+      .swatch { min-height: 100px; }
+      .type-row { grid-template-columns: 72px 1fr; gap: 10px; }
+      .type-row .value { grid-column: 2; text-align: left; }
+      .display-sample { font-size: 46px; }
+      .serif-sample { font-size: 25px; }
+      .components { gap: 12px; }
+      .edition-grid { grid-template-columns: 1fr; }
+      .edition { min-height: 160px; }
+      .chapter { display: block; min-height: auto; padding: 62px 0; }
+      .chapter-rail { display: flex; flex-direction: row; justify-content: flex-start; gap: 18px; align-items: baseline; margin-bottom: 22px; }
+      .chapter-no { font-size: 34px; }
+      .chapter h3 { font-size: 61px; }
+      .chapter-sub { font-size: 20px; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metrics .metric:last-child { grid-column: 1 / -1; }
+      .chapter-art { margin-top: 30px; min-height: 330px; }
+      .chapter-art::after { right: auto; left: 0; }
+      .layer-stack { width: 82%; height: 280px; }
+      .fan { height: 310px; }
+      .node-map { width: 92%; }
+      .pedestal-wrap { height: 340px; }
+      .foot { flex-direction: column; gap: 10px; }
+      .table-wrap { overflow-x: auto; }
+      table { min-width: 610px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <div class="topline">
+      <div class="wordmark">bookln</div>
+      <div class="tiny">Visual system 01 / 2026-10-26 / 1440 + 390</div>
+    </div>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">CODEX 1 / A reading object</div>
+        <h1>Analog<span>by nature.</span></h1>
+        <p class="hero-sub">A dark, warm, editorial interface for an object that refuses to flicker. <em>Paper first. Signal second.</em></p>
+        <div class="hero-meta">
+          <div><strong>Desktop</strong><span>1440 · 12 col · 64 gutter</span></div>
+          <div><strong>Mobile</strong><span>390 · 4 col · 18 gutter</span></div>
+          <div><strong>Contrast</strong><span>AA body · 4.63–15.91:1</span></div>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Book cover mockup">
+        <div class="orbit"></div>
+        <div class="book-wrap">
+          <div class="book-cover"><div class="book-edge"></div></div>
+        </div>
+        <div class="art-caption">148 × 210 mm / foil on cloth / 30 mm</div>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="directions-title">
+      <div class="section-head">
+        <div class="section-index">01 / 07</div>
+        <h2 id="directions-title">Direction study</h2>
+        <p>Three interpretations of “quiet technology”. The archive-facing Editorial Instrument direction is selected for implementation.</p>
+      </div>
+      <div class="directions">
+        <article class="direction d-a">
+          <div class="tag"><span>A / MONOLITH</span><span>01</span></div>
+          <h3>Cold Museum</h3>
+          <p>White space, graphite type, object as sculpture. Maximum quiet, minimum warmth; loses the felt, collectible quality of paper.</p>
+          <div class="swatches"><i></i><i></i><i></i></div>
+        </article>
+        <article class="direction d-b selected">
+          <div class="selected-mark">SELECTED</div>
+          <div class="tag"><span>B / INSTRUMENT</span><span>02</span></div>
+          <h3>Editorial Instrument</h3>
+          <p>Warm black, foil, measured type and technical rules. Reads like a publisher’s archive crossed with a precision instrument.</p>
+          <div class="swatches"><i></i><i></i><i></i></div>
+        </article>
+        <article class="direction d-c">
+          <div class="tag"><span>C / FIBRE</span><span>03</span></div>
+          <h3>Living Archive</h3>
+          <p>Oxide red, exposed fibre and tactile grain. Emotional and organic, but less able to carry the benchmark and deployment chapters.</p>
+          <div class="swatches"><i></i><i></i><i></i></div>
+        </article>
+      </div>
+      <p class="direction-note">Decision: B keeps the physical-object story legible across all six chapters and gives metric/CTA components a stable, high-contrast home.</p>
+    </section>
+
+    <section class="section" aria-labelledby="tokens-title">
+      <div class="section-head">
+        <div class="section-index">02 / 07</div>
+        <h2 id="tokens-title">Tokens & type</h2>
+        <p>AA contrast is verified for all body and utility text. Rust is a material accent, never a small-text colour on dark.</p>
+      </div>
+      <div class="token-grid">
+        <div class="panel">
+          <div class="panel-label"><span>Colour tokens</span><span>warm dark / paper / foil</span></div>
+          <div class="swatch-list">
+            <div class="swatch ink0"><strong>--ink-0</strong><span>#11100E</span></div>
+            <div class="swatch ink1"><strong>--ink-1</strong><span>#181613</span></div>
+            <div class="swatch ink2"><strong>--ink-2</strong><span>#211D18</span></div>
+            <div class="swatch ink3"><strong>--ink-3</strong><span>#2B251E</span></div>
+            <div class="swatch gold light"><strong>--gold</strong><span>#C8A96D</span></div>
+            <div class="swatch paper light"><strong>--paper</strong><span>#E8DCC4</span></div>
+            <div class="swatch rust"><strong>--rust</strong><span>#9C3F2F</span></div>
+            <div class="swatch rusttext"><strong>--rust-text</strong><span>#D27C65</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-label"><span>Contrast</span><span>WCAG 2.2</span></div>
+          <div class="contrast-list">
+            <div class="contrast-row"><i class="dot"></i><code>text / ink-0</code><span class="ratio">15.91</span></div>
+            <div class="contrast-row"><i class="dot"></i><code>muted / ink-1</code><span class="ratio">8.33</span></div>
+            <div class="contrast-row"><i class="dot"></i><code>gold / ink-1</code><span class="ratio">8.04</span></div>
+            <div class="contrast-row"><i class="dot"></i><code>ink-2 / paper</code><span class="ratio">12.34</span></div>
+            <div class="contrast-row"><i class="dot" style="background:var(--faint)"></i><code>faint / ink-0</code><span class="ratio">5.81</span></div>
+            <div class="contrast-row"><i class="dot" style="background:var(--faint)"></i><code>faint / ink-3</code><span class="ratio">4.63</span></div>
+            <div class="contrast-row"><i class="dot" style="background:var(--rust-text)"></i><code>rust-text / ink-0</code><span class="ratio">6.17</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:18px">
+        <div class="panel-label"><span>Type ramp</span><span>Cormorant / Noto Serif SC / Noto Sans SC</span></div>
+        <div class="type-spec">
+          <div class="type-row"><span class="meta">Display</span><span class="display-sample">Analog by nature.</span><span class="value">clamp(68–142) / .83</span></div>
+          <div class="type-row"><span class="meta">Serif H2</span><span class="serif-sample">纸端，即云端。</span><span class="value">24–42 / 1.36</span></div>
+          <div class="type-row"><span class="meta">Body</span><span class="sans-sample">知识进入页边，阅读心流不被中断。自然光下的纸页，保留真实触感。</span><span class="value">14–16 / 1.65</span></div>
+          <div class="type-row"><span class="meta">Utility</span><span class="tiny">SCROLL 00 — 15 / MATERIAL ARCHITECTURE</span><span class="value">9–11 / .14em</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="components-title">
+      <div class="section-head">
+        <div class="section-index">03 / 07</div>
+        <h2 id="components-title">Components</h2>
+        <p>Square geometry, hairline borders and a single warm highlight. Interaction states should feel engraved rather than glowing.</p>
+      </div>
+      <div class="components">
+        <div class="panel">
+          <div class="panel-label"><span>Action system</span><span>default / hover / disabled</span></div>
+          <div class="button-row">
+            <a class="btn" href="#deployment">Reserve your edition →</a>
+            <a class="btn ghost" href="#benchmark">View the field notes</a>
+            <span class="btn disabled">Sold out</span>
+          </div>
+          <div class="state-line"><span><b>Rest</b> paper / ink-0</span><span><b>Hover</b> gold / ink-0</span><span><b>Focus</b> 2px gold outer</span><span><b>Pressed</b> y+1px</span></div>
+        </div>
+        <div class="panel">
+          <div class="panel-label"><span>Edition cards</span><span>compact / 3-up / same height</span></div>
+          <div class="edition-grid">
+            <article class="edition"><span class="no">01</span><h4>Standard</h4><p>Single bound volume + lifetime companion access.</p><span class="price">Price pending</span></article>
+            <article class="edition recommended"><span class="no">02</span><h4>Pro</h4><p>Clothbound volume + AI study pack + metal marker.</p><span class="price">Price pending</span></article>
+            <article class="edition"><span class="no">03</span><h4>Enterprise</h4><p>Classroom dashboard + shared reading permissions.</p><span class="price">Price pending</span></article>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:18px" class="table-wrap">
+        <table aria-label="Benchmark table component">
+          <thead><tr><th>Dimension</th><th>iPad Pro*</th><th>Kindle*</th><th>CODEX 1</th></tr></thead>
+          <tbody>
+            <tr><td>Power</td><td>Rechargeable</td><td>Weeks-class battery</td><td>No battery chemistry†</td></tr>
+            <tr><td>Focus</td><td>General-purpose apps</td><td>Reading-first</td><td>Reading-only by design</td></tr>
+            <tr><td>Durability</td><td>Glass display</td><td>E-reader construction</td><td>Paper-first construction†</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">* Context only; no comparative lab testing was performed. † Concept claim, validation required before launch.</p>
+    </section>
+
+    <section class="chapters" aria-labelledby="chapters-title">
+      <div class="section-head" style="padding-top:76px">
+        <div class="section-index">04 / 07</div>
+        <h2 id="chapters-title">Six chapters</h2>
+        <p>One continuous 0–100 scroll timeline. Copy enters at 30 / 50 / 72% of each chapter; the 3D scene changes first, then the reading layer resolves.</p>
+      </div>
+
+      <article class="chapter" id="arrival">
+        <div class="chapter-rail"><span class="chapter-no">00</span><div class="chapter-progress"><span class="active">0–15</span><span>ARRIVAL</span><span>DESK / SHADOW</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">A new reading object</div>
+          <h3>CODEX<em>1.</em></h3>
+          <p class="chapter-sub">The Zero-Watt Cognitive Engine.<br />零功耗认知引擎。</p>
+          <p>Local by nature. Silent by design. Pure cellulose display matrix.</p>
+          <div class="metrics"><div class="metric"><strong>210</strong><span>MM OBJECT HEIGHT</span></div><div class="metric"><strong>0</strong><span>BATTERY CELLS†</span></div><div class="metric"><strong>1</strong><span>OBJECT TO UNFOLD</span></div></div>
+        </div>
+        <div class="chapter-art" data-caption="Hero / closed form / 3/4 camera">
+          <div class="book-wrap" style="width:clamp(210px, 54%, 360px)">
+            <div class="book-cover"><div class="book-edge"></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="chapter" id="structure">
+        <div class="chapter-rail"><span class="chapter-no">01</span><div class="chapter-progress"><span>0–15</span><span class="active">15–35</span><span>STRUCTURE</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Material architecture</div>
+          <h3>Cellulose<em>Display™</em></h3>
+          <p class="chapter-sub">A reading surface built from fibre, air and light.</p>
+          <p>由纤维、空气与自然光构成的阅读表面。六层材料在爆炸视图中逐层剥离，锁线张力成为唯一需要被感知的机械结构。</p>
+          <div class="metrics"><div class="metric"><strong>179.9°</strong><span>AMBIENT VIEW†</span></div><div class="metric"><strong>6</strong><span>MATERIAL LAYERS</span></div><div class="metric"><strong>180°</strong><span>LAY-FLAT</span></div></div>
+        </div>
+        <div class="chapter-art" data-caption="Macro material study / exploded view">
+          <div class="layer-stack"><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="layer"></div><div class="hinge"></div></div>
+        </div>
+      </article>
+
+      <article class="chapter" id="interaction">
+        <div class="chapter-rail"><span class="chapter-no">02</span><div class="chapter-progress"><span>15–35</span><span class="active">35–50</span><span>TOUCH</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Touch is the interface</div>
+          <h3>Haptic<em>Random Access</em></h3>
+          <p class="chapter-sub">Every page is one gesture away.</p>
+          <p>每一次翻动，都直达想去的地方。页片在气流中展开，织物书签以一条清晰的红线落回阅读位置。</p>
+          <div class="metrics"><div class="metric"><strong>280</strong><span>MM BOOKMARK</span></div><div class="metric"><strong>0</strong><span>MENUS</span></div><div class="metric"><strong>1</strong><span>LAST POSITION</span></div></div>
+        </div>
+        <div class="chapter-art" data-caption="Page fan / heat map omitted for legibility">
+          <div class="fan"><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="leaf"></div><div class="ribbon"></div></div>
+        </div>
+      </article>
+
+      <article class="chapter" id="neural-link">
+        <div class="chapter-rail"><span class="chapter-no">03</span><div class="chapter-progress"><span>35–50</span><span class="active">50–75</span><span>BRIDGE</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">The physical-to-digital bridge</div>
+          <h3>Analog<em>at heart.</em></h3>
+          <p class="chapter-sub">Digital in Soul.<br />纸端，即云端。</p>
+          <p>扫描页边标记，打开与当前页对应的云端知识层。讲解、引文与讨论进入页边，但阅读本身仍留在纸页上。</p>
+          <div class="metrics"><div class="metric"><strong>01</strong><span>SCAN TO CONTEXT</span></div><div class="metric"><strong>∞</strong><span>MARGIN LAYER</span></div><div class="metric"><strong>0</strong><span>FEED DISTRACTIONS</span></div></div>
+        </div>
+        <div class="chapter-art" data-caption="Matrix mark / node graph / concept preview">
+          <div class="node-map"><i class="node a"></i><i class="node b"></i><i class="node c"></i><i class="node d"></i><i class="node e"></i><i class="node-line nl1"></i><i class="node-line nl2"></i><i class="node-line nl3"></i><i class="node-line nl4"></i><div class="qr-card"><div class="qr-grid"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>Preview / replace URL</small></div></div>
+        </div>
+      </article>
+
+      <article class="chapter" id="benchmark">
+        <div class="chapter-rail"><span class="chapter-no">04</span><div class="chapter-progress"><span>50–75</span><span class="active">75–90</span><span>BENCHMARK</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">A different kind of engine</div>
+          <h3>A different<em>kind of engine.</em></h3>
+          <p class="chapter-sub">No recharge. No feeds. No glow.</p>
+          <p>不比较跑分，只比较注意力如何被使用。参数表将第三方设备作为语境参考，不宣称实验室对等测试。</p>
+          <div class="metrics"><div class="metric"><strong>0 Wh†</strong><span>CONCEPT POWER</span></div><div class="metric"><strong>100%</strong><span>READING MODE</span></div><div class="metric"><strong>01</strong><span>PURPOSE</span></div></div>
+        </div>
+        <div class="chapter-art" data-caption="45° pedestal / slow object rotation">
+          <div class="pedestal-wrap"><div class="floating-book"></div><div class="plinth"></div></div>
+        </div>
+      </article>
+
+      <article class="chapter deployment" id="deployment">
+        <div class="chapter-rail"><span class="chapter-no">05</span><div class="chapter-progress"><span>75–90</span><span class="active">90–100</span><span>DEPLOY</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Choose your edition</div>
+          <h3>Deploy to<em>your reality.</em></h3>
+          <p class="chapter-sub">One object. Three ways to begin.</p>
+          <p>书本闭合，滑入黑色函套。页面下方只保留一个决定：选择你与知识相处的方式。</p>
+          <div class="button-row" style="margin-top:30px"><a class="btn" href="#deployment">Reserve your edition →</a><a class="btn ghost" href="#arrival">Back to the object</a></div>
+        </div>
+        <div class="chapter-art" data-caption="Slipcase / seal / three editions">
+          <div class="edition-tower">
+            <article class="edition"><span class="no">01 / STANDARD</span><h4>Standard</h4><p>Single volume + lifetime companion access.</p></article>
+            <article class="edition recommended"><span class="no">02 / PRO</span><h4>Pro</h4><p>Clothbound + AI study pack + metal marker.</p></article>
+            <article class="edition"><span class="no">03 / ENTERPRISE</span><h4>Enterprise</h4><p>Classroom dashboard + shared reading.</p></article>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <footer class="foot">
+      <span>Bookln / Asset & interaction specification / Concept build</span>
+      <span>WCAG AA verified · No audio assets · v1.0</span>
+    </footer>
+  </main>
+</body>
+</html>

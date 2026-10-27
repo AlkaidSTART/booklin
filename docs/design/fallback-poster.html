@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookln / CODEX 1 — static poster</title>
+  <style>
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-semibold.woff2") format("woff2");
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSerifSC";
+      src: url("../../public/fonts/noto-serif-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-regular.woff2") format("woff2");
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: swap;
+    }
+
+    :root {
+      --ink-0: #11100e;
+      --ink-1: #181613;
+      --ink-2: #211d18;
+      --paper: #e8dcc4;
+      --text: #f3ead8;
+      --muted: #b9af9e;
+      --faint: #968d80;
+      --gold: #c8a96d;
+      --gold-2: #a78750;
+      --rust: #9c3f2f;
+      --line: rgba(232, 220, 196, 0.17);
+      --line-strong: rgba(232, 220, 196, 0.34);
+      --sans: "NotoSansSC", "PingFang SC", sans-serif;
+      --serif: "NotoSerifSC", "Songti SC", serif;
+      --display: "Cormorant", "Bodoni 72", serif;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(80rem 58rem at 78% -8%, rgba(133, 93, 48, 0.2), transparent 58%),
+        radial-gradient(52rem 38rem at 3% 80%, rgba(125, 58, 38, 0.12), transparent 62%),
+        var(--ink-0);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.07;
+      mix-blend-mode: soft-light;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+    }
+
+    .poster {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 34px 64px 26px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+    .wordmark { display: block; width: 122px; height: auto; }
+    .topline .meta {
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1.4;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+      text-align: right;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.03fr) minmax(380px, 0.97fr);
+      gap: clamp(38px, 6vw, 90px);
+      align-items: center;
+      min-height: 0;
+      padding: 28px 0 18px;
+    }
+    .copy { max-width: 680px; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      color: var(--gold);
+      font-size: 10px;
+      letter-spacing: 0.19em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--gold); }
+    h1 {
+      margin: 25px 0 22px;
+      font: 500 clamp(104px, 9.6vw, 148px) / 0.78 var(--display);
+      letter-spacing: -0.05em;
+    }
+    h1 span { display: block; color: var(--gold); }
+    .sub {
+      max-width: 620px;
+      margin: 0 0 24px;
+      font: 500 clamp(22px, 2vw, 32px) / 1.42 var(--serif);
+      letter-spacing: -0.02em;
+    }
+    .sub .zh { display: block; margin-top: 5px; color: var(--muted); font-size: 0.72em; }
+    .annotation {
+      max-width: 540px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 590px;
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+    .metric strong {
+      display: block;
+      color: var(--gold);
+      font: 500 28px / 1 var(--display);
+      letter-spacing: -0.02em;
+    }
+    .metric span {
+      display: block;
+      margin-top: 7px;
+      color: var(--faint);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 19px;
+      border: 1px solid transparent;
+      background: var(--paper);
+      color: var(--ink-0);
+      font: 500 12px / 1 var(--sans);
+      text-decoration: none;
+    }
+    .button.ghost { border-color: var(--line-strong); background: transparent; color: var(--text); }
+
+    .art {
+      position: relative;
+      min-height: 660px;
+      display: grid;
+      place-items: center;
+    }
+    .art::before {
+      content: "";
+      position: absolute;
+      width: 76%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200, 169, 109, 0.16), transparent 64%);
+      filter: blur(14px);
+    }
+    .orbit {
+      position: absolute;
+      width: min(78%, 520px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(200, 169, 109, 0.2);
+      border-radius: 50%;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      left: 11%;
+      top: 21%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 20px var(--gold);
+    }
+    .book-wrap {
+      position: relative;
+      width: min(66%, 430px);
+      transform: perspective(1500px) rotateY(-10deg) rotateX(3deg) rotateZ(-1deg);
+      filter: drop-shadow(28px 36px 36px rgba(0, 0, 0, 0.68));
+    }
+    .cover {
+      position: relative;
+      display: block;
+      width: 100%;
+      aspect-ratio: 148 / 210;
+      border: 1px solid rgba(200, 169, 109, 0.26);
+      background: var(--ink-2) url("book-cover-art.png") center / cover no-repeat;
+    }
+    .cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(100deg, rgba(255,255,255,.07), transparent 24%, transparent 72%, rgba(0,0,0,.2));
+    }
+    .edge {
+      position: absolute;
+      top: 2%;
+      right: -15px;
+      width: 17px;
+      height: 96%;
+      border-radius: 0 4px 4px 0;
+      background: repeating-linear-gradient(90deg, #b8a887 0 1px, #e0d4ba 1px 3px);
+      box-shadow: 8px 0 22px rgba(0, 0, 0, 0.28);
+    }
+    .caption {
+      position: absolute;
+      right: 3%;
+      bottom: 3%;
+      writing-mode: vertical-rl;
+      color: var(--faint);
+      font-size: 8px;
+      letter-spacing: 0.17em;
+      text-transform: uppercase;
+    }
+
+    .foot {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 900px) {
+      .poster { padding: 24px 28px 20px; }
+      .hero { grid-template-columns: 1fr; gap: 10px; padding: 10px 0 0; }
+      .art { order: -1; min-height: 360px; }
+      .book-wrap { width: 190px; }
+      .orbit { width: 330px; }
+      h1 { font-size: 88px; }
+      .sub { font-size: 21px; }
+      .metrics, .actions { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .poster { padding: 20px 18px 16px; }
+      .topline { padding-bottom: 13px; }
+      .wordmark { width: 98px; }
+      .topline .meta { font-size: 7px; max-width: 150px; }
+      .hero { padding-top: 0; }
+      .art { min-height: 330px; }
+      .book-wrap { width: 178px; }
+      .orbit { width: 292px; }
+      .caption { display: none; }
+      .eyebrow { font-size: 8px; }
+      h1 { margin: 18px 0 15px; font-size: 76px; }
+      .sub { margin-bottom: 15px; font-size: 18px; }
+      .sub .zh { font-size: 12px; }
+      .annotation { font-size: 10px; line-height: 1.6; }
+      .foot { flex-direction: column; gap: 7px; padding-top: 12px; font-size: 7px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster">
+    <header class="topline">
+      <img class="wordmark" src="../../public/brand/bookln-wordmark.svg" alt="bookln" />
+      <div class="meta">CODEX 1 / Static edition<br />Concept build · 2026-10-26</div>
+    </header>
+
+    <section class="hero">
+      <div class="copy">
+        <div class="eyebrow">A new reading object</div>
+        <h1>CODEX<span>1.</span></h1>
+        <p class="sub">The Zero-Watt Cognitive Engine.<span class="zh">零功耗认知引擎。</span></p>
+        <p class="annotation">Local by nature. Silent by design. Pure cellulose display matrix.<br />纯本地运行 / 零辐射 / 纯天然纤维显示矩阵。</p>
+        <div class="metrics">
+          <div class="metric"><strong>210</strong><span>MM object height</span></div>
+          <div class="metric"><strong>0</strong><span>Battery cells†</span></div>
+          <div class="metric"><strong>1</strong><span>Object to unfold</span></div>
+        </div>
+        <div class="actions">
+          <a class="button" href="#unfold">Scroll to unfold</a>
+          <a class="button ghost" href="#field-notes">View field notes</a>
+        </div>
+      </div>
+
+      <div class="art" aria-label="CODEX 1 book cover">
+        <div class="orbit"></div>
+        <div class="book-wrap">
+          <div class="cover"><div class="edge"></div></div>
+        </div>
+        <div class="caption">148 × 210 mm / foil on cloth / 30 mm</div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>Bookln / CODEX 1 / static fallback poster</span>
+      <span>† Concept claim · validate before launch · no audio assets</span>
+    </footer>
+  </main>
+</body>
+</html>

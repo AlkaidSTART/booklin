@@ -1,0 +1,140 @@
+{
+  "version": "2026-10-26",
+  "status": "concept-preview",
+  "source": "Chapter 03 — Neural Link / one-code entry",
+  "page": {
+    "id": "page-042",
+    "label": "Page 042",
+    "labelZh": "第 042 页",
+    "chapter": "01",
+    "chapterTitle": "Cellulose Display",
+    "chapterTitleZh": "纤维视网膜系统"
+  },
+  "legend": [
+    { "type": "page", "label": "Current page", "labelZh": "当前纸页" },
+    { "type": "concept", "label": "Concept", "labelZh": "概念" },
+    { "type": "citation", "label": "Citation", "labelZh": "引文" },
+    { "type": "video", "label": "Lesson", "labelZh": "讲解" },
+    { "type": "discussion", "label": "Discussion", "labelZh": "讨论" },
+    { "type": "ai", "label": "AI companion", "labelZh": "AI 伴读" }
+  ],
+  "nodes": [
+    {
+      "id": "page",
+      "type": "page",
+      "label": "Page 042",
+      "labelZh": "第 042 页",
+      "detail": "The physical page that anchors the whole layer.",
+      "detailZh": "触发整层数字上下文的实体纸页。",
+      "x": 0.5,
+      "y": 0.52,
+      "weight": 1.0
+    },
+    {
+      "id": "concept",
+      "type": "concept",
+      "label": "Cellulose Display",
+      "labelZh": "纤维视网膜",
+      "detail": "Material architecture and ambient-light viewing.",
+      "detailZh": "材料结构与自然漫反射显示。",
+      "x": 0.72,
+      "y": 0.29,
+      "weight": 0.82
+    },
+    {
+      "id": "citation",
+      "type": "citation",
+      "label": "Fibre optics paper",
+      "labelZh": "纤维光学论文",
+      "detail": "A cited source attached to the current spread.",
+      "detailZh": "附着在当前跨页上的引用来源。",
+      "x": 0.86,
+      "y": 0.47,
+      "weight": 0.6
+    },
+    {
+      "id": "lecture",
+      "type": "video",
+      "label": "Lesson 01",
+      "labelZh": "名师讲解 01",
+      "detail": "A short instructor video, opened in the margin.",
+      "detailZh": "在页边打开的短讲解视频。",
+      "x": 0.73,
+      "y": 0.72,
+      "weight": 0.76
+    },
+    {
+      "id": "discussion",
+      "type": "discussion",
+      "label": "Margin notes",
+      "labelZh": "页边讨论",
+      "detail": "Reader annotations without a feed.",
+      "detailZh": "没有信息流的读者批注。",
+      "x": 0.5,
+      "y": 0.83,
+      "weight": 0.58
+    },
+    {
+      "id": "glossary",
+      "type": "glossary",
+      "label": "Glossary",
+      "labelZh": "术语表",
+      "detail": "Terms resolved in place, not in a new tab.",
+      "detailZh": "原地解释术语，不打开新标签页。",
+      "x": 0.28,
+      "y": 0.71,
+      "weight": 0.52
+    },
+    {
+      "id": "author",
+      "type": "author",
+      "label": "Author note",
+      "labelZh": "作者手记",
+      "detail": "Context from the author, kept beside the text.",
+      "detailZh": "与正文并置的作者补充说明。",
+      "x": 0.14,
+      "y": 0.48,
+      "weight": 0.5
+    },
+    {
+      "id": "related",
+      "type": "chapter",
+      "label": "Chapter 02",
+      "labelZh": "关联章节",
+      "detail": "A cross-reference to Haptic Random Access.",
+      "detailZh": "跳转到触觉随机寻址章节。",
+      "x": 0.28,
+      "y": 0.29,
+      "weight": 0.56
+    },
+    {
+      "id": "ai",
+      "type": "ai",
+      "label": "AI companion",
+      "labelZh": "AI 伴读",
+      "detail": "A bounded study companion, not an open feed.",
+      "detailZh": "有边界的伴读协议，而非开放信息流。",
+      "x": 0.5,
+      "y": 0.14,
+      "weight": 0.68
+    }
+  ],
+  "links": [
+    { "source": "page", "target": "concept", "label": "defines", "weight": 0.9 },
+    { "source": "page", "target": "lecture", "label": "explains", "weight": 0.8 },
+    { "source": "page", "target": "discussion", "label": "annotates", "weight": 0.7 },
+    { "source": "page", "target": "glossary", "label": "resolves", "weight": 0.6 },
+    { "source": "page", "target": "author", "label": "context", "weight": 0.55 },
+    { "source": "page", "target": "related", "label": "cross-ref", "weight": 0.55 },
+    { "source": "page", "target": "ai", "label": "asks", "weight": 0.7 },
+    { "source": "concept", "target": "citation", "label": "cites", "weight": 0.65 },
+    { "source": "concept", "target": "related", "label": "continues", "weight": 0.45 },
+    { "source": "lecture", "target": "ai", "label": "discusses", "weight": 0.4 },
+    { "source": "discussion", "target": "glossary", "label": "references", "weight": 0.35 }
+  ],
+  "dataNotes": [
+    "This is a deterministic concept preview, not a live AI response.",
+    "Node positions are normalized 0–1 for layout portability.",
+    "Replace labels and links with the CMS export when the companion layer ships."
+  ]
+}

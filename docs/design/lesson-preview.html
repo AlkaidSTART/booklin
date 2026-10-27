@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bookln / CODEX 1 — lesson preview</title>
+  <style>
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Cormorant";
+      src: url("../../public/fonts/cormorant-garamond-semibold.woff2") format("woff2");
+      font-weight: 600;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "NotoSerifSC";
+      src: url("../../public/fonts/noto-serif-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-regular.woff2") format("woff2");
+      font-weight: 400;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "NotoSansSC";
+      src: url("../../public/fonts/noto-sans-sc-medium.woff2") format("woff2");
+      font-weight: 500;
+      font-display: block;
+    }
+
+    :root {
+      --ink-0: #11100e;
+      --ink-1: #181613;
+      --ink-2: #211d18;
+      --paper: #e8dcc4;
+      --text: #f3ead8;
+      --muted: #b9af9e;
+      --faint: #968d80;
+      --gold: #c8a96d;
+      --gold-2: #a78750;
+      --rust: #9c3f2f;
+      --rust-text: #d27c65;
+      --line: rgba(232, 220, 196, 0.17);
+      --line-strong: rgba(232, 220, 196, 0.34);
+      --sans: "NotoSansSC", "PingFang SC", sans-serif;
+      --serif: "NotoSerifSC", "Songti SC", serif;
+      --display: "Cormorant", "Bodoni 72", serif;
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
+    body {
+      margin: 0;
+      background: var(--ink-0);
+      color: var(--text);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage {
+      position: relative;
+      width: 1280px;
+      height: 720px;
+      overflow: hidden;
+      background:
+        radial-gradient(58rem 40rem at 78% -8%, rgba(133, 93, 48, 0.2), transparent 58%),
+        radial-gradient(44rem 34rem at 4% 100%, rgba(125, 58, 38, 0.1), transparent 64%),
+        var(--ink-0);
+    }
+    .grain {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0.07;
+      mix-blend-mode: soft-light;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
+    }
+    .frame {
+      position: absolute;
+      inset: 20px;
+      z-index: 19;
+      pointer-events: none;
+      border: 1px solid rgba(232, 220, 196, 0.12);
+    }
+
+    .topbar {
+      position: absolute;
+      top: 0;
+      left: 64px;
+      right: 64px;
+      height: 64px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: block; width: 104px; height: auto; }
+    .topmeta {
+      display: flex;
+      gap: 28px;
+      color: var(--muted);
+      font-size: 8px;
+      line-height: 1.4;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .topmeta b { color: var(--gold); font-weight: 500; }
+    .progress {
+      position: absolute;
+      top: 63px;
+      left: 64px;
+      right: 64px;
+      height: 1px;
+      z-index: 11;
+      background: rgba(232, 220, 196, 0.08);
+    }
+    .progress i {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(200, 169, 109, 0.38);
+    }
+
+    .chapter-rail {
+      position: absolute;
+      left: 30px;
+      top: 104px;
+      bottom: 80px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--faint);
+      font-size: 8px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .chapter-rail::before {
+      content: "";
+      width: 1px;
+      flex: 1;
+      margin: 12px 0;
+      background: var(--line);
+    }
+    .chapter-no {
+      color: var(--gold);
+      font: 500 32px / 1 var(--display);
+      letter-spacing: -0.03em;
+    }
+    .chapter-label { writing-mode: vertical-rl; }
+
+    .scene {
+      position: absolute;
+      inset: 64px 64px 62px 64px;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(390px, 0.88fr);
+      gap: 44px;
+      align-items: center;
+      padding: 24px 0 0 32px;
+      opacity: 0;
+      visibility: hidden;
+    }
+    .copy { max-width: 570px; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+      color: var(--gold);
+      font-size: 9px;
+      letter-spacing: 0.19em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { content: ""; width: 30px; height: 1px; background: var(--gold); }
+    h1 {
+      margin: 0 0 21px;
+      font: 500 82px / 0.84 var(--display);
+      letter-spacing: -0.05em;
+    }
+    h1 .accent { display: block; color: var(--gold); }
+    .sub {
+      margin: 0 0 18px;
+      max-width: 540px;
+      font: 500 23px / 1.35 var(--serif);
+      letter-spacing: -0.02em;
+    }
+    .sub .zh { display: block; margin-top: 7px; color: var(--muted); font-size: 0.66em; }
+    .annotation {
+      max-width: 520px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.7;
+    }
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      max-width: 560px;
+      margin-top: 28px;
+    }
+    .metric {
+      min-height: 76px;
+      padding: 12px 0 0;
+      border-top: 1px solid var(--line-strong);
+    }
+    .metric strong {
+      display: block;
+      color: var(--gold);
+      font: 500 24px / 1 var(--display);
+      letter-spacing: -0.02em;
+    }
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--faint);
+      font-size: 7px;
+      line-height: 1.5;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .scene-tag {
+      position: absolute;
+      right: 0;
+      bottom: 2px;
+      color: var(--faint);
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .visual {
+      position: relative;
+      width: 100%;
+      height: 520px;
+      display: grid;
+      place-items: center;
+    }
+    .visual::before {
+      content: "";
+      position: absolute;
+      width: 74%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(200, 169, 109, 0.15), transparent 64%);
+      filter: blur(14px);
+    }
+    .visual-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+    }
+
+    .orbit {
+      position: absolute;
+      width: min(86%, 420px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(200, 169, 109, 0.2);
+      border-radius: 50%;
+    }
+    .orbit::before {
+      content: "";
+      position: absolute;
+      left: 12%;
+      top: 19%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 18px var(--gold);
+    }
+    .orbit::after {
+      content: "";
+      position: absolute;
+      right: 4%;
+      bottom: 25%;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold-2);
+    }
+    .book-card {
+      position: relative;
+      width: 300px;
+      aspect-ratio: 148 / 210;
+      transform: perspective(1200px) rotateY(-13deg) rotateX(3deg);
+      filter: drop-shadow(24px 32px 30px rgba(0, 0, 0, 0.62));
+    }
+    .book-card img { display: block; width: 100%; height: 100%; object-fit: cover; border: 1px solid rgba(200, 169, 109, 0.26); }
+    .book-card::after {
+      content: "";
+      position: absolute;
+      top: 2%;
+      right: -13px;
+      width: 15px;
+      height: 96%;
+      background: repeating-linear-gradient(90deg, #b8a887 0 1px, #e0d4ba 1px 3px);
+      box-shadow: 7px 0 20px rgba(0, 0, 0, 0.28);
+    }
+
+    .layer-stack { position: relative; width: 360px; height: 440px; transform: rotate(-7deg); }
+    .layer {
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(200, 169, 109, 0.28);
+      background: linear-gradient(155deg, rgba(232, 220, 196, 0.13), rgba(232, 220, 196, 0.015));
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
+    }
+    .layer:nth-child(5) {
+      background: repeating-linear-gradient(0deg, rgba(20, 18, 15, 0.92) 0 2px, transparent 2px 7px);
+    }
+    .hinge {
+      position: absolute;
+      left: 23%;
+      top: 5%;
+      bottom: 5%;
+      width: 1px;
+      background: var(--gold);
+      box-shadow: -8px 0 28px rgba(200, 169, 109, 0.18);
+    }
+    .layer-note {
+      position: absolute;
+      left: 0;
+      bottom: -30px;
+      color: var(--faint);
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .fan { position: relative; width: 430px; height: 460px; }
+    .leaf {
+      position: absolute;
+      left: 43%;
+      top: 12%;
+      width: 230px;
+      height: 300px;
+      transform-origin: 0 50%;
+      border: 1px solid rgba(232, 220, 196, 0.25);
+      background: linear-gradient(100deg, #d8cab0, #9f927d);
+      opacity: 0.86;
+      box-shadow: 10px 18px 30px rgba(0, 0, 0, 0.12);
+    }
+    .leaf:nth-child(2) { background: linear-gradient(100deg, #e5d7bc, #b9a98e); }
+    .leaf:nth-child(3) { background: linear-gradient(100deg, #efe2ca, #cbb99a); }
+    .leaf:nth-child(4) { background: linear-gradient(100deg, #d7c8ad, #a7987f); }
+    .ribbon {
+      position: absolute;
+      left: 45%;
+      top: 4%;
+      width: 7px;
+      height: 380px;
+      background: var(--rust);
+      transform-origin: top;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.34);
+    }
+    .heat {
+      position: absolute;
+      left: 12%;
+      right: 2%;
+      bottom: 4%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(210, 124, 101, 0.5), transparent);
+    }
+
+    .graph-wrap { position: relative; width: 600px; height: 440px; display: grid; place-items: center; }
+    .graph { display: block; width: 100%; height: auto; opacity: 0.92; }
+    .qr-card {
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      width: 104px;
+      padding: 8px;
+      background: var(--paper);
+      color: var(--ink-0);
+      transform: rotate(3deg);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.38);
+    }
+    .qr-card img { display: block; width: 100%; height: auto; }
+    .qr-card small {
+      display: block;
+      margin-top: 6px;
+      font-size: 5px;
+      line-height: 1.4;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .end {
+      position: absolute;
+      inset: 64px 64px 62px 64px;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      text-align: center;
+    }
+    .end img { width: 420px; height: auto; }
+    .end h2 {
+      margin: 28px 0 0;
+      color: var(--gold);
+      font: 500 66px / 0.9 var(--display);
+      letter-spacing: -0.04em;
+    }
+    .end p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      position: absolute;
+      left: 64px;
+      right: 64px;
+      bottom: 0;
+      height: 44px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid var(--line);
+      color: var(--faint);
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .footer b { color: var(--gold); font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="grain"></div>
+    <div class="frame"></div>
+
+    <header class="topbar">
+      <img class="brand" src="../../public/brand/bookln-wordmark.svg" alt="bookln" />
+      <div class="topmeta">
+        <span><b>LESSON PREVIEW</b> / 01</span>
+        <span>CODEX 1 / CONCEPT</span>
+        <span id="timecode">00:00 / 00:15</span>
+      </div>
+    </header>
+    <div class="progress"><i id="progress"></i></div>
+
+    <aside class="chapter-rail">
+      <span class="chapter-no" id="chapterNo">00</span>
+      <span class="chapter-label" id="chapterLabel">ARRIVAL</span>
+    </aside>
+
+    <section class="scene" data-scene="0">
+      <div class="copy">
+        <div class="eyebrow" data-reveal>A new reading object</div>
+        <h1 data-reveal>CODEX<span class="accent">1.</span></h1>
+        <p class="sub" data-reveal>The Zero-Watt Cognitive Engine.<span class="zh">零功耗认知引擎。</span></p>
+        <p class="annotation" data-reveal>Local by nature. Silent by design. Pure cellulose display matrix.<br />纯本地运行 / 零辐射 / 纯天然纤维显示矩阵。</p>
+        <div class="metric-row" data-reveal>
+          <div class="metric"><strong>210</strong><span>MM object height</span></div>
+          <div class="metric"><strong>0</strong><span>Battery cells†</span></div>
+          <div class="metric"><strong>1</strong><span>Object to unfold</span></div>
+        </div>
+      </div>
+      <div class="visual">
+        <div class="visual-inner">
+          <div class="orbit"></div>
+          <div class="book-card"><img src="book-cover-art.png" alt="CODEX 1 cover" /></div>
+        </div>
+        <span class="scene-tag">00 / ARRIVAL · CLOSED FORM</span>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="1">
+      <div class="copy">
+        <div class="eyebrow" data-reveal>Material architecture</div>
+        <h1 data-reveal>Cellulose<span class="accent">Display™</span></h1>
+        <p class="sub" data-reveal>A reading surface built from fibre, air and light.<span class="zh">由纤维、空气与自然光构成的阅读表面。</span></p>
+        <p class="annotation" data-reveal>Six material layers. One sewn structure. The page stays flat at 180°.<br />六层材料结构，锁线装订，180° 纯平摊开。</p>
+        <div class="metric-row" data-reveal>
+          <div class="metric"><strong>179.9°</strong><span>Ambient view†</span></div>
+          <div class="metric"><strong>6</strong><span>Material layers</span></div>
+          <div class="metric"><strong>180°</strong><span>Lay-flat</span></div>
+        </div>
+      </div>
+      <div class="visual">
+        <div class="visual-inner">
+          <div class="layer-stack" id="layerStack">
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="layer"></div>
+            <div class="hinge"></div>
+            <span class="layer-note">Exploded view · 6 layers · not to scale</span>
+          </div>
+        </div>
+        <span class="scene-tag">01 / STRUCTURE · MATERIAL STUDY</span>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="2">
+      <div class="copy">
+        <div class="eyebrow" data-reveal>Touch is the interface</div>
+        <h1 data-reveal>Haptic<span class="accent">Random Access</span></h1>
+        <p class="sub" data-reveal>Every page is one gesture away.<span class="zh">每一次翻动，都直达想去的地方。</span></p>
+        <p class="annotation" data-reveal>Move slowly. The paper records exactly where you stop.<br />慢慢翻。纸页会记住你停下的位置。</p>
+        <div class="metric-row" data-reveal>
+          <div class="metric"><strong>280</strong><span>MM bookmark</span></div>
+          <div class="metric"><strong>0</strong><span>Menus</span></div>
+          <div class="metric"><strong>1</strong><span>Last position</span></div>
+        </div>
+      </div>
+      <div class="visual">
+        <div class="visual-inner">
+          <div class="fan" id="fan">
+            <div class="leaf"></div>
+            <div class="leaf"></div>
+            <div class="leaf"></div>
+            <div class="leaf"></div>
+            <div class="ribbon" id="ribbon"></div>
+            <div class="heat"></div>
+          </div>
+        </div>
+        <span class="scene-tag">02 / INTERACTION · PAGE FAN</span>
+      </div>
+    </section>
+
+    <section class="scene" data-scene="3">
+      <div class="copy">
+        <div class="eyebrow" data-reveal>The physical-to-digital bridge</div>
+        <h1 data-reveal>Analog<span class="accent">at heart.</span></h1>
+        <p class="sub" data-reveal>Digital in Soul.<span class="zh">纸端，即云端。</span></p>
+        <p class="annotation" data-reveal>Scan the page-edge mark. The context follows — without leaving the reading flow.<br />扫描页边标记，上下文随之而来，不打断阅读心流。</p>
+        <div class="metric-row" data-reveal>
+          <div class="metric"><strong>01</strong><span>Scan to context</span></div>
+          <div class="metric"><strong>∞</strong><span>Margin layer</span></div>
+          <div class="metric"><strong>0</strong><span>Feed distractions</span></div>
+        </div>
+      </div>
+      <div class="visual">
+        <div class="visual-inner">
+          <div class="graph-wrap">
+            <img class="graph" id="graph" src="../../public/design/knowledge-graph.svg" alt="Concept knowledge graph" />
+            <div class="qr-card">
+              <img src="../../public/qr/one-code-entry.svg" alt="One-code entry QR" />
+              <small>Scan to context<br />一码入网</small>
+            </div>
+          </div>
+        </div>
+        <span class="scene-tag">03 / NEURAL LINK · CONCEPT PREVIEW</span>
+      </div>
+    </section>
+
+    <section class="end" data-scene="4">
+      <img src="../../public/brand/bookln-wordmark.svg" alt="bookln" />
+      <h2>CODEX 1.</h2>
+      <p>Concept preview · 2026 · no audio assets</p>
+    </section>
+
+    <footer class="footer">
+      <span>Concept preview · not final lesson footage</span>
+      <span><b>Bookln</b> / one-code entry / page 042</span>
+    </footer>
+  </div>
+
+  <script>
+    const TIMELINE = { duration: 15, fps: 24 };
+    window.__TIMELINE = TIMELINE;
+
+    const scenes = [...document.querySelectorAll('[data-scene]')];
+    const windows = [
+      { start: 0.0, end: 3.4, no: "00", label: "ARRIVAL" },
+      { start: 3.4, end: 6.8, no: "01", label: "STRUCTURE" },
+      { start: 6.8, end: 10.2, no: "02", label: "INTERACTION" },
+      { start: 10.2, end: 13.6, no: "03", label: "NEURAL LINK" },
+      { start: 13.6, end: 15.0, no: "04", label: "BOOKLN" },
+    ];
+
+    const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+    const progress = document.getElementById("progress");
+    const timecode = document.getElementById("timecode");
+    const chapterNo = document.getElementById("chapterNo");
+    const chapterLabel = document.getElementById("chapterLabel");
+    const layerStack = document.getElementById("layerStack");
+    const fan = document.getElementById("fan");
+    const ribbon = document.getElementById("ribbon");
+    const graph = document.getElementById("graph");
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    window.renderFrame = (time) => {
+      const t = clamp(time, 0, TIMELINE.duration);
+      progress.style.width = `${(t / TIMELINE.duration) * 100}%`;
+      timecode.textContent = `00:${pad(Math.floor(t))} / 00:${pad(TIMELINE.duration)}`;
+
+      let active = windows[0];
+      windows.forEach((window) => {
+        if (t >= window.start) active = window;
+      });
+      chapterNo.textContent = active.no;
+      chapterLabel.textContent = active.label;
+
+      windows.forEach((window, index) => {
+        const scene = scenes[index];
+        const fadeIn = index === 0 ? 0.5 : 0.55;
+        const fadeOut = index === windows.length - 1 ? 0.35 : 0.55;
+        const opacity = clamp((t - window.start) / fadeIn) * clamp((window.end - t) / fadeOut);
+        scene.style.opacity = opacity;
+        scene.style.visibility = opacity > 0.001 ? "visible" : "hidden";
+
+        if (opacity <= 0.001) return;
+        const p = clamp((t - window.start) / (window.end - window.start));
+
+        scene.querySelectorAll("[data-reveal]").forEach((element, revealIndex) => {
+          const revealStart = 0.08 + revealIndex * 0.09;
+          const reveal = clamp((p - revealStart) / 0.2);
+          element.style.opacity = reveal;
+          element.style.transform = `translateY(${(1 - reveal) * 14}px)`;
+        });
+
+        const inner = scene.querySelector(".visual-inner");
+        if (inner) inner.style.transform = `translateY(${(1 - p) * 10}px)`;
+
+        const book = scene.querySelector(".book-card");
+        if (book) {
+          book.style.transform = `perspective(1200px) rotateY(${-13 + p * 8}deg) rotateX(${3 - p * 2}deg) translateY(${(1 - p) * 10}px)`;
+        }
+      });
+
+      if (t >= 3.4 && t < 6.8) {
+        const p = clamp((t - 3.4) / 3.4);
+        [...layerStack.querySelectorAll(".layer")].forEach((layer, index) => {
+          const spread = 28 + p * 34;
+          layer.style.transform = `translate(${index * spread * 0.34}px, ${-index * spread * 0.34}px) rotate(${index * 0.55}deg)`;
+        });
+        layerStack.style.transform = `rotate(${-7 + p * 2}deg) scale(${0.96 + p * 0.04})`;
+      }
+
+      if (t >= 6.8 && t < 10.2) {
+        const p = clamp((t - 6.8) / 3.4);
+        [...fan.querySelectorAll(".leaf")].forEach((leaf, index) => {
+          const angles = [-24, -12, 0, 13];
+          leaf.style.transform = `rotate(${angles[index] + (p - 0.5) * 8}deg)`;
+        });
+        ribbon.style.transform = `rotate(${7 - p * 3}deg) translateY(${(1 - p) * -12}px)`;
+      }
+
+      if (t >= 10.2 && t < 13.6) {
+        const p = clamp((t - 10.2) / 3.4);
+        graph.style.transform = `scale(${0.96 + p * 0.04}) translateY(${(1 - p) * 8}px)`;
+      }
+    };
+
+    window.renderFrame(0);
+  </script>
+</body>
+</html>

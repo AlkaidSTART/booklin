@@ -1,0 +1,28 @@
+{
+  "version": "2026-10-26",
+  "status": "placeholder",
+  "replaceBefore": "launch",
+  "owner": "brand + commerce",
+  "landing": {
+    "url": "https://bookln.example/codex-1",
+    "qrTarget": "https://bookln.example/codex-1?utm_source=print&utm_medium=qr&utm_campaign=codex-1",
+    "label": "One-code entry",
+    "labelZh": "一码入网"
+  },
+  "legal": {
+    "url": "https://bookln.example/legal",
+    "label": "Legal & disclosures"
+  },
+  "qr": {
+    "file": "/qr/one-code-entry.svg",
+    "png": "/qr/one-code-entry.png",
+    "card": "/qr/one-code-entry-card.svg",
+    "errorCorrection": "M",
+    "quietZoneModules": 4
+  },
+  "notes": [
+    "The .example host is an intentional placeholder reserved for documentation.",
+    "Replace landing.url and landing.qrTarget with production URLs, then run node scripts/build-qr.mjs.",
+    "Keep the UTM parameters on the QR target so print scans can be attributed separately from direct visits."
+  ]
+}

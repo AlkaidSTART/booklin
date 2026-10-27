@@ -13,6 +13,13 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# asset render cache
+scripts/.cache/
+
+# Blender backups and intermediate exports
+*.blend1
+public/models/source/*-raw.glb
+
 # environment variables
 .env
 .env.production

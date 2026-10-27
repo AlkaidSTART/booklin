@@ -1,0 +1,485 @@
+{
+  "version": "2026-10-26",
+  "source": "docs/script-final.md",
+  "status": "concept-copy-launch-review-required",
+  "language": ["en", "zh"],
+  "notes": [
+    "Counts are Unicode code points; CJK glyphs count as one unit.",
+    "Line limits are layout guidance, not enforced by this file.",
+    "Every claim marked † is a forward-looking concept claim and requires validation before launch."
+  ],
+  "limits": {
+    "eyebrow": { "desktop": 32, "mobile": 24, "maxLines": { "desktop": 1, "mobile": 1 } },
+    "title": { "desktop": 34, "mobile": 24, "maxLines": { "desktop": 2, "mobile": 3 } },
+    "subtitle": { "desktop": 72, "mobile": 52, "maxLines": { "desktop": 2, "mobile": 3 } },
+    "annotation": { "desktop": 120, "mobile": 84, "maxLines": { "desktop": 3, "mobile": 4 } },
+    "metric": { "desktop": 42, "mobile": 34, "maxLines": { "desktop": 2, "mobile": 2 } },
+    "cardTitle": { "desktop": 20, "mobile": 20, "maxLines": { "desktop": 1, "mobile": 1 } },
+    "cardBody": { "desktop": 96, "mobile": 78, "maxLines": { "desktop": 4, "mobile": 5 } },
+    "cta": { "desktop": 24, "mobile": 20, "maxLines": { "desktop": 1, "mobile": 1 } },
+    "legal": { "desktop": 240, "mobile": 200, "maxLines": { "desktop": 4, "mobile": 5 } }
+  },
+  "fields": [
+    {
+      "id": "arrival.eyebrow",
+      "chapter": "00-arrival",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "A NEW READING OBJECT",
+      "zh": "一件新的阅读对象"
+    },
+    {
+      "id": "arrival.title",
+      "chapter": "00-arrival",
+      "role": "title",
+      "limit": "title",
+      "en": "CODEX 1.",
+      "zh": "CODEX 1."
+    },
+    {
+      "id": "arrival.subtitle",
+      "chapter": "00-arrival",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "The Zero-Watt Cognitive Engine.",
+      "zh": "零功耗认知引擎。"
+    },
+    {
+      "id": "arrival.annotation",
+      "chapter": "00-arrival",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Local by nature. Silent by design. Pure cellulose display matrix.",
+      "zh": "纯本地运行 / 零辐射 / 纯天然纤维显示矩阵。"
+    },
+    {
+      "id": "arrival.scrollCue",
+      "chapter": "00-arrival",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Scroll to unfold.",
+      "zh": "向下滚动，展开。"
+    },
+    {
+      "id": "structure.eyebrow",
+      "chapter": "01-structure",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "MATERIAL ARCHITECTURE",
+      "zh": "材料结构"
+    },
+    {
+      "id": "structure.title",
+      "chapter": "01-structure",
+      "role": "title",
+      "limit": "title",
+      "en": "Cellulose Display™",
+      "zh": "Cellulose Display™ 纤维视网膜系统",
+      "enMobile": "Cellulose Display™",
+      "zhMobile": "纤维视网膜系统"
+    },
+    {
+      "id": "structure.subtitle",
+      "chapter": "01-structure",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "A reading surface built from fibre, air and light.",
+      "zh": "由纤维、空气与自然光构成的阅读表面。"
+    },
+    {
+      "id": "structure.metric1",
+      "chapter": "01-structure",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Ambient-light conceptual field of view†",
+      "zh": "自然漫反射 · 概念可视角度†",
+      "enMobile": "Ambient view†",
+      "fullEn": "Ambient-light viewing · 179.9° conceptual field of view†",
+      "fullZh": "自然漫反射 · 概念可视角度 179.9°†",
+      "fullLimit": "annotation"
+    },
+    {
+      "id": "structure.metric2",
+      "chapter": "01-structure",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Carbon-storing paper · no battery†",
+      "zh": "纸张固碳工艺 · 无电池†",
+      "fullEn": "Carbon-storing paper · no battery chemistry†",
+      "fullZh": "纸张固碳工艺 · 无电池化学体系†",
+      "fullLimit": "annotation"
+    },
+    {
+      "id": "structure.metric3",
+      "chapter": "01-structure",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Lay-flat sewn binding · 180° opening",
+      "zh": "锁线装订 · 180° 纯平摊开",
+      "enMobile": "Lay-flat · 180°"
+    },
+    {
+      "id": "structure.microcopy",
+      "chapter": "01-structure",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Exploded view · 6 material layers · not to scale.",
+      "zh": "爆炸图 · 6 层结构 · 非等比展示。"
+    },
+    {
+      "id": "interaction.eyebrow",
+      "chapter": "02-interaction",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "TOUCH IS THE INTERFACE",
+      "zh": "触觉即界面"
+    },
+    {
+      "id": "interaction.title",
+      "chapter": "02-interaction",
+      "role": "title",
+      "limit": "title",
+      "en": "Haptic Random Access",
+      "zh": "触觉随机寻址"
+    },
+    {
+      "id": "interaction.subtitle",
+      "chapter": "02-interaction",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "Every page is one gesture away.",
+      "zh": "每一次翻动，都直达想去的地方。"
+    },
+    {
+      "id": "interaction.metric1",
+      "chapter": "02-interaction",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Muscle-memory navigation · zero menus",
+      "zh": "肌肉记忆导航 · 无需菜单",
+      "enMobile": "Muscle-memory nav"
+    },
+    {
+      "id": "interaction.metric2",
+      "chapter": "02-interaction",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Woven bookmark · persistent place marker",
+      "zh": "高韧织物书签 · 持续断点续存",
+      "enMobile": "280 mm bookmark",
+      "fullEn": "280 mm woven bookmark · persistent place marker",
+      "fullZh": "280 mm 高韧织物书签 · 持续断点续存",
+      "fullLimit": "annotation"
+    },
+    {
+      "id": "interaction.microcopy",
+      "chapter": "02-interaction",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Move slowly. The paper records exactly where you stop.",
+      "zh": "慢慢翻。纸页会记住你停下的位置。"
+    },
+    {
+      "id": "neural-link.eyebrow",
+      "chapter": "03-neural-link",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE PHYSICAL-TO-DIGITAL BRIDGE",
+      "zh": "从纸页到云端",
+      "enMobile": "PHYSICAL → DIGITAL"
+    },
+    {
+      "id": "neural-link.title",
+      "chapter": "03-neural-link",
+      "role": "title",
+      "limit": "title",
+      "en": "Analog at Heart.",
+      "zh": "纸端，即云端。"
+    },
+    {
+      "id": "neural-link.subtitle",
+      "chapter": "03-neural-link",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "Digital in Soul.",
+      "zh": "触感留在手里，知识延展到云端。"
+    },
+    {
+      "id": "neural-link.feature1Title",
+      "chapter": "03-neural-link",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "One-code entry",
+      "zh": "一码入网"
+    },
+    {
+      "id": "neural-link.feature1Body",
+      "chapter": "03-neural-link",
+      "role": "cardBody",
+      "limit": "cardBody",
+      "en": "Scan the mark on the page to open its companion knowledge layer.",
+      "zh": "扫描页边标记，打开与当前页对应的云端知识层。"
+    },
+    {
+      "id": "neural-link.feature2Title",
+      "chapter": "03-neural-link",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "AI study companion",
+      "zh": "AI 伴读协议"
+    },
+    {
+      "id": "neural-link.feature2Body",
+      "chapter": "03-neural-link",
+      "role": "cardBody",
+      "limit": "cardBody",
+      "en": "Bring explanations, references and discussion into the margin without leaving the reading flow.",
+      "zh": "让讲解、引文与讨论自然进入页边，不打断阅读心流。",
+      "enMobile": "Bring context into the margin without leaving the page."
+    },
+    {
+      "id": "neural-link.microcopy",
+      "chapter": "03-neural-link",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Your page stays paper. Your context becomes connected.",
+      "zh": "纸页仍留在手中，上下文从此彼此相连。"
+    },
+    {
+      "id": "benchmark.title",
+      "chapter": "04-benchmark",
+      "role": "title",
+      "limit": "title",
+      "en": "A Different Kind of Engine",
+      "zh": "另一种引擎",
+      "enMobile": "A Different Engine"
+    },
+    {
+      "id": "benchmark.ipad.power",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Rechargeable",
+      "zh": "可充电"
+    },
+    {
+      "id": "benchmark.kindle.power",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Weeks-class battery*",
+      "zh": "数周级续航*"
+    },
+    {
+      "id": "benchmark.codex.power",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "No battery chemistry†",
+      "zh": "无电池化学体系†"
+    },
+    {
+      "id": "benchmark.ipad.focus",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "General-purpose apps",
+      "zh": "通用应用"
+    },
+    {
+      "id": "benchmark.kindle.focus",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Reading-first",
+      "zh": "阅读优先"
+    },
+    {
+      "id": "benchmark.codex.focus",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Reading-only by design",
+      "zh": "为阅读而生"
+    },
+    {
+      "id": "benchmark.ipad.durability",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Glass display",
+      "zh": "玻璃显示屏"
+    },
+    {
+      "id": "benchmark.kindle.durability",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "E-reader construction",
+      "zh": "电子阅读器结构"
+    },
+    {
+      "id": "benchmark.codex.durability",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Paper-first construction†",
+      "zh": "纸张优先结构†"
+    },
+    {
+      "id": "benchmark.ipad.knowledge",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "App ecosystem",
+      "zh": "应用生态"
+    },
+    {
+      "id": "benchmark.kindle.knowledge",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Dictionary / store",
+      "zh": "词典 / 书店"
+    },
+    {
+      "id": "benchmark.codex.knowledge",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Scan-to-context companion layer",
+      "zh": "扫码上下文伴读层"
+    },
+    {
+      "id": "benchmark.ipad.sensory",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Metal and glass",
+      "zh": "金属与玻璃"
+    },
+    {
+      "id": "benchmark.kindle.sensory",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Polymer",
+      "zh": "聚合物"
+    },
+    {
+      "id": "benchmark.codex.sensory",
+      "chapter": "04-benchmark",
+      "role": "metric",
+      "limit": "metric",
+      "en": "Fibre, ink and cloth",
+      "zh": "纤维、油墨与布面"
+    },
+    {
+      "id": "benchmark.footnote.context",
+      "chapter": "04-benchmark",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "* Comparison references third-party devices for context only; no lab testing was performed by Bookln.",
+      "zh": "* 第三方设备仅作语境参照；Bookln 未进行实验室对比测试。",
+      "enMobile": "* Context only; no Bookln lab testing."
+    },
+    {
+      "id": "benchmark.footnote.concept",
+      "chapter": "04-benchmark",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "† Forward-looking concept claim. Validate before launch. Full disclosure: benchmark-sources.md.",
+      "zh": "† 前瞻性概念声明，上线前需完成验证。完整说明见 benchmark-sources.md。",
+      "enMobile": "† Concept claim. Validate before launch."
+    },
+    {
+      "id": "deployment.eyebrow",
+      "chapter": "05-deployment",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "CHOOSE YOUR EDITION",
+      "zh": "选择你的版本"
+    },
+    {
+      "id": "deployment.title",
+      "chapter": "05-deployment",
+      "role": "title",
+      "limit": "title",
+      "en": "Deploy to Your Reality.",
+      "zh": "部署至你的现实桌面。"
+    },
+    {
+      "id": "deployment.subtitle",
+      "chapter": "05-deployment",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "One object. Three ways to begin.",
+      "zh": "一件实体，三种进入方式。"
+    },
+    {
+      "id": "deployment.cta",
+      "chapter": "05-deployment",
+      "role": "cta",
+      "limit": "cta",
+      "en": "Reserve your edition →",
+      "zh": "立即预订实体版 →",
+      "enMobile": "Reserve yours →"
+    },
+    {
+      "id": "deployment.standard.title",
+      "chapter": "05-deployment",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Standard",
+      "zh": "标配版"
+    },
+    {
+      "id": "deployment.standard.body",
+      "chapter": "05-deployment",
+      "role": "cardBody",
+      "limit": "cardBody",
+      "en": "Single bound volume + lifetime companion access.",
+      "zh": "单书实体 + 终身云端伴读资源接入。"
+    },
+    {
+      "id": "deployment.pro.title",
+      "chapter": "05-deployment",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Pro",
+      "zh": "专业版"
+    },
+    {
+      "id": "deployment.pro.body",
+      "chapter": "05-deployment",
+      "role": "cardBody",
+      "limit": "cardBody",
+      "en": "Clothbound volume + AI study pack + metal place marker.",
+      "zh": "精装布面版 + 专属 AI 伴读算力包 + 实体金属定位书签。"
+    },
+    {
+      "id": "deployment.enterprise.title",
+      "chapter": "05-deployment",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Enterprise",
+      "zh": "企业 / 师生特选"
+    },
+    {
+      "id": "deployment.enterprise.body",
+      "chapter": "05-deployment",
+      "role": "cardBody",
+      "limit": "cardBody",
+      "en": "Classroom dashboard + shared reading permissions.",
+      "zh": "班级互动学情看板 + 群组共读权限。"
+    },
+    {
+      "id": "global.legalFooter",
+      "chapter": "global",
+      "role": "annotation",
+      "limit": "legal",
+      "en": "Bookln is a concept in development. Product appearance, capabilities, availability and specifications are illustrative and may change. Third-party names are trademarks of their respective owners.",
+      "zh": "Bookln 仍处于概念开发阶段。产品外观、能力、可获得性与规格均为示意，可能发生变化。第三方名称归其各自所有者所有。"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+/* Bookln / CODEX 1 design tokens.
+   Generated alongside docs/design/visual-spec.html. */
+
+:root {
+  color-scheme: dark;
+
+  --ink-0: #11100e;
+  --ink-1: #181613;
+  --ink-2: #211d18;
+  --ink-3: #2b251e;
+  --paper: #e8dcc4;
+  --text: #f3ead8;
+  --muted: #b9af9e;
+  --faint: #968d80;
+  --gold: #c8a96d;
+  --gold-2: #a78750;
+  --rust: #9c3f2f;
+  --rust-text: #d27c65;
+  --line: rgba(232, 220, 196, 0.17);
+  --line-strong: rgba(232, 220, 196, 0.34);
+
+  --font-display: "Cormorant Garamond", "Bodoni 72", serif;
+  --font-serif: "Noto Serif SC", "Songti SC", serif;
+  --font-sans: "Noto Sans SC", "PingFang SC", sans-serif;
+
+  --text-display: clamp(68px, 9vw, 142px);
+  --text-serif: clamp(24px, 3vw, 42px);
+  --text-body: 16px;
+  --text-utility: 9px;
+
+  --leading-display: 0.83;
+  --leading-serif: 1.36;
+  --leading-body: 1.65;
+  --tracking-display: -0.045em;
+  --tracking-serif: -0.025em;
+  --tracking-utility: 0.14em;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 100px;
+
+  --container: 1440px;
+  --gutter-desktop: 64px;
+  --gutter-mobile: 18px;
+
+  --button-height: 46px;
+  --button-padding-x: 19px;
+  --card-border: 1px solid var(--line);
+  --card-background: rgba(24, 22, 19, 0.72);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 180ms;
+  --duration-base: 420ms;
+  --duration-slow: 900ms;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --text-display: 78px;
+    --text-serif: 24px;
+    --text-body: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

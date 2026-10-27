@@ -1,6 +1,13 @@
 # 素材交付清单（Asset Checklist）
 
-本文档依据 [TDD.md](TDD.md)「资产管线与生产标准」与 [script.md](script.md) 章节分镜整理，用于在开发启动前明确素材范围、规格与验收标准。
+本文档依据 [TDD.md](TDD.md)「资产管线与生产标准」与 [script-source.md](script-source.md) 章节分镜整理，用于在开发启动前明确素材范围、规格与验收标准。
+
+> **当前交付状态**
+>
+> - 清单：[asset-manifest.md](asset-manifest.md) 与机器可读的 [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)
+> - **A1–A7：** 已交付可用于开发
+> - **B1/B3：** 已有可用占位资产，正式二维码/讲师视频待替换
+> - **B2：** 数据结构已交付，价格与购买链接待商务提供
 
 **状态说明**
 
@@ -19,8 +26,8 @@
 | A3 | 函套 3D 模型 | 第六章 | GLB（Draco 压缩） | `public/models/slipcase.glb` |
 | A4 | 桌面与台座 | 序章、第五章 | GLB 或程序化几何 | `public/models/` |
 | A5 | 字体文件 | 全片 | woff2 + ttf/otf | `public/fonts/` |
-| A6 | 视觉稿 | 全片 2D UI | Figma 链接/文件 | — |
-| A7 | 定稿文案 | 全片 | Markdown / 飞书文档 | `docs/script.md` 更新 |
+| A6 | 视觉稿 | 全片 2D UI | Figma 链接/文件 | `docs/design/visual-spec.html`、`public/design/tokens.*` |
+| A7 | 定稿文案 | 全片 | Markdown / 飞书文档 | `docs/script-final.md`、`docs/copy-fields.json` |
 
 ### A1 书本模型（Blender 源文件 + GLB）
 
@@ -79,9 +86,10 @@
 
 ### A7 定稿文案
 
-- 确认 [script.md](script.md) 中的文案是否为最终版，输出中英双语定稿。
+- 确认 [script-final.md](script-final.md) 中的文案是否为最终版，输出中英双语定稿。
 - 明确各字段长度上限（主标题、副标题、注释微字、卡片文案），避免排版溢出。
-- 参数表（iPad Pro / Kindle）需提供数据来源或免责声明。
+- 参数表（iPad Pro / Kindle）需提供数据来源或免责声明，见 [benchmark-sources.md](benchmark-sources.md)。
+- 机器可读文案与移动端变体见 [`copy-fields.json`](copy-fields.json)，用 `node scripts/validate-copy.mjs` 校验。
 
 ---
 
@@ -102,7 +110,7 @@
 
 ## 3. 已确认不需要（⚪）
 
-- **音效资产**：文档中音频引擎、音频生产流程与音效触发逻辑已全部剔除，无需 ElevenLabs / Freesound 素材。
+- **音效资产**：文档中音频引擎、音频生产流程与音效触发逻辑已全部剔除，无需 ElevenLabs / Freesound 素材。仓库中现有的 `public/voice/voice.mp3` 为历史遗留文件，不纳入当前交付，也不在清单中引用。
 
 ---
 
@@ -125,12 +133,40 @@
 
 ## 5. 验收清单
 
-- [ ] 书本模型面数 ≤ 50k，三个形态键命名正确且可正常插值
-- [ ] 模型坐标、缩放、原点符合约定，导入后无需二次调整
-- [ ] PBR 通道齐全，AO 已烘焙，贴图为 KTX2
-- [ ] Draco 压缩后 GLB 体积符合预算
-- [ ] 函套、书桌、台座可独立控制显隐与动画
-- [ ] 字体授权文件已归档，3D 文字字体可用
-- [ ] 视觉稿覆盖桌面与移动断点，对比度达标
-- [ ] 文案双语定稿，无溢出风险
-- [ ] 可后补项已明确责任人与最晚交付时间
+- [x] 书本模型面数 ≤ 50k，三个形态键命名正确且可正常插值（已核验：4,400 三角面；`Key_Closed`、`Key_HalfOpen`、`Key_Flat`）
+- [x] 模型坐标、缩放、原点符合约定，导入后无需二次调整（节点 extras 记录 mm / +Y up / +Z forward / scale 1:1）
+- [x] PBR 通道齐全，AO 已烘焙，贴图为 KTX2（Draco + KTX2 扩展均为 required）
+- [x] Draco 压缩后 GLB 体积符合预算（1.4 MB）
+- [x] 函套、书桌、台座可独立控制显隐与动画（独立 GLB）
+- [x] 字体授权文件已归档，3D 文字字体可用（OFL）
+- [x] 视觉稿覆盖桌面与移动断点，对比度达标
+- [x] 文案双语定稿，无溢出风险（`validate-copy.mjs` 通过；移动端变体已补齐）
+- [ ] 可后补项已明确责任人与最晚交付时间（B1/B2/B3 仍需商务、讲师与法务确认）
+
+---
+
+## 6. 当前交付状态
+
+| 编号 | 状态 | 交付路径 | 说明 |
+| --- | --- | --- | --- |
+| A1 | ✅ delivered | `public/models/book-transformed.glb` | 4,400 三角面；Draco + KTX2；三个形态键；源文件 `public/models/source/book-codex-1.blend` |
+| A2 | ✅ delivered | `public/textures/` | 桌面 + 移动 KTX2 PBR 套装；源 PNG 在 `public/textures/source/` |
+| A3 | ✅ delivered | `public/models/slipcase.glb` | 函套模型 |
+| A4 | ✅ delivered | `public/models/oak-desk.glb`、`display-pedestal.glb` | 橡木桌与台座 |
+| A5 | ✅ delivered | `public/fonts/` | WOFF2 + TTF；OFL 授权文件与源字体在 `public/fonts/source/` |
+| A6 | ✅ delivered | `docs/design/visual-spec.html`、`public/design/tokens.*` | 桌面/移动视觉稿与设计 token |
+| A7 | ✅ delivered | `docs/script-final.md`、`docs/copy-fields.json` | 概念定稿；声明类文案待法务复核 |
+| B1 | 🟡 placeholder | `public/qr/`、`public/data/links.json` | `.example` 占位域名；替换后重跑 QR 脚本 |
+| B2 | 🟡 pending-external | `public/data/editions.json` | 三档结构已交付；价格/购买链接为 `null` |
+| B3 | 🟡 placeholder | `public/video/` | 15 秒静音概念预览；讲师实拍与授权待补，音频不纳入当前素材范围 |
+| B4 | ✅ delivered | `public/data/knowledge-graph.json`、`public/design/knowledge-graph.*` | 9 节点 / 11 连线的概念数据与静态图 |
+| B5 | ✅ delivered | `public/brand/`、`public/favicon.*`、`public/site.webmanifest` | 标识、字标、锁合、favicon、PWA 图标 |
+| B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
+| B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
+| B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
+
+生成/刷新清单：
+
+```sh
+node scripts/build-asset-manifest.mjs
+```

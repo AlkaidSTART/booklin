@@ -1,0 +1,687 @@
+{
+  "version": "2026-10-26",
+  "generatedAt": "2026-10-26T13:55:13.176Z",
+  "source": "docs/assets.md",
+  "statusCounts": {
+    "delivered": 12,
+    "placeholder": 2,
+    "pending-external": 1
+  },
+  "totals": {
+    "groups": 15,
+    "files": 84,
+    "bytes": 19160416,
+    "missing": 0
+  },
+  "assets": [
+    {
+      "id": "A1",
+      "label": "Book 3D model",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Draco-compressed GLB with shape keys Key_Closed, Key_HalfOpen and Key_Flat.",
+      "files": [
+        {
+          "path": "public/models/book-transformed.glb",
+          "bytes": 1410012,
+          "sha256": "041f9273bd499334df479357d950248dd164cd91deacdd00fa34b52a0e747ce8",
+          "missing": false
+        }
+      ],
+      "bytes": 1410012,
+      "missing": []
+    },
+    {
+      "id": "A2",
+      "label": "Book PBR textures",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Desktop and mobile KTX2 / Basis Universal sets. Source PNGs remain under public/textures/source for regeneration.",
+      "files": [
+        {
+          "path": "public/textures/book-ao.ktx2",
+          "bytes": 121040,
+          "sha256": "608f38907b94517f8712826313bfd7c3ac536f82b2e3bb84ca6cf96c99805fda",
+          "missing": false
+        },
+        {
+          "path": "public/textures/book-basecolor.ktx2",
+          "bytes": 91071,
+          "sha256": "52403076c9e9a32a1d616b3b86dc0b81e6984dec7673c3516655d0bba5e1f418",
+          "missing": false
+        },
+        {
+          "path": "public/textures/book-metalness.ktx2",
+          "bytes": 5545,
+          "sha256": "497e530ed4d3d7cb7994587db730c5050756d8f2952e3ab8639c909224bf5945",
+          "missing": false
+        },
+        {
+          "path": "public/textures/book-normal.ktx2",
+          "bytes": 1537957,
+          "sha256": "043e447470cb0eafc965ebc4ea62319315d6225b4a2450dcae222ff551a93015",
+          "missing": false
+        },
+        {
+          "path": "public/textures/book-roughness.ktx2",
+          "bytes": 314822,
+          "sha256": "bbf29d1e2de11da7ab4f210cb4c016b092db2ec3b4995d99b8a19264cdcee252",
+          "missing": false
+        },
+        {
+          "path": "public/textures/mobile/book-ao.ktx2",
+          "bytes": 45342,
+          "sha256": "66fb43dbe02fd9f89274e41ab6a2358d4fcb753f5f72bb72e8a9654ebce1299b",
+          "missing": false
+        },
+        {
+          "path": "public/textures/mobile/book-basecolor.ktx2",
+          "bytes": 35934,
+          "sha256": "3bc30b655532f8ec40c658664ba5f4c9c1ca867e5eaea80556232f5f9e72a01e",
+          "missing": false
+        },
+        {
+          "path": "public/textures/mobile/book-metalness.ktx2",
+          "bytes": 3419,
+          "sha256": "e1b19fe1b8f3692411912f4906b9a2c63b01a0a50f3148c1b168588239d13a19",
+          "missing": false
+        },
+        {
+          "path": "public/textures/mobile/book-normal.ktx2",
+          "bytes": 407159,
+          "sha256": "018a7c4b4fe42255fab0091bf441053af41430b0bc331dfc4a85b534f21574b3",
+          "missing": false
+        },
+        {
+          "path": "public/textures/mobile/book-roughness.ktx2",
+          "bytes": 88251,
+          "sha256": "73bc5a4f86bfeb640e7c79c3a21f884666f66a8ee4433c0a1b3d1411799a8f63",
+          "missing": false
+        }
+      ],
+      "bytes": 2650540,
+      "missing": []
+    },
+    {
+      "id": "A3",
+      "label": "Slipcase 3D model",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Draco-compressed GLB used by the sixth chapter.",
+      "files": [
+        {
+          "path": "public/models/slipcase.glb",
+          "bytes": 10896,
+          "sha256": "0ee69ae24b7668982ecf9b0b4af6cf2482e06b6d131502835a1ff01b5bd240c4",
+          "missing": false
+        }
+      ],
+      "bytes": 10896,
+      "missing": []
+    },
+    {
+      "id": "A4",
+      "label": "Desk and pedestal",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Programmatic oak desk and display pedestal with oak PBR maps.",
+      "files": [
+        {
+          "path": "public/models/oak-desk.glb",
+          "bytes": 515228,
+          "sha256": "9ecb7dda5feea903cb63e9a762aefe0c737c7d33874c9287bb8d2519a369a1a2",
+          "missing": false
+        },
+        {
+          "path": "public/models/display-pedestal.glb",
+          "bytes": 6724,
+          "sha256": "4124d4582a866ae66899631af8bb80b6c1f915d815b5eb058824292dac046c3b",
+          "missing": false
+        },
+        {
+          "path": "public/textures/oak-basecolor.ktx2",
+          "bytes": 172810,
+          "sha256": "d9dcc2de8114abb35d5c679c0cb6bbeb31096155b38b5659190b24eabdd3fcd6",
+          "missing": false
+        },
+        {
+          "path": "public/textures/oak-normal.ktx2",
+          "bytes": 367023,
+          "sha256": "abe3a08139772c15b7df2eabf562a53268ba9c54440af542df912d82d8d49763",
+          "missing": false
+        },
+        {
+          "path": "public/textures/oak-roughness.ktx2",
+          "bytes": 159751,
+          "sha256": "3f834af5b87876c734a7067a525efc2e03059fc803475b043619415780f54f0b",
+          "missing": false
+        }
+      ],
+      "bytes": 1221536,
+      "missing": []
+    },
+    {
+      "id": "A5",
+      "label": "Fonts",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "WOFF2 + TTF. OFL licence files live in public/fonts/licenses/.",
+      "files": [
+        {
+          "path": "public/fonts/cormorant-garamond-medium.woff2",
+          "bytes": 27680,
+          "sha256": "4777be9fc24e95dcbcb87d5ed9d33a89e2ba0a9e8b8b47f3f4fec119ecb153fb",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/cormorant-garamond-semibold.woff2",
+          "bytes": 27916,
+          "sha256": "c36cf91f5929bcaf6dfcdbd1c35d3ed39a2907dac26f992b9f7b48c33514de23",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-sans-sc-regular.woff2",
+          "bytes": 69588,
+          "sha256": "7ac6db1f1ee61281f955a0c7f1a83c20a8d20fa88c7e8f4484eff5ac2ba9c5da",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-sans-sc-medium.woff2",
+          "bytes": 69900,
+          "sha256": "5a08ce96046b72a459979e4e74169c51139d12ea7d0e438531bde1a1c5b4645a",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-serif-sc-medium.woff2",
+          "bytes": 94412,
+          "sha256": "de9d4eb469bbfdde0a8b845d0c7683e9a94e88ed7c375d55b70355cf7e3d6a8f",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-serif-sc-semibold.woff2",
+          "bytes": 95048,
+          "sha256": "44895fdf26ccd6fb0e8cb147a93ebfaa1a570c116fa54be9063b1eca892d24b2",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/cormorant-garamond-medium.ttf",
+          "bytes": 81728,
+          "sha256": "3c75b9c7b3d4ceb37fd30ce274b229999430a8bb09df944da0d240f84027053a",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/cormorant-garamond-semibold.ttf",
+          "bytes": 81724,
+          "sha256": "2c2f890e2092acc468bca21d0a008adf25edaef58e9435b22dc63cc0e14d073b",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-sans-sc-regular.ttf",
+          "bytes": 152144,
+          "sha256": "48161da574b8acb184500e3f9091d27fb5a349989a2429a01e0a172c75c54ef1",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-sans-sc-medium.ttf",
+          "bytes": 152072,
+          "sha256": "d865371404a2527b5aad71bc7b08d3049fa1c8bf3a06d4e2414f37428ecfbc36",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-serif-sc-medium.ttf",
+          "bytes": 210868,
+          "sha256": "557790db84e75ec00f9d3f1f1953893a76b3c387db517287acf9f2bda75ee0e7",
+          "missing": false
+        },
+        {
+          "path": "public/fonts/noto-serif-sc-semibold.ttf",
+          "bytes": 210896,
+          "sha256": "eff7e812bb8edf34832160430ee64b1bcad5cfea4e5756cf22ac25fe8ee9cba7",
+          "missing": false
+        }
+      ],
+      "bytes": 1273976,
+      "missing": []
+    },
+    {
+      "id": "A6",
+      "label": "Visual specification and design references",
+      "status": "delivered",
+      "role": "reference",
+      "notes": "Desktop and mobile visual spec, book previews, and implementation-ready design tokens. Figma handoff is not required for the concept build.",
+      "files": [
+        {
+          "path": "docs/design/visual-spec.html",
+          "bytes": 39612,
+          "sha256": "26c093619b537329c6c804c6a0d05b01e65e49e4c55fd2801d70f446d059bf10",
+          "missing": false
+        },
+        {
+          "path": "docs/design/visual-spec-desktop.png",
+          "bytes": 1478064,
+          "sha256": "7fc96b5c3c5313f03ef020fb50692a2d6bdda740e41af01f6430dc79ae08ef97",
+          "missing": false
+        },
+        {
+          "path": "docs/design/visual-spec-desktop.webp",
+          "bytes": 365678,
+          "sha256": "09403b64aadcab44f1632d5e69318f65885e4a1bc71f8aec43e6df17c4fe07fd",
+          "missing": false
+        },
+        {
+          "path": "docs/design/visual-spec-mobile.png",
+          "bytes": 955041,
+          "sha256": "8d0b136717f0a6c36cbe108195b2814f53788e026c29ac183464704926a888dc",
+          "missing": false
+        },
+        {
+          "path": "docs/design/visual-spec-mobile.webp",
+          "bytes": 265942,
+          "sha256": "3eda33312663c9f267215b118984c9f47ece02a93472ce8a9adea4ebc2e5faef",
+          "missing": false
+        },
+        {
+          "path": "docs/design/book-cover-art.png",
+          "bytes": 88311,
+          "sha256": "ec727f196fcf270c98ae41daea3a9555d2c53a01314df4404c1417d377d7b974",
+          "missing": false
+        },
+        {
+          "path": "docs/design/book-preview-closed.png",
+          "bytes": 1477670,
+          "sha256": "e5dfaabdb3cbb4104af4bf892d7d3fdf225ce69daf61d690fcc5ccaa6294e0e8",
+          "missing": false
+        },
+        {
+          "path": "docs/design/book-preview-open.png",
+          "bytes": 1391554,
+          "sha256": "798d08eadea1d5b6fb7714b3d28ecb3c52571f3bab36aa1eb3483f77fac8296c",
+          "missing": false
+        },
+        {
+          "path": "public/design/tokens.json",
+          "bytes": 3451,
+          "sha256": "08f2e39b155b95356ca53036ad6293f94e8c45bdaafa7934a700c58032660478",
+          "missing": false
+        },
+        {
+          "path": "public/design/tokens.css",
+          "bytes": 1653,
+          "sha256": "183994eb9a241e4edd33a3c71cc2902d365d742deca64beadfaf79e975aab147",
+          "missing": false
+        }
+      ],
+      "bytes": 6066976,
+      "missing": []
+    },
+    {
+      "id": "A7",
+      "label": "Final bilingual copy",
+      "status": "delivered",
+      "role": "reference",
+      "notes": "Canonical copy deck is script-final.md; script.md is a legacy mirror. Desktop/mobile limits and layout variants are validated by scripts/validate-copy.mjs. Launch review still required for all claim language.",
+      "files": [
+        {
+          "path": "docs/script-final.md",
+          "bytes": 7496,
+          "sha256": "1ac9860cf1849f972b754ce34877406bef77a28ed60fa9b369fca57c18401d4b",
+          "missing": false
+        },
+        {
+          "path": "docs/script.md",
+          "bytes": 7626,
+          "sha256": "8df2f9f00b4f0a25cad8e24006dd93c9dd5855c9386b6abad6e244bdebec3029",
+          "missing": false
+        },
+        {
+          "path": "docs/copy-fields.json",
+          "bytes": 15108,
+          "sha256": "537608739e02c8cf4a3996aec9cd2eb26077d27403e5b000b0ba8d9867fe5e76",
+          "missing": false
+        }
+      ],
+      "bytes": 30230,
+      "missing": []
+    },
+    {
+      "id": "B1",
+      "label": "One-code entry QR and links",
+      "status": "placeholder",
+      "role": "delivery",
+      "notes": "QR content is generated from links.json. The target currently uses the reserved .example host and must be replaced before launch.",
+      "files": [
+        {
+          "path": "public/data/links.json",
+          "bytes": 946,
+          "sha256": "878f4a8928f166b72a347740404378636f5070a905733463e587a4dc3951327f",
+          "missing": false
+        },
+        {
+          "path": "public/qr/one-code-entry.svg",
+          "bytes": 9852,
+          "sha256": "52416ac4513499c364b0eca606a17762a3bfb35cce478d020904452d60b1a8e3",
+          "missing": false
+        },
+        {
+          "path": "public/qr/one-code-entry.png",
+          "bytes": 15266,
+          "sha256": "6128cd102def2a9d857e796156c021f84a50e255b59e18b01500423b725cd05c",
+          "missing": false
+        },
+        {
+          "path": "public/qr/one-code-entry-card.svg",
+          "bytes": 63413,
+          "sha256": "3c3891e4c47aa1b3d0dc80334208ee7ae05cbcb7669988762b03b1c23d8f33c0",
+          "missing": false
+        },
+        {
+          "path": "public/qr/one-code-entry-card.png",
+          "bytes": 35520,
+          "sha256": "9549e572dd74f02b92c178f8f008acb8b46a0ab9f40f048aeb519d71af901e04",
+          "missing": false
+        },
+        {
+          "path": "public/qr/one-code-entry-card.webp",
+          "bytes": 29752,
+          "sha256": "8129b740eb84dfdbb2f011b2703a794cc4f4bfa2998825d7d5b1bd94c8116aea",
+          "missing": false
+        }
+      ],
+      "bytes": 154749,
+      "missing": []
+    },
+    {
+      "id": "B2",
+      "label": "Editions, prices and checkout",
+      "status": "pending-external",
+      "role": "delivery",
+      "notes": "Schema and three editions are delivered, but prices and checkout URLs are null until the commerce owner supplies them.",
+      "files": [
+        {
+          "path": "public/data/editions.json",
+          "bytes": 2672,
+          "sha256": "fe0e798087212a494532bfcab20a25383578fe110672d5176a2e29f826354d23",
+          "missing": false
+        }
+      ],
+      "bytes": 2672,
+      "missing": []
+    },
+    {
+      "id": "B3",
+      "label": "Lesson video and poster",
+      "status": "placeholder",
+      "role": "delivery",
+      "notes": "15 s silent concept preview. Final instructor footage, audio and rights clearance are pending.",
+      "files": [
+        {
+          "path": "public/video/lesson-preview.mp4",
+          "bytes": 1541756,
+          "sha256": "96cbcb9546d9b2d6c3289dab08184926239fa58961f25c656bf0e719f4616a0c",
+          "missing": false
+        },
+        {
+          "path": "public/video/lesson-preview-poster.webp",
+          "bytes": 28546,
+          "sha256": "43516281b4ff80836b5aba1584bf04ee88e4b651c7f4d336dcb021cb55e9c455",
+          "missing": false
+        },
+        {
+          "path": "public/video/lesson-preview.vtt",
+          "bytes": 745,
+          "sha256": "34ff8f4fcd83f47c0221af844793811fbf992ddc4824eac5389703dc2ae88e7e",
+          "missing": false
+        },
+        {
+          "path": "docs/design/lesson-preview-poster.png",
+          "bytes": 598999,
+          "sha256": "f6f31d41d32fc02656e377f7b40fcc69dac4c32f4b6b6e27709f5a23b6b054f4",
+          "missing": false
+        },
+        {
+          "path": "docs/design/lesson-preview.html",
+          "bytes": 22293,
+          "sha256": "582f56e3ca9903d7e95edd3cb0e0fb420667eb51ac116befc54e6d84576aff78",
+          "missing": false
+        },
+        {
+          "path": "docs/video-spec.md",
+          "bytes": 3696,
+          "sha256": "e4f25168e5f0f047a9c99eff678b8f9be0dd3491b47dd2e88d993070136705d0",
+          "missing": false
+        }
+      ],
+      "bytes": 2196035,
+      "missing": []
+    },
+    {
+      "id": "B4",
+      "label": "Knowledge graph data and preview",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Deterministic concept graph with 9 nodes and 11 links. Replace with CMS export when available.",
+      "files": [
+        {
+          "path": "public/data/knowledge-graph.json",
+          "bytes": 4713,
+          "sha256": "6d4498102dce40b17afc1359dd43e0c8a70054eb03e449bcb68520fa65a9a81d",
+          "missing": false
+        },
+        {
+          "path": "public/design/knowledge-graph.svg",
+          "bytes": 11660,
+          "sha256": "7733279f6340f48a98b781b20818a2effeb2ae53ab34cbb631619df8584d04a7",
+          "missing": false
+        },
+        {
+          "path": "public/design/knowledge-graph.png",
+          "bytes": 546003,
+          "sha256": "2eccd7c6e3721bdb924f658a51ffc39c3722de91c49b673b4cbca711d3e3b5a5",
+          "missing": false
+        },
+        {
+          "path": "public/design/knowledge-graph.webp",
+          "bytes": 56478,
+          "sha256": "324b3252864ed5bf98e39f0c77998ee85912c9336884503af2b998b67c223b56",
+          "missing": false
+        }
+      ],
+      "bytes": 618854,
+      "missing": []
+    },
+    {
+      "id": "B5",
+      "label": "Brand mark, wordmark and favicon",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Outlined wordmarks, geometric mark, favicon set, Apple touch icon and web manifest.",
+      "files": [
+        {
+          "path": "public/brand/bookln-mark.svg",
+          "bytes": 814,
+          "sha256": "d093a233a1ae694c9de7238bbd848bb336d56124440d2a6f58202986c620b63d",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-mark-transparent.svg",
+          "bytes": 758,
+          "sha256": "55959f20093cdd471fba4f25b76b7eb7e7406572b5f5981f4e6dd4c263bb29ec",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-mark-1024.png",
+          "bytes": 8260,
+          "sha256": "0105b84d70c4b412b51bab0a477387c897ef1b9c2910cbc7eadb41fd62ca020a",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-mark-512.png",
+          "bytes": 3340,
+          "sha256": "7a212f6a6b87ba8da8d245b6b3984ac949b0a0c6d420032c23dff5bd711f3d75",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-mark-192.png",
+          "bytes": 1388,
+          "sha256": "636691f981ce67afa00771771af3501dbd4382bdf18c452a9ddc423a798a3c22",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-wordmark.svg",
+          "bytes": 3984,
+          "sha256": "250eecab6a507ba3d1f3bad30bac147c3740b0946622b7ba8d2e076c06cdcfaa",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-wordmark-light.svg",
+          "bytes": 3984,
+          "sha256": "440bde3a2abdd41d820ba878b7251c8d7a49b044b780ba01d33ab59ce73c7eb8",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-lockup.svg",
+          "bytes": 4597,
+          "sha256": "3a9d5b878aa92f017fe5640a0004d9c8d18a339b97be53ef951a12f250820323",
+          "missing": false
+        },
+        {
+          "path": "public/brand/bookln-lockup-light.svg",
+          "bytes": 4604,
+          "sha256": "6bee32fc8e1a55df8cb1c6ef560094c1557ccfc1a0e09ef28891cd5cc967ebfc",
+          "missing": false
+        },
+        {
+          "path": "public/brand/favicon-32.png",
+          "bytes": 416,
+          "sha256": "4d0a4787a43a39ab7ca151ca04019764f500086c5b3a3256ba4c8bf869771988",
+          "missing": false
+        },
+        {
+          "path": "public/brand/favicon-48.png",
+          "bytes": 536,
+          "sha256": "ed4ce516c3db22687cb110fa063ed3f26f6f5c122f085fc06a40c8558e2389c8",
+          "missing": false
+        },
+        {
+          "path": "public/favicon.svg",
+          "bytes": 814,
+          "sha256": "d093a233a1ae694c9de7238bbd848bb336d56124440d2a6f58202986c620b63d",
+          "missing": false
+        },
+        {
+          "path": "public/favicon.ico",
+          "bytes": 7304,
+          "sha256": "39c9e0e6896b3b3cbcd19feba4988c9d6537984169afe7458e957215aa38d534",
+          "missing": false
+        },
+        {
+          "path": "public/apple-touch-icon.png",
+          "bytes": 1386,
+          "sha256": "d6cca2835116ad671b6e9700839c61e764e72dbc4914f218bb72aa5488948b80",
+          "missing": false
+        },
+        {
+          "path": "public/site.webmanifest",
+          "bytes": 690,
+          "sha256": "b247e4f9b0d85031db54cd41da536c3c1deb3c8ffe37b4044b5e08e786f1a62c",
+          "missing": false
+        },
+        {
+          "path": "docs/brand-guidelines.md",
+          "bytes": 5227,
+          "sha256": "59c5af60d5f8433329556c66b82beb2b796ca6df1830e7bc02d833c3130c422d",
+          "missing": false
+        }
+      ],
+      "bytes": 48102,
+      "missing": []
+    },
+    {
+      "id": "B6",
+      "label": "Studio HDRI",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Warm studio environment used by the 3D scene.",
+      "files": [
+        {
+          "path": "public/hdri/warm-studio.hdr",
+          "bytes": 2097228,
+          "sha256": "4fa2b40d7387e695a544d5f87de6c309803dc4af23a5c651271e37336d731f5e",
+          "missing": false
+        }
+      ],
+      "bytes": 2097228,
+      "missing": []
+    },
+    {
+      "id": "B7",
+      "label": "Fallback posters",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Static desktop and mobile posters for low-power devices and reduced-motion mode.",
+      "files": [
+        {
+          "path": "public/fallback/book-cover-art.webp",
+          "bytes": 10666,
+          "sha256": "bc3d1ede494e10e5d34515fc2a895420ddf0e39717517f79966543f15a2e13ed",
+          "missing": false
+        },
+        {
+          "path": "public/fallback/fallback-desktop.webp",
+          "bytes": 36874,
+          "sha256": "12fe81b479e05a6c49e5f8acf4e45ecb81af024f02864fe0f77d4b1ec32e89dc",
+          "missing": false
+        },
+        {
+          "path": "public/fallback/fallback-mobile.webp",
+          "bytes": 16650,
+          "sha256": "9de92861bab4ba41c88a3707d445620dcf98ae2d938686289f01f20ba8d890a9",
+          "missing": false
+        },
+        {
+          "path": "docs/design/fallback-poster.html",
+          "bytes": 10429,
+          "sha256": "9e95141e80ae49fa91f5350720d072769a65027d6a3f0f9b0120cad6c3f3cf95",
+          "missing": false
+        },
+        {
+          "path": "docs/design/fallback-desktop.png",
+          "bytes": 965197,
+          "sha256": "0c1a087c68a8ed166b225dd8b9929203a49ed96cb7fdf3f657335830ce9747cb",
+          "missing": false
+        },
+        {
+          "path": "docs/design/fallback-mobile.png",
+          "bytes": 322374,
+          "sha256": "40658a365627b47535ce02045f3c8b6490c2d192b3ed7786fe38621dc5bf3183",
+          "missing": false
+        }
+      ],
+      "bytes": 1362190,
+      "missing": []
+    },
+    {
+      "id": "B8",
+      "label": "Benchmark sources and evidence",
+      "status": "delivered",
+      "role": "reference",
+      "notes": "Claim register, source URLs, caveats and legal disclaimers. All † claims still need a technical evidence pack.",
+      "files": [
+        {
+          "path": "public/data/benchmark.json",
+          "bytes": 7710,
+          "sha256": "611d14a3e786479d29037b75aea3ef56937523fa46788408b5db537f030091a2",
+          "missing": false
+        },
+        {
+          "path": "docs/benchmark-sources.md",
+          "bytes": 8710,
+          "sha256": "9757e48973d48069add79298e749780daffb2523d4c7d57a6763ccd3e0c9101b",
+          "missing": false
+        }
+      ],
+      "bytes": 16420,
+      "missing": []
+    }
+  ]
+}

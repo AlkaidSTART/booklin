@@ -215,7 +215,7 @@ function CameraRig({
     const { index, t } = timeline(progressRef.current);
     const a = CAMERA_KEYS[index];
     const b = CAMERA_KEYS[Math.min(index + 1, CAMERA_KEYS.length - 1)];
-    const mobile = size.width < 760;
+    const mobile = size.width < 980;
 
     const targetX = mobile
       ? lerp(a.mobileTargetX, b.mobileTargetX, t)
@@ -398,7 +398,7 @@ function QrCompanionCard({ progressRef }: { progressRef: MutableRefObject<number
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const visible = size.width >= 760;
+    const visible = size.width >= 980;
     const target = visible ? band(phase, 3.32, 0.65) * 0.96 : 0;
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
@@ -444,7 +444,7 @@ function BookRig({
   progressRef: MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
-  const mobile = useThree((state) => state.size.width < 760);
+  const mobile = useThree((state) => state.size.width < 980);
   const bookGroupRef = useRef<THREE.Group>(null);
   const deskGroupRef = useRef<THREE.Group>(null);
   const pedestalGroupRef = useRef<THREE.Group>(null);

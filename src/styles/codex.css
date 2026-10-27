@@ -2240,3 +2240,52 @@ main,
     background: rgba(200, 169, 109, 0.06);
   }
 }
+
+
+/* Tablet stage framing: the layout is single-column below 980px, so the
+   3D object moves above the copy and the copy gets a readable scrim. */
+@media (max-width: 980px) {
+  .stage-scrim {
+    opacity: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(17, 16, 14, 0) 0%,
+      rgba(17, 16, 14, 0.04) 28%,
+      rgba(17, 16, 14, 0.5) 42%,
+      rgba(17, 16, 14, 0.9) 56%,
+      rgba(17, 16, 14, 0.985) 68%,
+      var(--ink-0) 80%
+    );
+  }
+
+  .chapter {
+    padding-top: calc(var(--header-height) + 42svh);
+  }
+
+  .chapter--hero {
+    padding-top: calc(var(--header-height) + 44svh);
+  }
+
+  .chapter--media {
+    padding-top: calc(var(--header-height) + 42svh);
+  }
+
+  .chapter--deployment {
+    padding-top: calc(var(--header-height) + 42svh);
+  }
+
+  .chapter__copy::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -34px -18px -28px;
+    background: linear-gradient(
+      to bottom,
+      rgba(17, 16, 14, 0) 0%,
+      rgba(17, 16, 14, 0.86) 28px,
+      rgba(17, 16, 14, 0.97) 62px,
+      rgba(17, 16, 14, 0.97) 100%
+    );
+    pointer-events: none;
+  }
+}

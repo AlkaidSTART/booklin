@@ -6,6 +6,8 @@ import * as THREE from 'three';
 
 export const SHELF_PHASE_COUNT = 9;
 
+type Vec3 = [number, number, number];
+
 export type ShelfPick = {
   x: number;
   row: number;
@@ -20,7 +22,7 @@ const PICK_TITLES = [
   { title: 'PAGE 042.', subtitle: 'HAPTIC ADDRESS · PAPER + CLOUD' },
   { title: 'NIGHT COPY.', subtitle: 'LOOP EDITION · PAPER + CLOUD' },
   { title: 'THE FIRST READER.', subtitle: 'SHELF COPY 0001 · PAPER + CLOUD' },
-  { title: 'CELULOSE.', subtitle: 'STRUCTURE NOTES · PAPER + CLOUD' },
+  { title: 'CELLULOSE.', subtitle: 'STRUCTURE NOTES · PAPER + CLOUD' },
 ];
 
 const PICK_SLOTS = [0.03, 0.13, 0.23, 0.33];
@@ -133,7 +135,7 @@ function buildShelfBooks(gapX: number): BookSpec[] {
     return seed / 4294967296;
   };
 
-  const gapHalf = 24;
+  const gapHalf = 40;
   const gapCenter = gapX * 1000;
 
   for (const row of rows) {
@@ -163,8 +165,8 @@ function buildShelfBooks(gapX: number): BookSpec[] {
         const right = spec.x + spec.w;
         const gapLeft = gapCenter - gapHalf;
         const gapRight = gapCenter + gapHalf;
-        if (right > gapLeft - 22 && left < gapRight + 22) {
-          x = gapRight + 26;
+        if (right > gapLeft - 10 && left < gapRight + 10) {
+          x = gapRight + 14;
           continue;
         }
       }
@@ -403,7 +405,7 @@ export function ShelfSelection({ pick }: { pick: ShelfPick }) {
 
   useFrame((_, delta) => {
     if (glowRef.current) {
-      const breath = 0.55 + Math.sin(performance.now() * 0.0014) * 0.16;
+      const breath = 0.62 + Math.sin(performance.now() * 0.0014) * 0.16;
       glowRef.current.opacity = THREE.MathUtils.damp(glowRef.current.opacity, breath, 4, delta);
     }
     if (ringRef.current) {
@@ -422,7 +424,7 @@ export function ShelfSelection({ pick }: { pick: ShelfPick }) {
           ref={glowRef}
           map={glowTexture ?? undefined}
           transparent
-          opacity={0.4}
+          opacity={0.5}
           depthWrite={false}
           blending={THREE.AdditiveBlending}
           toneMapped={false}
@@ -439,6 +441,33 @@ export function ShelfSelection({ pick }: { pick: ShelfPick }) {
           toneMapped={false}
         />
       </mesh>
+
+      <pointLight
+        position={[centerX, pick.rowY + 145, -70]}
+        intensity={0.5}
+        color="#ffcf8f"
+        distance={0.6}
+        decay={2}
+      />
+
+      {[
+        { position: [centerX, pick.rowY + 232, 6] as Vec3, size: [68, 1.8] as [number, number] },
+        { position: [centerX, pick.rowY - 2, 6] as Vec3, size: [68, 1.8] as [number, number] },
+        { position: [centerX - 33.5, pick.rowY + 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
+        { position: [centerX + 33.5, pick.rowY + 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
+      ].map((bar, index) => (
+        <mesh key={index} position={bar.position}>
+          <planeGeometry args={bar.size} />
+          <meshBasicMaterial
+            color="#e0b372"
+            transparent
+            opacity={index < 2 ? 0.5 : 0.38}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+      ))}
 
       {[354, 824, 1294, 1776].map((y, index) => (
         <mesh key={y} position={[0, y - 2, 2.2]}>
@@ -473,6 +502,7 @@ export function QrCoverMark({
   const sweepMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const haloRef = useRef<THREE.MeshBasicMaterial>(null);
   const frameRef = useRef<THREE.Group>(null);
+  const spineGlowRef = useRef<THREE.MeshBasicMaterial>(null);
 
   useEffect(() => {
     qr.colorSpace = THREE.SRGBColorSpace;
@@ -507,10 +537,35 @@ export function QrCoverMark({
       sweepRef.current.position.y = 42.5 - Math.max(0, Math.min(1, sweep)) * 25;
       sweepRef.current.visible = strength > 0.01;
     }
+    if (spineGlowRef.current) {
+      const onShelf = phase > 0.8 && phase < 1.6;
+      const breathe = reducedMotion ? 0.1 : 0.08 + Math.sin(performance.now() * 0.0021) * 0.08;
+      spineGlowRef.current.opacity = THREE.MathUtils.damp(
+        spineGlowRef.current.opacity,
+        onShelf ? 0.34 + breathe : 0.18,
+        4,
+        delta,
+      );
+    }
   });
 
   return (
-    <group position={[46, 43.5, 15.5]}>
+    <>
+      <mesh position={[-74.3, 105, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[4.4, 168]} />
+        <meshBasicMaterial
+          ref={spineGlowRef}
+          color="#ffd79a"
+          transparent
+          opacity={0.18}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </mesh>
+
+      <group position={[46, 43.5, 15.5]}>
       <mesh position={[0, 0, 0.15]}>
         <planeGeometry args={[31.5, 31.5]} />
         <meshStandardMaterial
@@ -562,7 +617,8 @@ export function QrCoverMark({
           toneMapped={false}
         />
       </mesh>
-    </group>
+      </group>
+    </>
   );
 }
 
@@ -729,6 +785,8 @@ export function PhoneScanner({
   const scanMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const [found, setFound] = useState(false);
   const foundRef = useRef(false);
+  const { size } = useThree();
+  const mobile = size.width < 760;
   const qrImage = useMemo(() => {
     if (typeof window === 'undefined') return null;
     const image = new Image();
@@ -785,11 +843,14 @@ export function PhoneScanner({
 
     if (groupRef.current) {
       groupRef.current.visible = vis > 0.01;
-      groupRef.current.position.x = 0.265;
-      groupRef.current.position.y = 0.862 - (1 - eased) * 0.2 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0011) * 0.003);
-      groupRef.current.position.z = 0.19;
-      groupRef.current.rotation.set(0.02, -0.52, 0.015);
-      const scale = 0.86 + eased * 0.14;
+      groupRef.current.position.x = mobile ? 0.145 : 0.265;
+      groupRef.current.position.y =
+        (mobile ? 0.842 : 0.862) -
+        (1 - eased) * 0.2 +
+        (reducedMotion ? 0 : Math.sin(performance.now() * 0.0011) * 0.003);
+      groupRef.current.position.z = mobile ? 0.22 : 0.19;
+      groupRef.current.rotation.set(0.02, mobile ? -0.34 : -0.52, 0.015);
+      const scale = (mobile ? 0.8 : 0.86) + eased * (mobile ? 0.12 : 0.14);
       groupRef.current.scale.setScalar(scale);
     }
 
@@ -803,7 +864,7 @@ export function PhoneScanner({
       const scanning = phase > 1.66 && phase < 1.9;
       const progress = ((phase - 1.66) / 0.22) % 1;
       scanRef.current.visible = scanning;
-      scanRef.current.position.y = 0.066 - Math.max(0, Math.min(1, progress)) * 0.132;
+      scanRef.current.position.y = 0.06 - Math.max(0, Math.min(1, progress)) * 0.12;
       if (scanMatRef.current) scanMatRef.current.opacity = scanning ? 0.8 : 0;
     }
 
@@ -844,7 +905,7 @@ export function PhoneScanner({
       </RoundedBox>
 
       <mesh position={[0, 0, 0.0074]}>
-        <planeGeometry args={[0.079, 0.171]} />
+        <planeGeometry args={[0.079, 0.158]} />
         <meshBasicMaterial
           ref={screenMatRef}
           map={texture ?? undefined}
@@ -855,7 +916,7 @@ export function PhoneScanner({
         />
       </mesh>
 
-      <mesh ref={scanRef} position={[0, 0.066, 0.0085]} visible={false}>
+      <mesh ref={scanRef} position={[0, 0.06, 0.0085]} visible={false}>
         <planeGeometry args={[0.071, 0.0022]} />
         <meshBasicMaterial
           ref={scanMatRef}
@@ -1129,8 +1190,8 @@ export function CloudSoulPanel({
     if (groupRef.current) {
       groupRef.current.visible = vis > 0.01;
       groupRef.current.position.set(
-        mobile ? 0.13 : 0.225,
-        1.045 - (1 - vis) * 0.035 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0009) * 0.002),
+        mobile ? 0.1 : 0.225,
+        (mobile ? 1.0 : 1.045) - (1 - vis) * 0.035 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0009) * 0.002),
         0.06,
       );
       groupRef.current.rotation.set(0.02, mobile ? -0.16 : -0.26, 0.008);
@@ -1140,9 +1201,9 @@ export function CloudSoulPanel({
 
     if (panelMatRef.current) panelMatRef.current.opacity = vis;
     if (borderMatRef.current) borderMatRef.current.opacity = vis * 0.62;
-    if (beamRef.current) beamRef.current.visible = vis > 0.01;
+    if (beamRef.current) beamRef.current.visible = vis > 0.01 && !mobile;
     if (beamMatRef.current) beamMatRef.current.opacity = vis * 0.72;
-    if (motesRef.current) motesRef.current.visible = vis > 0.01;
+    if (motesRef.current) motesRef.current.visible = vis > 0.01 && !mobile;
     if (moteMatRef.current) {
       moteMatRef.current.opacity = vis * 0.8;
       const positions = motePositions;

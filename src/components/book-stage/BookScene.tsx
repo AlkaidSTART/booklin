@@ -10,7 +10,6 @@ import {
   CloudSoulPanel,
   PhoneScanner,
   QrCoverMark,
-  SHELF_PHASE_COUNT,
   ShelfBooks,
   ShelfSelection,
   useShelfPick,
@@ -542,9 +541,10 @@ function useMorphMesh(scene: THREE.Object3D) {
    ------------------------------------------------------------------ */
 
 const PAGE_SPINE_X = -74; // hinge line in the book's local space
-const PAGE_LAG_START = 0.26; // trailing pages begin this much later
-const PAGE_LAG_LAND = 0.14; // ...and land this much later than the cover
-const PAGE_CURL = 0.22; // radians of bend at the free edge, mid-turn
+const PAGE_LAG_START = 0.28; // trailing pages begin this much later
+const PAGE_LAG_LAND = 0.2; // ...and land this much later than the cover
+const PAGE_CURL = 0.42; // radians of bend at the free edge, mid-turn
+const PAGE_BOUNCE = 0.11; // free-edge lift as the sheet settles
 
 type PageTurnRig = {
   position: THREE.BufferAttribute;
@@ -552,10 +552,10 @@ type PageTurnRig = {
   basePositions: Float32Array;
   baseNormals: Float32Array;
   radius: Float32Array;
-  angle0: Float32Array;
   lag: Float32Array;
   bend: Float32Array;
   maxRadius: number;
+  lastOpenness: number;
 };
 
 function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
@@ -563,15 +563,6 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
   const position = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
   const normal = geometry.getAttribute('normal') as THREE.BufferAttribute | undefined;
   const halfOpen = geometry.morphAttributes.position?.[1];
-  console.log('[page-turn] probe', JSON.stringify({
-    attrs: Object.keys(geometry.attributes),
-    morphKeys: Object.keys(geometry.morphAttributes),
-    morphPositions: geometry.morphAttributes.position?.length,
-    hasPosition: !!position,
-    hasNormal: !!normal,
-    hasHalfOpen: !!halfOpen,
-    posType: position?.array?.constructor?.name,
-  }));
   if (!position || !normal || !halfOpen) return null;
 
   const positionArray = position.array;
@@ -582,7 +573,7 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
 
   const count = position.count;
   const radius = new Float32Array(count);
-  const angle0 = new Float32Array(count);
+  const angle = new Float32Array(count);
   const lag = new Float32Array(count).fill(-1);
   const bend = new Float32Array(count);
   let maxRadius = 1;
@@ -593,14 +584,14 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     const z = positionArray[i * 3 + 2];
     const r = Math.hypot(x, z);
     radius[i] = r;
-    angle0[i] = Math.atan2(z, x);
+    angle[i] = Math.atan2(z, x);
     if (r > maxRadius) maxRadius = r;
 
     const dx = halfOpen.getX(i);
     const dz = halfOpen.getZ(i);
     if (Math.hypot(dx, dz) < 0.5) continue;
 
-    let delta = Math.atan2(z + dz, x + dx) - angle0[i];
+    let delta = Math.atan2(z + dz, x + dx) - angle[i];
     if (delta > Math.PI) delta -= Math.PI * 2;
     if (delta < -Math.PI) delta += Math.PI * 2;
     const value = clamp01(-delta / (Math.PI / 4));
@@ -608,7 +599,6 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     if (value > maxLag) maxLag = value;
   }
 
-  console.log('[page-turn] lag', JSON.stringify({ count, maxLag, maxRadius }));
   if (maxLag <= 0) return null;
 
   for (let i = 0; i < count; i += 1) {
@@ -624,17 +614,20 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     basePositions: new Float32Array(positionArray),
     baseNormals: new Float32Array(normalArray),
     radius,
-    angle0,
     lag,
     bend,
     maxRadius,
+    lastOpenness: -1,
   };
 }
 
 function applyPageTurn(rig: PageTurnRig, openness: number) {
+  if (Math.abs(openness - rig.lastOpenness) < 0.0002) return;
+  rig.lastOpenness = openness;
+
   const positions = rig.position.array as Float32Array;
   const normals = rig.normal.array as Float32Array;
-  const { basePositions, baseNormals, radius, angle0, lag, bend, maxRadius } = rig;
+  const { basePositions, baseNormals, radius, lag, bend, maxRadius } = rig;
 
   for (let i = 0; i < lag.length; i += 1) {
     const page = lag[i];
@@ -646,9 +639,12 @@ function applyPageTurn(rig: PageTurnRig, openness: number) {
     const eased = local * local * (3 - 2 * local);
     const theta = Math.PI * eased;
 
-    // Air drag keeps the free edge trailing through the whole sweep.
+    // Air drag keeps the free edge trailing through the whole sweep; on
+    // landing it lifts once more before settling flat.
     const reach = radius[i] / maxRadius;
-    const curl = bend[i] * Math.sin(theta) * PAGE_CURL * reach * reach;
+    const settle = clamp01((local - 0.82) / 0.18);
+    const bounce = PAGE_BOUNCE * Math.sin(settle * Math.PI) * (1 - settle) * reach * reach;
+    const curl = bend[i] * Math.sin(theta) * PAGE_CURL * reach * reach * reach + bounce;
     const phi = -(theta - curl);
     const cos = Math.cos(phi);
     const sin = Math.sin(phi);
@@ -681,7 +677,6 @@ function PageTurnRig({
   useEffect(() => {
     if (!mesh) return;
     const rig = buildPageTurnRig(mesh);
-    console.log('[page-turn] rig', rig ? 'ok' : 'null');
     if (!rig) return;
     mesh.morphTargetInfluences?.fill(0);
     rigRef.current = rig;
@@ -736,8 +731,12 @@ function CameraRig({
     const pointerY = reducedMotion || mobile ? 0 : pointerRef.current.y;
 
     const targetX = pose.target[0];
-    const targetY = pose.target[1];
+    let targetY = pose.target[1];
     const targetZ = pose.target[2];
+
+    // On phones the copy sits over the upper half; lift the shelf framing so
+    // the case and the selected spine breathe in the lower band.
+    if (mobile && custom && phase < 1.12) targetY += 0.26;
 
     const desiredPosition = new THREE.Vector3(
       (mobile ? targetX : pose.position[0]) + pointerX * 0.018,

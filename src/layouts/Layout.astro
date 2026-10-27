@@ -4,16 +4,18 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  lang?: string;
 }
 
 const {
   title = 'Bookln / THE BOOK. — Every Physical Book, Connected',
   description = 'Bookln connects any physical book to its digital twin. A concept preview of cellulose display architecture, haptic navigation and a scan-to-context companion layer.',
+  lang = 'en',
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />

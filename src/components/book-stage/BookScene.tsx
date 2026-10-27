@@ -225,6 +225,50 @@ function useSceneMaterials(scene: THREE.Object3D) {
   }, [scene]);
 }
 
+type MaterialPreset = {
+  color?: string;
+  roughness?: number;
+  metalness?: number;
+  envMapIntensity?: number;
+  /** Uniform XY normal scale. */
+  normalScale?: number;
+  /** Only applied to MeshPhysicalMaterial (e.g. glTF clearcoat extension). */
+  clearcoat?: number;
+  clearcoatRoughness?: number;
+  map?: THREE.Texture | null;
+  /** Wipe all texture maps before applying the rest of the preset. */
+  stripMaps?: boolean;
+};
+
+/**
+ * Applies a declarative material preset to a list of materials.
+ * Only keys defined in the preset are written, so nothing is overwritten by accident.
+ */
+function applyPreset(materials: THREE.Material[], preset: MaterialPreset): void {
+  for (const material of materials) {
+    const m = material as THREE.MeshPhysicalMaterial;
+    if (!m.isMeshStandardMaterial) continue;
+
+    if (preset.stripMaps) {
+      m.map = null;
+      m.normalMap = null;
+      m.roughnessMap = null;
+      m.metalnessMap = null;
+    }
+    if (preset.map !== undefined) m.map = preset.map;
+    if (preset.color !== undefined) m.color.set(preset.color);
+    if (preset.roughness !== undefined) m.roughness = preset.roughness;
+    if (preset.metalness !== undefined) m.metalness = preset.metalness;
+    if (preset.envMapIntensity !== undefined) m.envMapIntensity = preset.envMapIntensity;
+    if (preset.normalScale !== undefined) m.normalScale.set(preset.normalScale, preset.normalScale);
+    if (m.isMeshPhysicalMaterial) {
+      if (preset.clearcoat !== undefined) m.clearcoat = preset.clearcoat;
+      if (preset.clearcoatRoughness !== undefined) m.clearcoatRoughness = preset.clearcoatRoughness;
+    }
+    m.needsUpdate = true;
+  }
+}
+
 function useMorphMesh(scene: THREE.Object3D) {
   return useMemo(() => {
     let morphMesh: THREE.Mesh | null = null;
@@ -887,44 +931,45 @@ function BookRig({
     bookCoverAtlas.colorSpace = THREE.SRGBColorSpace;
     bookCoverAtlas.needsUpdate = true;
 
-    const configure = (
-      materials: THREE.Material[],
-      intensity: number,
-      tint?: string,
-      normalFactor = 0.42,
-    ) => {
-      for (const material of materials) {
-        const standard = material as THREE.MeshStandardMaterial;
-        if ('envMapIntensity' in standard) standard.envMapIntensity = intensity;
-        if (tint && standard.color) standard.color.multiply(new THREE.Color(tint));
-        if (standard.normalScale) standard.normalScale.multiplyScalar(normalFactor);
-        if (typeof standard.roughness === 'number') standard.roughness = Math.max(standard.roughness, 0.78);
-        material.needsUpdate = true;
-      }
-    };
+    // Book cover: the atlas drives color fully; satin cloth, subtle lacquer if available.
+    applyPreset(bookMaterials, {
+      stripMaps: true,
+      map: bookCoverAtlas,
+      color: '#ffffff',
+      roughness: 0.52,
+      metalness: 0,
+      envMapIntensity: 2.2,
+      normalScale: 0.72,
+      clearcoat: 0.12,
+      clearcoatRoughness: 0.55,
+    });
 
-    configure(bookMaterials, 1.3);
-    for (const material of bookMaterials) {
-      const standard = material as THREE.MeshStandardMaterial;
-      standard.map = bookCoverAtlas;
-      material.needsUpdate = true;
-    }
+    // Oak desk: flat dark walnut, no maps.
+    applyPreset(deskMaterials, {
+      stripMaps: true,
+      color: '#1a1007',
+      roughness: 0.85,
+      metalness: 0,
+      envMapIntensity: 0.55,
+    });
 
-    configure(deskMaterials, 0.2, '#171310', 0.035);
-    configure(pedestalMaterials, 0.55, '#5a4a3a');
-    configure(slipcaseMaterials, 0.85, '#8a6a4a');
+    // Display pedestal: medium rosewood.
+    applyPreset(pedestalMaterials, {
+      color: '#5c4632',
+      roughness: 0.58,
+      metalness: 0,
+      envMapIntensity: 0.85,
+      normalScale: 0.38,
+    });
 
-    for (const material of deskMaterials) {
-      const standard = material as THREE.MeshStandardMaterial;
-      standard.map = null;
-      standard.normalMap = null;
-      standard.roughnessMap = null;
-      standard.metalnessMap = null;
-      standard.color.set('#171310');
-      standard.roughness = 0.96;
-      standard.metalness = 0;
-      material.needsUpdate = true;
-    }
+    // Clothbound slipcase: warm tan cloth.
+    applyPreset(slipcaseMaterials, {
+      color: '#8c6745',
+      roughness: 0.72,
+      metalness: 0,
+      envMapIntensity: 1.1,
+      normalScale: 0.55,
+    });
   }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials]);
 
   useEffect(() => {
@@ -1052,12 +1097,12 @@ function BookRig({
 
       <ContactShadows
         position={[0, 0.7615, 0]}
-        scale={1.65}
-        resolution={256}
-        blur={2.6}
-        opacity={0.48}
-        far={0.55}
-        color="#050403"
+        scale={2.0}
+        resolution={512}
+        blur={3.8}
+        opacity={0.72}
+        far={0.68}
+        color="#020100"
         frames={Infinity}
       />
     </>
@@ -1079,22 +1124,38 @@ function SceneContents({
 }) {
   return (
     <>
-      <color attach="background" args={['#11100e']} />
-      <fog attach="fog" args={['#11100e', 1.9, 4.2]} />
+      {/* ── Scene base ─────────────────────────────────────────────── */}
+      <color attach="background" args={['#0e0d0b']} />
+      <fog attach="fog" args={['#0e0d0b', 2.4, 5.2]} />
 
-      <Environment files="/hdri/warm-studio.hdr" background={false} environmentIntensity={0.62} />
+      {/* HDR environment at moderate strength — lets PBR materials self-illuminate */}
+      <Environment files="/hdri/warm-studio.hdr" background={false} environmentIntensity={0.95} />
 
-      <ambientLight intensity={0.42} color="#d8c6a7" />
-      <directionalLight position={[1.8, 2.4, 1.7]} intensity={2.7} color="#ffe4bd" />
-      <directionalLight position={[-1.6, 1.25, 0.35]} intensity={1.75} color="#c9905e" />
-      <pointLight position={[0.26, 0.92, 0.45]} intensity={0.55} color="#d8b275" distance={1.8} decay={2} />
-      <pointLight position={[-0.32, 0.96, 0.48]} intensity={0.42} color="#ffe0b0" distance={1.4} decay={2} />
+      {/* Hemisphere sky/ground fill — gradient bounce instead of flat ambient */}
+      <hemisphereLight args={['#ddc89a', '#3a2810', 0.38]} />
+
+      {/* Key: warm window light from upper-left-front */}
+      <directionalLight position={[-1.4, 2.8, 1.6]} intensity={1.85} color="#fff3d6" />
+
+      {/* Fill: cool overcast from the right — softens key shadows */}
+      <directionalLight position={[2.1, 1.2, -0.4]} intensity={0.72} color="#c4d4e8" />
+
+      {/* Rim: warm terracotta backlight — separates book silhouette from bg */}
+      <directionalLight position={[-0.6, 0.8, -1.8]} intensity={1.1} color="#cc7744" />
+
+      {/* Desk bounce: gentle glow simulating light reflecting off the desk */}
+      <pointLight position={[0, 0.72, 0.28]} intensity={0.48} color="#c9941e" distance={1.4} decay={2.2} />
+
+      {/* Spine accent: skims across the spine to reveal cloth texture */}
+      <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.55} color="#ffe4b0" distance={1.1} decay={2} />
+
+      {/* Practical reading spot: principal light for the hero view */}
       <spotLight
-        position={[0.9, 1.9, 1.1]}
-        angle={0.48}
-        penumbra={1}
-        intensity={8.5}
-        color="#f4d39a"
+        position={[0.68, 2.1, 1.05]}
+        angle={0.34}
+        penumbra={0.92}
+        intensity={11}
+        color="#fdefc0"
         distance={5}
         decay={2}
       />

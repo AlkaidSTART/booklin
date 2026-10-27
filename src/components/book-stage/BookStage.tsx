@@ -287,7 +287,8 @@ export default function BookStage() {
               frameloop="always"
               onCreated={({ gl }) => {
                 gl.toneMapping = THREE.ACESFilmicToneMapping;
-                gl.toneMappingExposure = 1.08;
+                // Bump exposure a touch — richer blacks without blowing highlights
+                gl.toneMappingExposure = 1.22;
               }}
             >
               <AdaptiveDpr pixelated={false} />

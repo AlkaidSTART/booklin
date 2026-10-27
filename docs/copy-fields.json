@@ -1,12 +1,13 @@
 {
-  "version": "2026-10-26",
+  "version": "2026-10-27",
   "source": "docs/script-final.md",
   "status": "concept-copy-launch-review-required",
   "language": ["en", "zh"],
   "notes": [
     "Counts are Unicode code points; CJK glyphs count as one unit.",
     "Line limits are layout guidance, not enforced by this file.",
-    "Every claim marked † is a forward-looking concept claim and requires validation before launch."
+    "Every claim marked † is a forward-looking concept claim and requires validation before launch.",
+    "2026-10-27: loop-narrative fields added (00-shelf, 01-carry, 04-binding, 05-loop, 06-return). Legacy chapter labels (00-arrival … 05-deployment) stay until the page restructure."
   ],
   "limits": {
     "eyebrow": { "desktop": 32, "mobile": 24, "maxLines": { "desktop": 1, "mobile": 1 } },
@@ -59,6 +60,74 @@
       "limit": "annotation",
       "en": "Scroll to unfold.",
       "zh": "向下滚动，展开。"
+    },
+    {
+      "id": "shelf.eyebrow",
+      "chapter": "00-shelf",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "WHERE BOOKS WAIT",
+      "zh": "书在架上，魂在云上"
+    },
+    {
+      "id": "shelf.title",
+      "chapter": "00-shelf",
+      "role": "title",
+      "limit": "title",
+      "en": "A Shelf of Sleeping Souls.",
+      "zh": "一面架，睡着一群云魂。",
+      "enMobile": "Sleeping Souls."
+    },
+    {
+      "id": "shelf.subtitle",
+      "chapter": "00-shelf",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "Every book on the shelf is two bodies: paper here, soul in the cloud.",
+      "zh": "书架上的每一本书都有两个身体：纸身在此处，云魂在云上。",
+      "enMobile": "Paper here. Soul in the cloud."
+    },
+    {
+      "id": "shelf.annotation",
+      "chapter": "00-shelf",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Scan a spine mark: the preview layer rises — a glimpse of a soul not yet yours. Unclaimed, it stays at 0.00W.",
+      "zh": "扫一扫脊码，试读层升起——看一眼还不属于你的云魂。无人认领时，书保持 0.00W。",
+      "enMobile": "Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W."
+    },
+    {
+      "id": "carry.eyebrow",
+      "chapter": "01-carry",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE CARRY",
+      "zh": "携归"
+    },
+    {
+      "id": "carry.title",
+      "chapter": "01-carry",
+      "role": "title",
+      "limit": "title",
+      "en": "You Buy Two Bodies.",
+      "zh": "买下的，是两个身体。"
+    },
+    {
+      "id": "carry.subtitle",
+      "chapter": "01-carry",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "Paper in your bag; the soul follows, asleep until claimed.",
+      "zh": "纸身装进包里，云魂跟着回家，认领前一直沉睡。",
+      "enMobile": "Paper in your bag; soul in tow."
+    },
+    {
+      "id": "carry.annotation",
+      "chapter": "01-carry",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "The till binds nothing yet. The claim happens at home, on the page.",
+      "zh": "收银台不绑定任何东西；认领发生在家里，在纸页上。"
     },
     {
       "id": "structure.eyebrow",
@@ -244,6 +313,121 @@
       "limit": "annotation",
       "en": "Your page stays paper. Your context becomes connected.",
       "zh": "纸页仍留在手中，上下文从此彼此相连。"
+    },
+    {
+      "id": "binding.eyebrow",
+      "chapter": "04-binding",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE BINDING",
+      "zh": "认领"
+    },
+    {
+      "id": "binding.annotation",
+      "chapter": "04-binding",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "The first scan is a claim — this book's soul now answers to you.",
+      "zh": "第一次扫码即认领——从此这本书的云魂只应答你。"
+    },
+    {
+      "id": "loop.eyebrow",
+      "chapter": "05-loop",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE NIGHTLY LOOP",
+      "zh": "伴读循环"
+    },
+    {
+      "id": "loop.title",
+      "chapter": "05-loop",
+      "role": "title",
+      "limit": "title",
+      "en": "The Nightly Loop.",
+      "zh": "每晚，一个小闭环。"
+    },
+    {
+      "id": "loop.subtitle",
+      "chapter": "05-loop",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "Read on paper. Understand in the cloud.",
+      "zh": "读，在纸上；懂，在云端。"
+    },
+    {
+      "id": "loop.step1",
+      "chapter": "05-loop",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Stuck on a line",
+      "zh": "卡壳在一行"
+    },
+    {
+      "id": "loop.step2",
+      "chapter": "05-loop",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Look up, scan",
+      "zh": "抬头，扫码"
+    },
+    {
+      "id": "loop.step3",
+      "chapter": "05-loop",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Companion answers",
+      "zh": "云端开讲"
+    },
+    {
+      "id": "loop.step4",
+      "chapter": "05-loop",
+      "role": "cardTitle",
+      "limit": "cardTitle",
+      "en": "Back to paper",
+      "zh": "回到纸上"
+    },
+    {
+      "id": "loop.annotation",
+      "chapter": "05-loop",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "The ribbon remembers where your hand stopped. The app remembers where your mind did. Dual anchors, one loop.",
+      "zh": "书签记着手停在哪一页，App 记着脑学到哪一行。双锚点，一个循环。",
+      "enMobile": "Ribbon marks the page; the app marks the mind."
+    },
+    {
+      "id": "return.eyebrow",
+      "chapter": "06-return",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE RETURN",
+      "zh": "传承"
+    },
+    {
+      "id": "return.title",
+      "chapter": "06-return",
+      "role": "title",
+      "limit": "title",
+      "en": "Books Outlive Their Readers.",
+      "zh": "书比读者活得久。",
+      "enMobile": "Books Outlive Us."
+    },
+    {
+      "id": "return.subtitle",
+      "chapter": "06-return",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "The soul unbinds. The book forgets. The shelf waits.",
+      "zh": "云魂解绑，书忘了你，架子在等下一位。"
+    },
+    {
+      "id": "return.annotation",
+      "chapter": "06-return",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Your journey stays in your account, never in the book. To the next reader, this is a first encounter.",
+      "zh": "你的阅读里程只在你自己的账户里，从不在书里。对下一位读者而言，这是一场初见。",
+      "enMobile": "Your journey lives in your account — never in the book."
     },
     {
       "id": "benchmark.title",

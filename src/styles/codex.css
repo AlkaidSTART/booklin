@@ -1185,7 +1185,7 @@ main,
 .benchmark-panel {
   width: 100%;
   max-width: 830px;
-  margin-top: 22px;
+  margin-top: 16px;
   padding: clamp(14px, 2vw, 24px);
   border: 1px solid var(--line);
   background: rgba(24, 22, 19, 0.82);
@@ -1208,7 +1208,7 @@ main,
 
 .benchmark-table th,
 .benchmark-table td {
-  padding: 10px 8px;
+  padding: 9px 8px;
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;

@@ -50,7 +50,7 @@ const BOOK_KEYS: BookKey[] = [
   },
   // 04 Benchmark — closed and floating above the display pedestal.
   {
-    position: [0, 0.23, 0],
+    position: [0, 0.125, 0],
     rotation: [0.02, 0.54, 0],
     morph: [0, 0, 0],
   },
@@ -74,8 +74,8 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetX: 0,
   },
   {
-    position: [-0.25, 1.34, 0.57],
-    target: [-0.16, 0.78, 0.01],
+    position: [-0.4, 1.34, 0.57],
+    target: [-0.24, 0.78, 0.01],
     mobileTargetX: 0,
   },
   {
@@ -84,13 +84,13 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetX: 0,
   },
   {
-    position: [-0.3, 0.72, 0.87],
-    target: [-0.17, 0.24, 0],
+    position: [-0.3, 0.72, 1.0],
+    target: [-0.17, 0.18, 0],
     mobileTargetX: 0,
   },
   {
     position: [-0.38, 0.6, 1.15],
-    target: [-0.22, 0.12, 0],
+    target: [-0.22, 0.03, 0],
     mobileTargetX: 0,
   },
 ];
@@ -482,9 +482,21 @@ function BookRig({
     };
 
     configure(bookMaterials, 1.3);
-    configure(deskMaterials, 0.28, '#211a15', 0.08);
+    configure(deskMaterials, 0.2, '#171310', 0.035);
     configure(pedestalMaterials, 0.46, '#5a4a3a');
     configure(slipcaseMaterials, 0.82, '#8a6a4a');
+
+    for (const material of deskMaterials) {
+      const standard = material as THREE.MeshStandardMaterial;
+      standard.map = null;
+      standard.normalMap = null;
+      standard.roughnessMap = null;
+      standard.metalnessMap = null;
+      standard.color.set('#171310');
+      standard.roughness = 0.96;
+      standard.metalness = 0;
+      material.needsUpdate = true;
+    }
   }, [bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials]);
 
   useEffect(() => {
@@ -567,8 +579,10 @@ function BookRig({
       </group>
 
       <group ref={pedestalGroupRef} visible={false}>
-        <group scale={0.001}>
-          <primitive object={pedestal.scene} dispose={null} />
+        <group position={[0, 0.06, 0]} scale={0.55}>
+          <group scale={0.001}>
+            <primitive object={pedestal.scene} dispose={null} />
+          </group>
         </group>
       </group>
 

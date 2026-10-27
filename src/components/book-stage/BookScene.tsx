@@ -6,6 +6,16 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
+import {
+  CloudSoulPanel,
+  PhoneScanner,
+  QrCoverMark,
+  SHELF_PHASE_COUNT,
+  ShelfBooks,
+  ShelfSelection,
+  useShelfPick,
+} from './ShelfStage';
+import type { ShelfPick } from './ShelfStage';
 
 export type StageInteractionState = {
   activeLayer: number | null;
@@ -26,6 +36,7 @@ type CameraKey = {
   target: Vec3;
   mobileTargetX: number;
   mobileTargetY: number;
+  fov?: number;
 };
 
 type PointerRef = MutableRefObject<{ x: number; y: number }>;
@@ -104,12 +115,14 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetX: 0,
     mobileTargetY: 0.76,
   },
-  // 00 Shelf — tighter single-book framing
+  // 00 Shelf — pulled back so the full walnut case, both tiers and the
+  //   breathing hero spine fill the background behind the copy.
   {
-    position: [-0.3, 1.0, 0.6],
-    target: [-0.14, 0.85, 0],
+    position: [-0.26, 1.16, 1.02],
+    target: [-0.1, 0.96, -0.42],
     mobileTargetX: 0,
-    mobileTargetY: 0.75,
+    mobileTargetY: 0.9,
+    fov: 42,
   },
   // 01 Carry — wider, following the book home
   {
@@ -230,6 +243,176 @@ function timeline(progress: number) {
 
 function band(value: number, center: number, halfWidth: number) {
   return clamp01(1 - Math.abs(value - center) / halfWidth);
+}
+
+/* ------------------------------------------------------------------
+   Chapter 00 — shelf take-down / scan / uplink beat
+   ------------------------------------------------------------------ */
+
+const SHELF_RETURN_START = 0.82;
+const SHELF_RETURN_END = 1.05;
+const SHELF_SLIDE_END = 1.3;
+const SHELF_PICK_END = 1.56;
+const SHELF_BEAT_END = 2.15;
+
+type ShelfCameraPose = {
+  position: Vec3;
+  target: Vec3;
+  fov: number;
+};
+
+type BookPose = {
+  position: Vec3;
+  rotation: Vec3;
+};
+
+function mixVec3(a: Vec3, b: Vec3, t: number): Vec3 {
+  return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+}
+
+function mixCameraPose(a: ShelfCameraPose, b: ShelfCameraPose, t: number): ShelfCameraPose {
+  return {
+    position: mixVec3(a.position, b.position, t),
+    target: mixVec3(a.target, b.target, t),
+    fov: lerp(a.fov, b.fov, t),
+  };
+}
+
+function mixBookPose(a: BookPose, b: BookPose, t: number): BookPose {
+  return {
+    position: mixVec3(a.position, b.position, t),
+    rotation: mixVec3(a.rotation, b.rotation, t),
+  };
+}
+
+function keyBookPose(index: number, t: number): BookPose {
+  const a = BOOK_KEYS[index];
+  const b = BOOK_KEYS[Math.min(index + 1, BOOK_KEYS.length - 1)];
+  return {
+    position: mixVec3(a.position, b.position, t),
+    rotation: mixVec3(a.rotation, b.rotation, t),
+  };
+}
+
+function genericBookPose(phase: number): BookPose {
+  const { index, t } = timeline(phase);
+  return keyBookPose(index, t);
+}
+
+function cameraKeyPose(index: number, t: number, mobile: boolean): ShelfCameraPose {
+  const a = CAMERA_KEYS[index];
+  const b = CAMERA_KEYS[Math.min(index + 1, CAMERA_KEYS.length - 1)];
+  const target: Vec3 = mobile
+    ? [lerp(a.mobileTargetX, b.mobileTargetX, t), lerp(a.mobileTargetY, b.mobileTargetY, t), lerp(a.target[2], b.target[2], t)]
+    : mixVec3(a.target, b.target, t);
+  return {
+    position: mixVec3(a.position, b.position, t),
+    target,
+    fov: lerp(a.fov ?? 32, b.fov ?? 32, t),
+  };
+}
+
+function genericCameraPose(phase: number, mobile: boolean): ShelfCameraPose {
+  const { index, t } = timeline(phase);
+  return cameraKeyPose(index, t, mobile);
+}
+
+const SHELF_WIDE_CAMERA: ShelfCameraPose = {
+  position: [-0.26, 1.16, 1.02],
+  target: [-0.1, 0.96, -0.42],
+  fov: 42,
+};
+
+const PRESENT_CAMERA: ShelfCameraPose = {
+  position: [-0.34, 1.03, 0.72],
+  target: [-0.16, 0.865, 0.02],
+  fov: 34,
+};
+
+const QR_CAMERA: ShelfCameraPose = {
+  position: [-0.23, 0.93, 0.51],
+  target: [-0.035, 0.865, 0.03],
+  fov: 31,
+};
+
+const SCAN_CAMERA: ShelfCameraPose = {
+  position: [-0.1, 0.965, 0.8],
+  target: [0.075, 0.918, 0.05],
+  fov: 40,
+};
+
+function shelfCameraPose(phase: number): ShelfCameraPose | null {
+  if (phase < 1 || phase >= SHELF_BEAT_END) return null;
+
+  if (phase < 1.12) return SHELF_WIDE_CAMERA;
+
+  if (phase < SHELF_PICK_END) {
+    const t = smoothstep((phase - 1.12) / (SHELF_PICK_END - 1.12));
+    return mixCameraPose(SHELF_WIDE_CAMERA, PRESENT_CAMERA, t);
+  }
+
+  if (phase < 1.68) {
+    const t = smoothstep((phase - SHELF_PICK_END) / (1.68 - SHELF_PICK_END));
+    return mixCameraPose(PRESENT_CAMERA, QR_CAMERA, t);
+  }
+
+  if (phase < 1.84) return QR_CAMERA;
+
+  if (phase < 1.98) {
+    const t = smoothstep((phase - 1.84) / 0.14);
+    return mixCameraPose(QR_CAMERA, SCAN_CAMERA, t);
+  }
+
+  const finalPose = cameraKeyPose(2, 0, false);
+  const t = smoothstep((phase - 1.98) / (SHELF_BEAT_END - 1.98));
+  return mixCameraPose(SCAN_CAMERA, finalPose, t);
+}
+
+function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
+  if (phase < SHELF_RETURN_START || phase >= SHELF_BEAT_END) return null;
+
+  const shelfPose: BookPose = {
+    position: [pick.x, 0.824, -1.064],
+    rotation: [0.012, Math.PI / 2, 0.008],
+  };
+
+  if (phase < SHELF_RETURN_END) {
+    const k = smoothstep((phase - SHELF_RETURN_START) / (SHELF_RETURN_END - SHELF_RETURN_START));
+    const from = genericBookPose(SHELF_RETURN_START);
+    const pose = mixBookPose(from, shelfPose, k);
+    return {
+      position: [pose.position[0], pose.position[1] + Math.sin(Math.PI * k) * 0.14, pose.position[2]],
+      rotation: pose.rotation,
+    };
+  }
+
+  if (phase < 1.12) return shelfPose;
+
+  const pulledPose: BookPose = {
+    position: [pick.x * 0.72, 0.846, -0.46],
+    rotation: [0.055, Math.PI / 2 - 0.42, 0.012],
+  };
+
+  if (phase < SHELF_SLIDE_END) {
+    const k = smoothstep((phase - 1.12) / (SHELF_SLIDE_END - 1.12));
+    const pose = mixBookPose(shelfPose, pulledPose, k);
+    return {
+      position: [pose.position[0], pose.position[1] + Math.sin(Math.PI * k) * 0.006, pose.position[2]],
+      rotation: pose.rotation,
+    };
+  }
+
+  const finalPose = keyBookPose(2, 0);
+  if (phase < SHELF_PICK_END) {
+    const k = smoothstep((phase - SHELF_SLIDE_END) / (SHELF_PICK_END - SHELF_SLIDE_END));
+    const pose = mixBookPose(pulledPose, finalPose, k);
+    return {
+      position: [pose.position[0], pose.position[1] + Math.sin(Math.PI * k) * 0.035, pose.position[2]],
+      rotation: pose.rotation,
+    };
+  }
+
+  return finalPose;
 }
 
 const loaderCache = new WeakMap<THREE.WebGLRenderer, GLTFLoader>();
@@ -370,26 +553,22 @@ function CameraRig({
   const perspective = camera as THREE.PerspectiveCamera;
 
   useFrame((_, delta) => {
-    const { index, t } = timeline(progressRef.current);
-    const a = CAMERA_KEYS[index];
-    const b = CAMERA_KEYS[Math.min(index + 1, CAMERA_KEYS.length - 1)];
+    const phase = clamp01(progressRef.current) * PHASE_COUNT;
     const mobile = size.width < 760;
-
-    const targetX = mobile
-      ? lerp(a.mobileTargetX, b.mobileTargetX, t)
-      : lerp(a.target[0], b.target[0], t);
-    const targetY = mobile
-      ? lerp(a.mobileTargetY, b.mobileTargetY, t)
-      : lerp(a.target[1], b.target[1], t);
-    const targetZ = lerp(a.target[2], b.target[2], t);
+    const custom = shelfCameraPose(phase);
+    const pose = custom ?? genericCameraPose(phase, mobile);
 
     const pointerX = reducedMotion || mobile ? 0 : pointerRef.current.x;
     const pointerY = reducedMotion || mobile ? 0 : pointerRef.current.y;
 
+    const targetX = pose.target[0];
+    const targetY = pose.target[1];
+    const targetZ = pose.target[2];
+
     const desiredPosition = new THREE.Vector3(
-      mobile ? targetX : lerp(a.position[0], b.position[0], t) + pointerX * 0.018,
-      lerp(a.position[1], b.position[1], t) * (mobile ? 1.08 : 1) + pointerY * 0.012,
-      lerp(a.position[2], b.position[2], t) * (mobile ? 1.34 : 1),
+      (mobile ? targetX : pose.position[0]) + pointerX * 0.018,
+      pose.position[1] * (mobile ? 1.08 : 1) + pointerY * 0.012,
+      pose.position[2] * (mobile ? 1.34 : 1),
     );
 
     const desiredTarget = new THREE.Vector3(
@@ -403,7 +582,7 @@ function CameraRig({
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
 
-    const desiredFov = mobile ? 39 : 32;
+    const desiredFov = mobile ? (custom ? pose.fov + 8 : 39) : pose.fov;
     if (perspective.isPerspectiveCamera && Math.abs(perspective.fov - desiredFov) > 0.05) {
       perspective.fov = desiredFov;
       perspective.updateProjectionMatrix();

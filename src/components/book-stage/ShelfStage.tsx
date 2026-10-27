@@ -792,10 +792,6 @@ export function PhoneScanner({
         />
       </RoundedBox>
 
-      <RoundedBox args={[0.086, 0.181, 0.004]} radius={0.009} smoothness={4} position={[0, 0, 0.005]}>
-        <meshStandardMaterial color="#080706" metalness={0.4} roughness={0.5} transparent opacity={0.001} />
-      </RoundedBox>
-
       <mesh position={[0, 0, 0.0074]}>
         <planeGeometry args={[0.079, 0.171]} />
         <meshBasicMaterial
@@ -819,15 +815,6 @@ export function PhoneScanner({
           blending={THREE.AdditiveBlending}
           toneMapped={false}
         />
-      </mesh>
-
-      <mesh position={[-0.0475, 0.024, 0]}>
-        <boxGeometry args={[0.0024, 0.03, 0.004]} />
-        <meshStandardMaterial color="#2b2620" metalness={0.8} roughness={0.35} transparent opacity={0.001} />
-      </mesh>
-      <mesh position={[0.0475, -0.006, 0]}>
-        <boxGeometry args={[0.0024, 0.042, 0.004]} />
-        <meshStandardMaterial color="#2b2620" metalness={0.8} roughness={0.35} transparent opacity={0.001} />
       </mesh>
     </group>
   );
@@ -1144,7 +1131,7 @@ export function CloudSoulPanel({
         </mesh>
       </group>
 
-      <line geometry={beamGeometry as never} position={[0, 0, 0]} visible={false}>
+      <line ref={beamRef} geometry={beamGeometry as never} position={[0, 0, 0]} visible={false}>
         <lineBasicMaterial
           ref={beamMatRef}
           color="#c8a96d"
@@ -1156,9 +1143,9 @@ export function CloudSoulPanel({
         />
       </line>
 
-      <points position={[0, 0, 0]}>
+      <points ref={motesRef} position={[0, 0, 0]} visible={false}>
         <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[motePositions, 3]} />
+          <bufferAttribute ref={moteAttrRef} attach="attributes-position" args={[motePositions, 3]} />
         </bufferGeometry>
         <pointsMaterial
           ref={moteMatRef}

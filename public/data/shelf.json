@@ -1,0 +1,27 @@
+{
+  "version": "2026-10-27",
+  "status": "concept-data",
+  "mark": {
+    "id": "spine-mark",
+    "label": "Spine mark",
+    "labelZh": "脊码",
+    "position": "spine"
+  },
+  "preview": {
+    "label": "Preview layer",
+    "labelZh": "试读层",
+    "note": "Public layer — anyone can scan a spine mark and meet the book before it is claimed.",
+    "noteZh": "公开层——任何人扫脊码，都能在认领前先遇见这本书。",
+    "contents": [
+      { "id": "contents", "label": "Contents", "labelZh": "目录" },
+      { "id": "sample", "label": "Sample chapter", "labelZh": "样章" },
+      { "id": "lesson", "label": "Lesson sample", "labelZh": "讲题样例" },
+      { "id": "graph", "label": "Graph outline", "labelZh": "图谱轮廓" }
+    ]
+  },
+  "dataNotes": [
+    "Concept preview only; not connected to a live catalog.",
+    "The publisher defines the real preview set.",
+    "The preview layer carries no reader data (worldview D4)."
+  ]
+}

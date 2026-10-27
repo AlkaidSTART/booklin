@@ -110,7 +110,38 @@ The page should read its volatile content from these JSON files rather than hard
 
 ---
 
-## 7. Status vocabulary
+## 7. `public/data/shelf.json`
+
+**Purpose:** concept data for Chapter 00 (shelf) — the spine mark and its public preview layer.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `mark.*` | object | Spine mark identity (`spine-mark`), bilingual labels. |
+| `preview.contents[]` | array | Preview-layer chips: contents / sample chapter / lesson sample / graph outline. |
+| `preview.note` / `.noteZh` | string | Public-layer rule — anyone meets the book before it is claimed. |
+| `status` | string | `concept-data` until a publisher catalog export exists. |
+
+**Update rule:** the preview set is illustrative; a publisher defines the real contents. The preview layer must never carry reader data (worldview D4).
+
+---
+
+## 8. `public/data/companion.json`
+
+**Purpose:** concept data for Chapter 05 (loop) — session anchors and the cloud-soul capability suite.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `session.page` / `.pageLabel` | number / string | Hand anchor: Page 042. |
+| `session.lesson` | string | Mind anchor: Lesson 07. |
+| `session.anchors.hand` / `.mind` | object | Dual anchors with bilingual labels and positions. |
+| `capabilities[]` | array | Cloud-soul suite: video / audio / graph / AI / journey. |
+| `dataNotes` | string[] | Concept-only; not a live AI output. |
+
+**Update rule:** reader progress stays in the reader's own account; nothing is written into the book or across readers (worldview D4).
+
+---
+
+## 9. Status vocabulary
 
 | Status | Meaning |
 | --- | --- |
@@ -121,7 +152,7 @@ The page should read its volatile content from these JSON files rather than hard
 
 ---
 
-## 8. Validation
+## 10. Validation
 
 ```sh
 node scripts/validate-copy.mjs

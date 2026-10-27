@@ -31,40 +31,64 @@ type CameraKey = {
 type PointerRef = MutableRefObject<{ x: number; y: number }>;
 type InteractionRef = MutableRefObject<StageInteractionState>;
 
-// Unified desk coordinate space across all 6 chapters (00 -> 05)
+// Unified desk coordinate space across all 10 sections (prologue -> epilogue B)
 // so the object never teleports off the oak desk.
 const BOOK_KEYS: BookKey[] = [
-  // 00 Arrival — closed, standing on the oak desk, turned toward the reader.
+  // Prologue — closed, standing on the oak desk, turned toward the reader.
   {
     position: [0, 0.765, 0],
     rotation: [0.035, -0.28, 0.012],
     morph: [0, 0, 0],
   },
-  // 01 Structure — half-open (48°) and angled so the 6 material strata fan out clearly.
+  // 00 Shelf — closed, sleeping on the shelf (asset C1 pending: staged on the desk, single-book framing).
+  {
+    position: [0, 0.765, 0],
+    rotation: [0.05, -0.34, 0.01],
+    morph: [0, 0, 0],
+  },
+  // 01 Carry — closed, carried home with a slight lift.
+  {
+    position: [0, 0.772, 0.01],
+    rotation: [0.03, -0.18, 0.006],
+    morph: [0, 0, 0],
+  },
+  // 02 Structure — half-open (48°) and angled so the 6 material strata fan out clearly.
   {
     position: [0.01, 0.768, 0.01],
     rotation: [0.08, -0.54, 0.025],
     morph: [0, 0.86, 0],
   },
-  // 02 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
+  // 03 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
   {
     position: [0, 0.772, 0.015],
     rotation: [-Math.PI / 2, 0.06, 0],
     morph: [0, 0.04, 0.96],
   },
-  // 03 Neural Link — flat on the desk, lifted slightly as the Page 042 hologram rises above it.
+  // 04 Binding — flat on the desk, lifted slightly as the Page 042 hologram rises above it.
   {
     position: [0.01, 0.785, 0.01],
     rotation: [-Math.PI / 2, 0.14, 0],
     morph: [0, 0, 1],
   },
-  // 04 Benchmark — closed, elevated on the desktop display pedestal at a 45° hero angle.
+  // 05 Loop — flat on the night desk, reading posture (asset C4 pending).
+  {
+    position: [0, 0.778, 0.012],
+    rotation: [-Math.PI / 2, 0.09, 0],
+    morph: [0, 0.05, 0.95],
+  },
+  // 06 Return — closed, back on the shelf; mirrors the 00 shelf composition (ring closure).
+  {
+    position: [0, 0.765, 0],
+    rotation: [0.05, -0.34, 0.01],
+    morph: [0, 0, 0],
+  },
+  // Epilogue A Benchmark — closed, elevated on the desktop display pedestal at a 45° hero angle.
   {
     position: [0.01, 0.852, 0],
     rotation: [0.04, 0.58, 0.01],
     morph: [0, 0, 0],
   },
-  // 05 Deployment — closed on the desk, sliding into the custom clothbound slipcase.
+  // Epilogue B Deployment — closed on the desk, sliding into the custom clothbound slipcase.
   {
     position: [-0.038, 0.768, 0.015],
     rotation: [0.02, -0.24, 0.008],
@@ -73,42 +97,70 @@ const BOOK_KEYS: BookKey[] = [
 ];
 
 const CAMERA_KEYS: CameraKey[] = [
-  // 00 Arrival
+  // Prologue
   {
     position: [-0.38, 1.05, 0.72],
     target: [-0.18, 0.86, 0],
     mobileTargetX: 0,
     mobileTargetY: 0.76,
   },
-  // 01 Structure
+  // 00 Shelf — tighter single-book framing
+  {
+    position: [-0.3, 1.0, 0.6],
+    target: [-0.14, 0.85, 0],
+    mobileTargetX: 0,
+    mobileTargetY: 0.75,
+  },
+  // 01 Carry — wider, following the book home
+  {
+    position: [-0.4, 1.07, 0.78],
+    target: [-0.19, 0.87, 0],
+    mobileTargetX: 0,
+    mobileTargetY: 0.77,
+  },
+  // 02 Structure
   {
     position: [-0.34, 1.01, 0.67],
     target: [-0.16, 0.85, 0],
     mobileTargetX: 0,
     mobileTargetY: 0.74,
   },
-  // 02 Interaction — higher top-down angle to showcase the 180° spread & ribbon arc
+  // 03 Interaction — higher top-down angle to showcase the 180° spread & ribbon arc
   {
     position: [-0.36, 1.32, 0.55],
     target: [-0.21, 0.79, 0.01],
     mobileTargetX: -0.1,
     mobileTargetY: 0.71,
   },
-  // 03 Neural Link — framed to show both the open Page 042 and the 3D node constellation above it
+  // 04 Binding — framed to show both the open Page 042 and the 3D node constellation above it
   {
     position: [-0.32, 1.12, 0.68],
     target: [-0.17, 0.88, 0],
     mobileTargetX: -0.05,
     mobileTargetY: 0.8,
   },
-  // 04 Benchmark — framed for the wide comparison table on the left and pedestal on the right
+  // 05 Loop — closer, intimate night framing
+  {
+    position: [-0.34, 1.2, 0.6],
+    target: [-0.2, 0.82, 0.005],
+    mobileTargetX: -0.08,
+    mobileTargetY: 0.72,
+  },
+  // 06 Return — mirrors the 00 shelf framing (ring closure)
+  {
+    position: [-0.3, 1.0, 0.6],
+    target: [-0.14, 0.85, 0],
+    mobileTargetX: 0,
+    mobileTargetY: 0.75,
+  },
+  // Epilogue A Benchmark — framed for the wide comparison table on the left and pedestal on the right
   {
     position: [-0.34, 1.08, 0.78],
     target: [-0.2, 0.88, 0],
     mobileTargetX: 0,
     mobileTargetY: 0.78,
   },
-  // 05 Deployment — framed on the desk slipcase & book assembly
+  // Epilogue B Deployment — framed on the desk slipcase & book assembly
   {
     position: [-0.36, 1.04, 0.76],
     target: [-0.19, 0.86, 0],
@@ -407,7 +459,7 @@ function ExplodedLayers({
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const chapterStrength = band(phase, 1.18, 0.72);
+    const chapterStrength = band(phase, 3.18, 0.72);
     const activeLayer = interactionRef.current.activeLayer;
 
     let anyVisible = false;
@@ -455,7 +507,7 @@ function ExplodedLayers({
   );
 }
 
-// Chapter 02: Haptic page-turn airflow & 280mm bookmark ribbon landing on Page 042
+// Chapter 03: Haptic page-turn airflow & 280mm bookmark ribbon landing on Page 042
 function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -538,7 +590,7 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const active = band(phase, 2.15, 0.68);
+    const active = band(phase, 4.15, 0.68);
     ribbonMaterial.opacity = THREE.MathUtils.damp(ribbonMaterial.opacity, active * 0.9, 6, delta);
     arcMaterial.opacity = THREE.MathUtils.damp(arcMaterial.opacity, active * 0.48, 6, delta);
     ringMaterial.opacity = THREE.MathUtils.damp(ringMaterial.opacity, active * 0.75, 6, delta);
@@ -565,7 +617,7 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
   );
 }
 
-// Chapter 03 (and Chapter 05 Enterprise mode): True 3D Knowledge Graph rising from Page 042
+// Chapter 04 binding (and epilogue B Enterprise mode): True 3D Knowledge Graph rising from Page 042
 function NeuralGraph3D({
   progressRef,
   interactionRef,
@@ -683,8 +735,8 @@ function NeuralGraph3D({
     const { phase } = timeline(progressRef.current);
     const activeNode = interactionRef.current.activeNode ?? 'page';
     const enterpriseBoost =
-      phase >= 4.45 && interactionRef.current.activeEdition === 'enterprise' ? 0.78 : 0;
-    const strength = Math.max(band(phase, 3.12, 0.72), enterpriseBoost);
+      phase >= 8.45 && interactionRef.current.activeEdition === 'enterprise' ? 0.78 : 0;
+    const strength = Math.max(band(phase, 5.12, 0.72), enterpriseBoost);
 
     if (pointsMaterialRef.current) {
       pointsMaterialRef.current.opacity = THREE.MathUtils.damp(
@@ -803,8 +855,8 @@ function ScanRing({
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
     const standardBoost =
-      phase >= 4.45 && interactionRef.current.activeEdition === 'standard' ? 0.55 : 0;
-    const target = Math.max(band(phase, 3.12, 0.68) * 0.55, standardBoost);
+      phase >= 8.45 && interactionRef.current.activeEdition === 'standard' ? 0.55 : 0;
+    const target = Math.max(band(phase, 5.12, 0.68) * 0.55, standardBoost);
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
     }
@@ -860,7 +912,7 @@ function QrCompanionCard({ progressRef }: { progressRef: MutableRefObject<number
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
     const visible = size.width >= 760;
-    const target = visible ? band(phase, 3.15, 0.65) * 0.92 : 0;
+    const target = visible ? band(phase, 5.15, 0.65) * 0.92 : 0;
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
     }
@@ -991,17 +1043,17 @@ function BookRig({
     const scrollLanding = phase < 0.18 ? (1 - phase / 0.18) * 0.045 : 0;
     const idle = reducedMotion ? 0 : Math.sin(performance.now() * 0.00055) * 0.0015;
 
-    // In Chapter 05 (Deployment), adapt the book's horizontal position to the chosen edition
+    // In Epilogue B (Deployment), adapt the book's horizontal position to the chosen edition
     const edition = interactionRef.current.activeEdition;
     const deploymentOffsetX =
-      phase > 4.2
-        ? smoothstep((phase - 4.2) / 0.8) *
+      phase > 8.2
+        ? smoothstep((phase - 8.2) / 0.8) *
           (edition === 'standard' ? 0.085 : edition === 'enterprise' ? 0.055 : 0)
         : 0;
 
-    // Gentle turntable rotation on the pedestal during Chapter 04 (Benchmark)
+    // Gentle turntable rotation on the pedestal during Epilogue A (Benchmark)
     const benchmarkSpin =
-      band(phase, 4.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
+      band(phase, 8.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
 
     if (bookGroupRef.current) {
       const targetX = lerp(a.position[0], b.position[0], t) + deploymentOffsetX;
@@ -1027,10 +1079,10 @@ function BookRig({
       influences[2] = lerp(a.morph[2], b.morph[2], t);
     }
 
-    // Pedestal appears on the desk for Chapter 04 (Benchmark)
-    const pedestalTarget = band(phase, 4.0, 0.56) > 0.08 ? 1 : 0.001;
-    // Slipcase appears on the desk for Chapter 05 (Deployment)
-    const slipcaseTarget = phase >= 4.35 && edition !== 'standard' ? 1 : phase >= 4.35 ? 0.65 : 0.001;
+    // Pedestal appears on the desk for Epilogue A (Benchmark)
+    const pedestalTarget = band(phase, 8.0, 0.56) > 0.08 ? 1 : 0.001;
+    // Slipcase appears on the desk for Epilogue B (Deployment)
+    const slipcaseTarget = phase >= 8.35 && edition !== 'standard' ? 1 : phase >= 8.35 ? 0.65 : 0.001;
 
     if (pedestalGroupRef.current) {
       const next = THREE.MathUtils.damp(pedestalGroupRef.current.scale.x, pedestalTarget, 6, delta);

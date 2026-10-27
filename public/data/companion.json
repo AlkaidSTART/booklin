@@ -1,0 +1,24 @@
+{
+  "version": "2026-10-27",
+  "status": "concept-data",
+  "session": {
+    "page": 42,
+    "pageLabel": "Page 042",
+    "lesson": "Lesson 07",
+    "anchors": {
+      "hand": { "label": "Ribbon", "labelZh": "书签", "position": "Page 042" },
+      "mind": { "label": "App", "labelZh": "伴读", "position": "Lesson 07" }
+    }
+  },
+  "capabilities": [
+    { "id": "video", "label": "Teacher walkthroughs", "labelZh": "名师讲题" },
+    { "id": "audio", "label": "Audio companions", "labelZh": "音频讲解" },
+    { "id": "graph", "label": "Page knowledge graph", "labelZh": "知识图谱" },
+    { "id": "ai", "label": "AI companion", "labelZh": "AI 问答" },
+    { "id": "journey", "label": "Reading journey", "labelZh": "阅读里程" }
+  ],
+  "dataNotes": [
+    "Concept data only; not a live AI output.",
+    "Reader progress stays in the reader's own account; the book stores no reader data (worldview D4)."
+  ]
+}

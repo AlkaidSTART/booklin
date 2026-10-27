@@ -1,6 +1,6 @@
 # 循环叙事分镜草案（Loop Storyboard · Draft）
 
-> Status: **draft v0.1 — 待世界观定稿后并入 [`script-final.md`](script-final.md)**<br>
+> Status: **v0.3 — 页面已按循环结构重排；数据契约已落地；C1–C8 3D/视觉资产待产（书链馆与夜景暂用占位机位）**<br>
 > Version: `2026-10-27`<br>
 > 世界观依据：[`worldview.md`](worldview.md)（设定、决定记录、术语表）<br>
 > 格式沿用：[`script-source.md`](script-source.md)（3D 视觉 + 文案编排）
@@ -15,14 +15,14 @@
 
 ---
 
-## 00 · 停泊 The Shelf — 满架沉睡的云魂（🆕）
+## 00 · 停泊 The Shelf — 一本书，在架上沉睡（🆕）
 
-> 空间性质待世界观 Q1 拍板；当前按「泛化书架」拍。若定为「书链馆」，追加馆内标牌与驻足人流剪影。供给端已确认为真实网络（2,600+ 合作出版商、100 万+ 品种，见 [`worldview.md`](worldview.md) §7.1）——书架可以是「陈列真实库存」而不是布景。
+> Q1 已拍板（2026-10-27）：**书链馆（Bookln Haven）**，设定见 [`worldview.md`](worldview.md) §2。开场沿用 oryzo 式**单书聚焦**：第一眼永远是这一本书，书链馆只作虚焦环境，不拍群像。供给端为真实网络（2,600+ 合作出版商、100 万+ 品种，见 [`worldview.md`](worldview.md) §7.1）——书架是真实库存的陈列面，不是布景。
 
 ### 3D 视觉
 
-- 镜头从落桌的书上缓缓拉远，桌面渐渐让位于一面高大的橡木书架；灯光转冷调，只有顶灯扫过一排排竖立的书脊。
-- **群书皆暗，唯有一本书的书脊透出一缕极弱的暖金微光**——那是云魂沉睡态的呼吸光（0.00W 的视觉化）。
+- 承接 Hero：落桌的书轻轻合上，镜头沿书脊上摇，场景过渡到书链馆内一面高大的橡木书架。环境全部虚焦：暖黄顶灯、远处读者剪影、一枚「Bookln Haven」标签灯箱掠过景深。
+- **取景始终是一本书**：书架上这一本的书脊独占画面中央，其余书脊化作暗色虚影。它的书脊透出一缕极弱的暖金微光——云魂沉睡态的呼吸光（0.00W 的视觉化）。
 - 一只手入画，手机镜头对准书脊的**脊码**（Spine Mark）——书脊上方升起一层半透明的**试读层**全息浮窗：目录、样章、讲题样例、图谱轮廓。
 - 手指在「带走它」按钮上悬停（不按下），浮窗轻晃了一下，暗示书在等一个决定。
 
@@ -31,15 +31,15 @@
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow | WHERE BOOKS WAIT | 书在架上，魂在云上 |
-| Main title | **A Shelf of Sleeping Souls.** | **一面架，睡着一群云魂。** |
-| Subtitle | Every book on the shelf is two bodies: paper here, soul in the cloud. | 书架上的每一本书都有两个身体：纸身在此处，云魂在云上。 |
+| Main title | **One Book, Two Bodies.** | **一本书，两个身体。** |
+| Subtitle | This book has two bodies: paper here, soul in the cloud. | 这本书有两个身体：纸身在此处，云魂在云上。 |
 | Subtitle (mobile) | Paper here. Soul in the cloud. | 纸身在此，云魂在云上。 |
 | Annotation | Scan a spine mark: the preview layer rises — a glimpse of a soul not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的云魂。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
 **Telemetry:** `ON SHELF · DORMANT · 0.00W · PREVIEW ONLY` / `架上沉睡 · 仅试读层开放`
 
-**Motion beat:** 书架全景 15% → 推近微光书脊 60% → 脊码扫开试读层全息浮窗 100%。
+**Motion beat:** Hero 单书落桌 → 镜头沿书脊上摇入书链馆（环境虚焦）10% → 单书书脊微光特写 60% → 脊码扫开试读层全息浮窗 100%。
 
 ---
 
@@ -47,9 +47,9 @@
 
 ### 3D 视觉
 
-- 回到书架前，手指按下了「带走它」——试读层浮窗合拢成一枚光点，落回书脊。
-- 书从架上抽出，一束极简的**封签光**沿函套封口烙下一道哑金烙印（复用 A3 函套的封签细节）。
-- 快剪三连：书滑入函套 → 函套入包 → 门口回望一眼书架空出的位置。云魂的微光此刻**跟随在书旁**，像一枚安静的伴星。
+- 回到书架前，手指按下了「带走它」——试读层浮窗合拢成一枚光点，落回书脊；书从架上抽出。
+- 走向书链馆出口：结算界碑亮起，一束极简的**封签光**沿函套封口烙下一道哑金烙印（复用 A3 函套的封签细节）。馆内只完成「归属转移」，认领留给家里。
+- 快剪三连：书滑入函套 → 函套入包 → 门口回望一眼书架空出的位置（单书机位，环境虚焦）。云魂的微光此刻**跟随在书旁**，像一枚安静的伴星。
 - 灯光由冷转暖：家的方向。
 
 ### 文案编排
@@ -191,8 +191,10 @@
 
 ## 并稿与校验流程
 
-1. 世界观 Q1（书架空间）拍板 → 定稿 00/01 章分镜。
-2. 本章草案经评审后并入 `script-final.md`，删除被替换的旧 03 文案。
-3. 新增 copy fields（含 mobile 变体）写入 `docs/copy-fields.json`，章节 ID 扩展为 `00-shelf` … `06-return` 及 `epilogue-*`。
-4. `node scripts/validate-copy.mjs` 通过后，方可进入 `index.astro` 章节重排。
-5. 新章节数据契约（`shelf.json`、`companion.json`）届时并入 [`data-contracts.md`](data-contracts.md)。
+1. ✅ 世界观 Q1 拍板（2026-10-27，书链馆）→ 00/01 章分镜定稿（v0.2）。
+2. ✅ 草案并入 `script-final.md`（旧 03 云链的视觉与主文案由 04 认领继承，旧字段保留至页面重排）。
+3. ✅ 新增 copy fields（含 mobile 变体）写入 `docs/copy-fields.json`：`shelf / carry / binding / loop / return` 五组。
+4. ✅ `node scripts/validate-copy.mjs` 通过。
+5. ✅ 页面重排完成：`index.astro` 10 段结构（序幕 + 00–06 + 尾声 A/B）、`BookScene` 关键帧扩为 10 帧、章节导航与 telemetry 重编号、伴读 dock 迁入 05 章。
+6. ✅ 新章节数据契约落地：`public/data/shelf.json`、`public/data/companion.json`（契约并入 [`data-contracts.md`](data-contracts.md) §7/§8）。
+7. ⏳ C1–C8 资产制作与接入（书架、夜景布光、手机/App 视觉稿、试读层浮窗）——到位后替换占位机位。

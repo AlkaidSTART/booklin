@@ -74,17 +74,16 @@
       "chapter": "00-shelf",
       "role": "title",
       "limit": "title",
-      "en": "A Shelf of Sleeping Souls.",
-      "zh": "一面架，睡着一群云魂。",
-      "enMobile": "Sleeping Souls."
+      "en": "One Book, Two Bodies.",
+      "zh": "一本书，两个身体。"
     },
     {
       "id": "shelf.subtitle",
       "chapter": "00-shelf",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "Every book on the shelf is two bodies: paper here, soul in the cloud.",
-      "zh": "书架上的每一本书都有两个身体：纸身在此处，云魂在云上。",
+      "en": "This book has two bodies: paper here, soul in the cloud.",
+      "zh": "这本书有两个身体：纸身在此处，云魂在云上。",
       "enMobile": "Paper here. Soul in the cloud."
     },
     {

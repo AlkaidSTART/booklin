@@ -1046,6 +1046,36 @@ main,
   font-size: 11px;
 }
 
+.preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 540px;
+  margin-top: 20px;
+}
+
+.preview-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 11px;
+  border: 1px solid var(--line);
+  background: rgba(24, 22, 19, 0.62);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+}
+
+.preview-chip small {
+  color: var(--faint);
+  font-family: var(--font-serif);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
 .pull-quote {
   max-width: 500px;
   margin-top: 31px;

@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useRef } from 'react';
 import type { MutableRefObject } from 'react';
 import { ContactShadows, Environment, useTexture } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
@@ -86,16 +86,16 @@ const BOOK_KEYS: BookKey[] = [
     rotation: [0.05, -0.34, 0.01],
     open: 0,
   },
-  // Epilogue A Benchmark — closed, elevated on the desktop display pedestal at a 45° hero angle.
+  // Epilogue A Benchmark — closed, seated on the pedestal's felt pad at a 45° hero angle.
   {
-    position: [0.01, 0.852, 0],
+    position: [0.01, 0.8385, 0],
     rotation: [0.04, 0.58, 0.01],
     open: 0,
   },
-  // Epilogue B Deployment — closed on the desk, sliding into the custom clothbound slipcase.
+  // Epilogue B Deployment — closed on the desk in front of the clothbound slipcase.
   {
-    position: [-0.038, 0.768, 0.015],
-    rotation: [0.02, -0.24, 0.008],
+    position: [-0.015, 0.7641, 0.05],
+    rotation: [0.02, -0.3, 0.006],
     open: 0,
   },
 ];
@@ -170,6 +170,11 @@ const CAMERA_KEYS: CameraKey[] = [
 
 const PHASE_COUNT = BOOK_KEYS.length - 1;
 
+// Display pedestal: 120 mm tall at 0.62 scale, seated on the desk at 0.761 m.
+// The benchmark book rests on its top, so the deployment beat retracts the
+// whole plinth by exactly this height and leaves the book on the desk.
+const PEDESTAL_HEIGHT = 0.0744;
+
 type GraphNodeSpec = {
   id: string;
   type: string;
@@ -229,6 +234,24 @@ function timeline(progress: number) {
 
 function band(value: number, center: number, halfWidth: number) {
   return clamp01(1 - Math.abs(value - center) / halfWidth);
+}
+
+/**
+ * Scroll-linked light envelope: rises over [inStart, inEnd], holds, then falls
+ * over [outStart, outEnd]. Both shoulders ease with smoothstep, so the value
+ * and its derivative are continuous at every boundary — a light can never
+ * "switch" on a threshold.
+ */
+function lightEnvelope(
+  value: number,
+  inStart: number,
+  inEnd: number,
+  outStart: number,
+  outEnd: number,
+) {
+  const rise = smoothstep((value - inStart) / Math.max(0.001, inEnd - inStart));
+  const fall = 1 - smoothstep((value - outStart) / Math.max(0.001, outEnd - outStart));
+  return Math.min(rise, fall);
 }
 
 /* ------------------------------------------------------------------
@@ -399,6 +422,19 @@ function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
   }
 
   return finalPose;
+}
+
+/**
+ * Shared visibility of the shelf case across its two beats (00 Shelf and
+ * 05 Return). The wash lights reuse this so they can never pool on an empty
+ * desk before the case has grown in.
+ */
+function shelfPresence(phase: number) {
+  const shelfIn = smoothstep((phase - 0.56) / 0.18);
+  const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
+  const shelfReturn =
+    smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
+  return Math.max(shelfIn * shelfOut, shelfReturn);
 }
 
 const loaderCache = new WeakMap<THREE.WebGLRenderer, GLTFLoader>();
@@ -732,11 +768,23 @@ function CameraRig({
     // the case and the selected spine breathe in the lower band.
     if (mobile && custom && phase < 1.12) targetY += 0.26;
 
-    const desiredPosition = new THREE.Vector3(
-      (mobile ? targetX : pose.position[0]) + pointerX * 0.018,
-      pose.position[1] * (mobile ? 1.08 : 1) + pointerY * 0.012,
-      pose.position[2] * (mobile ? 1.34 : 1),
-    );
+    // Narrow desktop windows lose horizontal field of view. Pull the camera
+    // back along the view ray so the staged object stays framed instead of
+    // being cropped by the right edge. Wide screens keep the authored dolly.
+    const aspect = size.width / Math.max(1, size.height);
+    const aspectPush = mobile ? 1 : Math.min(1.35, Math.max(1, 1.6 / Math.max(0.9, aspect)));
+
+    const desiredPosition = mobile
+      ? new THREE.Vector3(
+          targetX + pointerX * 0.018,
+          pose.position[1] * 1.08 + pointerY * 0.012,
+          pose.position[2] * 1.34,
+        )
+      : new THREE.Vector3(
+          targetX + (pose.position[0] - targetX) * aspectPush + pointerX * 0.018,
+          targetY + (pose.position[1] - targetY) * aspectPush + pointerY * 0.012,
+          targetZ + (pose.position[2] - targetZ) * aspectPush,
+        );
 
     const desiredTarget = new THREE.Vector3(
       targetX + pointerX * 0.006,
@@ -991,9 +1039,7 @@ function NeuralGraph3D({
   useFrame(({ camera }, delta) => {
     const { phase } = timeline(progressRef.current);
     const activeNode = interactionRef.current.activeNode ?? 'page';
-    const enterpriseBoost =
-      phase >= 7.45 && interactionRef.current.activeEdition === 'enterprise' ? 0.78 : 0;
-    const strength = Math.max(band(phase, 4.12, 0.72), enterpriseBoost);
+    const strength = band(phase, 4.12, 0.72);
 
     if (pointsMaterialRef.current) {
       pointsMaterialRef.current.opacity = THREE.MathUtils.damp(
@@ -1098,22 +1144,14 @@ function NeuralGraph3D({
   );
 }
 
-function ScanRing({
-  progressRef,
-  interactionRef,
-}: {
-  progressRef: MutableRefObject<number>;
-  interactionRef: InteractionRef;
-}) {
+function ScanRing({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const innerRingRef = useRef<THREE.Mesh>(null);
   const materialRef = useRef<THREE.MeshBasicMaterial>(null);
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const standardBoost =
-      phase >= 7.45 && interactionRef.current.activeEdition === 'standard' ? 0.55 : 0;
-    const target = Math.max(band(phase, 4.12, 0.68) * 0.55, standardBoost);
+    const target = band(phase, 4.12, 0.68) * 0.55;
     if (materialRef.current) {
       materialRef.current.opacity = THREE.MathUtils.damp(materialRef.current.opacity, target, 6, delta);
     }
@@ -1272,29 +1310,30 @@ function BookRig({
       repeat: [2, 2],
     });
 
-    // Display pedestal (A4): cast bronze-black base, not a second wood tone.
+    // Display pedestal (A4): cast bronze-black base with a soft satin top,
+    // dark enough that the felt pad reads as the seat instead of a hole.
     applyNamedPresets(pedestalMaterials, {
       Pedestal_Bronze_Black: {
-        color: '#2a2118',
-        roughness: 0.38,
-        metalness: 0.58,
-        envMapIntensity: 1.15,
+        color: '#241c14',
+        roughness: 0.56,
+        metalness: 0.4,
+        envMapIntensity: 0.72,
       },
     });
 
     // Slipcase (A3): black cloth body, dark felt tray, real gold foil seal.
     applyNamedPresets(slipcaseMaterials, {
       Slipcase_Black_Cloth: {
-        color: '#161311',
-        roughness: 0.88,
+        color: '#050403',
+        roughness: 0.95,
         metalness: 0,
-        envMapIntensity: 0.55,
+        envMapIntensity: 0.15,
       },
       Slipcase_Inner_Tray: {
-        color: '#2a221a',
-        roughness: 0.96,
+        color: '#0b0807',
+        roughness: 0.98,
         metalness: 0,
-        envMapIntensity: 0.35,
+        envMapIntensity: 0.1,
       },
       Slipcase_Foil_Seal: {
         color: '#b8965d',
@@ -1391,12 +1430,22 @@ function BookRig({
     const deploymentOffsetX =
       phase > 7.2
         ? smoothstep((phase - 7.2) / 0.8) *
-          (edition === 'standard' ? 0.085 : edition === 'enterprise' ? 0.055 : 0)
+          (edition === 'standard' ? 0.05 : edition === 'enterprise' ? 0.028 : 0)
         : 0;
 
     // Gentle turntable rotation on the pedestal during Epilogue A (Benchmark)
     const benchmarkSpin =
       band(phase, 7.0, 0.55) * Math.sin(performance.now() * 0.00045) * 0.14;
+
+    // Pedestal is a Benchmark-only plinth. It retracts straight down into the
+    // desk before the slipcase arrives, so the deploying book and the case never
+    // share the stage with it.
+    const pedestalIn = smoothstep((phase - 6.68) / 0.22);
+    const pedestalOut = 1 - smoothstep((phase - 7.36) / 0.22);
+    const plinthRideY =
+      BOOK_KEYS[7].position[1] - (1 - pedestalOut) * PEDESTAL_HEIGHT;
+    // Slipcase only arrives once the plinth is flush and the desk is clear.
+    const slipcaseTarget = smoothstep((phase - 7.58) / 0.16);
 
     if (bookGroupRef.current) {
       const shelfPose = shelfBookPose(phase, pick);
@@ -1427,7 +1476,14 @@ function BookRig({
         );
       } else {
         const targetX = lerp(a.position[0], b.position[0], t) + deploymentOffsetX;
-        const targetY = lerp(a.position[1], b.position[1], t) + intro * 0.16 + scrollLanding + idle;
+        const lerpedY = lerp(a.position[1], b.position[1], t);
+        // The benchmark book rides the plinth as it retracts, so the two never
+        // separate mid-descent; once flush with the desk the keyframe takes over.
+        const targetY =
+          (phase > 7.36 ? Math.min(lerpedY, plinthRideY) : lerpedY) +
+          intro * 0.16 +
+          scrollLanding +
+          idle;
         const targetZ = lerp(a.position[2], b.position[2], t);
 
         bookGroupRef.current.position.set(
@@ -1443,20 +1499,11 @@ function BookRig({
       }
     }
 
-    // Pedestal appears on the desk for Epilogue A (Benchmark)
-    const pedestalTarget = band(phase, 7.0, 0.56) > 0.08 ? 1 : 0.001;
-    // Slipcase appears on the desk for Epilogue B (Deployment)
-    const slipcaseTarget = phase >= 7.35 && edition !== 'standard' ? 1 : phase >= 7.35 ? 0.65 : 0.001;
-
     // Shelf (00 Shelf and 05 Return share one composition: ring closure).
     // Scale is tied to scroll phase rather than time so the establish cannot
     // race ahead of the book when the wheel moves fast; the whole grow happens
     // behind the interlude plate (phase 0.56 → 0.74).
-    const shelfIn = smoothstep((phase - 0.56) / 0.18);
-    const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
-    const shelfReturn =
-      smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
-    const shelfScale = Math.max(shelfIn * shelfOut, shelfReturn);
+    const shelfScale = shelfPresence(phase);
     if (shelfGroupRef.current) {
       shelfGroupRef.current.scale.setScalar(Math.max(0.001, shelfScale));
       shelfGroupRef.current.visible = shelfScale > 0.005;
@@ -1469,16 +1516,16 @@ function BookRig({
     }
 
     if (pedestalGroupRef.current) {
-      const next = THREE.MathUtils.damp(pedestalGroupRef.current.scale.x, pedestalTarget, 6, delta);
-      pedestalGroupRef.current.scale.setScalar(Math.max(0.001, next));
-      pedestalGroupRef.current.visible = next > 0.005;
+      pedestalGroupRef.current.scale.setScalar(Math.max(0.001, pedestalIn));
+      pedestalGroupRef.current.position.y = 0.761 - (1 - pedestalOut) * PEDESTAL_HEIGHT;
+      pedestalGroupRef.current.visible = pedestalIn > 0.002 && pedestalOut > 0.002;
     }
 
     if (slipcaseGroupRef.current) {
       const next = THREE.MathUtils.damp(slipcaseGroupRef.current.scale.x, slipcaseTarget, 6, delta);
       slipcaseGroupRef.current.scale.setScalar(Math.max(0.001, next));
       slipcaseGroupRef.current.visible = next > 0.005;
-      const slipX = edition === 'standard' ? -0.13 : edition === 'enterprise' ? -0.095 : -0.042;
+      const slipX = edition === 'standard' ? -0.155 : edition === 'enterprise' ? -0.14 : -0.128;
       slipcaseGroupRef.current.position.x = THREE.MathUtils.damp(
         slipcaseGroupRef.current.position.x,
         slipX,
@@ -1508,14 +1555,18 @@ function BookRig({
         <group scale={0.62}>
           <group scale={0.001}>
             <primitive object={pedestal.scene} dispose={null} />
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 120.4, 0]}>
+              <circleGeometry args={[146, 64]} />
+              <meshStandardMaterial color="#14100c" roughness={0.96} metalness={0} envMapIntensity={0.18} />
+            </mesh>
           </group>
         </group>
       </group>
 
       <group
         ref={slipcaseGroupRef}
-        position={[-0.042, 0.763, 0.012]}
-        rotation={[0.02, -0.24, 0.008]}
+        position={[-0.128, 0.763, -0.008]}
+        rotation={[0.02, -0.32, 0.006]}
         visible={false}
       >
         <group scale={mobile ? 0.84 : 1}>
@@ -1540,7 +1591,7 @@ function BookRig({
 
       <InteractionArcs progressRef={progressRef} />
       <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
-      <ScanRing progressRef={progressRef} interactionRef={interactionRef} />
+      <ScanRing progressRef={progressRef} />
       <QrCompanionCard progressRef={progressRef} />
 
       <ContactShadows
@@ -1559,7 +1610,14 @@ function BookRig({
 
 /**
  * Day studio light with a night-desk grade for 04 Loop (asset C4).
- * The night HDRI is only requested when the reader approaches the loop chapter.
+ *
+ * Every value here is a continuous function of the scroll phase. The night is
+ * one eased envelope, and the practical lamp rides a slightly later envelope,
+ * so the day rig hands over to it instead of both fading in lockstep.
+ *
+ * The HDR stays fixed on purpose: changing `files` re-suspends the
+ * `Environment`, which drops `scene.environment` for a few frames and reads as
+ * an exposure cut. The night is carried by the lamp plus the dimmed rig.
  */
 function LightRig({
   progressRef,
@@ -1568,8 +1626,8 @@ function LightRig({
   progressRef: MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
-  const [nightEnv, setNightEnv] = useState(false);
   const nightRef = useRef(0);
+  const lampMixRef = useRef(0);
   const hemiRef = useRef<THREE.HemisphereLight>(null);
   const keyRef = useRef<THREE.DirectionalLight>(null);
   const fillRef = useRef<THREE.DirectionalLight>(null);
@@ -1583,37 +1641,46 @@ function LightRig({
 
   useFrame((_, delta) => {
     const phase = clamp01(progressRef.current) * PHASE_COUNT;
-    const target = smoothstep(band(phase, 5, 0.9));
-    nightRef.current = THREE.MathUtils.damp(nightRef.current, target, reducedMotion ? 30 : 4, delta);
-    const night = nightRef.current;
-    const wantsNightEnv = phase > 3.7 && phase < 6.3;
-    setNightEnv((prev) => (prev === wantsNightEnv ? prev : wantsNightEnv));
+    // Short time smoothing to absorb discrete wheel deltas. Kept faster than
+    // the camera so the grade never lags behind the framing.
+    const follow = reducedMotion ? 30 : 9;
 
-    const shelfOn =
-      (phase > 0.85 && phase < 2.44) || (phase > 5.5 && phase < 6.8) ? 1 : 0;
-    shelfMixRef.current = THREE.MathUtils.damp(shelfMixRef.current, shelfOn, 4, delta);
+    // 04 Loop (phase 5) is the only night beat.
+    const nightTarget = lightEnvelope(phase, 4.05, 5.0, 5.4, 6.15);
+    // The lamp arrives after the day rig starts to fall away and leaves after
+    // it comes back, so the room always keeps a source.
+    const lampTarget = lightEnvelope(phase, 4.4, 5.25, 5.55, 6.05);
+    nightRef.current = THREE.MathUtils.damp(nightRef.current, nightTarget, follow, delta);
+    lampMixRef.current = THREE.MathUtils.damp(lampMixRef.current, lampTarget, follow, delta);
+    const night = nightRef.current;
+    const lamp = lampMixRef.current;
+
+    // Shelf wash follows the case's own scroll visibility, so the light and
+    // the geometry arrive and leave together instead of on separate thresholds.
+    shelfMixRef.current = THREE.MathUtils.damp(
+      shelfMixRef.current,
+      shelfPresence(phase),
+      follow,
+      delta,
+    );
     const shelf = shelfMixRef.current;
 
-    const dim = 1 - night * 0.82;
-    if (hemiRef.current) hemiRef.current.intensity = 0.3 * (1 - night * 0.75);
-    if (keyRef.current) keyRef.current.intensity = 1.35 * dim;
-    if (fillRef.current) fillRef.current.intensity = 0.5 * (1 - night * 0.9);
-    if (rimRef.current) rimRef.current.intensity = 0.85 * (1 - night * 0.6);
-    if (spotRef.current) spotRef.current.intensity = 5.5 * (1 - night * 0.85);
-    if (lampRef.current) lampRef.current.intensity = night * 2.6;
+    if (hemiRef.current) hemiRef.current.intensity = 0.3 - night * 0.24;
+    if (keyRef.current) keyRef.current.intensity = 1.35 - night * 1.13;
+    if (fillRef.current) fillRef.current.intensity = 0.5 - night * 0.46;
+    if (rimRef.current) rimRef.current.intensity = 0.85 - night * 0.55;
+    if (spotRef.current) spotRef.current.intensity = 5.5 - night * 4.75;
+    if (lampRef.current) lampRef.current.intensity = lamp * 2.6;
     if (shelfLightRef.current) shelfLightRef.current.intensity = shelf * 0.7;
     if (shelfFillRef.current) shelfFillRef.current.intensity = shelf * 0.2;
-    sceneRef.environmentIntensity = 0.7 * (1 - night * 0.55) + shelf * 0.06;
+    sceneRef.environmentIntensity = 0.7 - night * 0.48 + shelf * 0.06;
   });
 
   return (
     <>
-      {/* HDR environment: warm studio by day, small lamp pool at night */}
+      {/* HDR environment: one warm studio probe; the night grade is lighting-led */}
       <Suspense fallback={null}>
-        <Environment
-          files={nightEnv ? '/hdri/night-desk.hdr' : '/hdri/warm-studio.hdr'}
-          background={false}
-        />
+        <Environment files="/hdri/warm-studio.hdr" background={false} />
       </Suspense>
 
       {/* Hemisphere sky/ground fill — gradient bounce instead of flat ambient */}

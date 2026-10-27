@@ -25,16 +25,16 @@
       "chapter": "00-arrival",
       "role": "eyebrow",
       "limit": "eyebrow",
-      "en": "A NEW READING OBJECT",
-      "zh": "一件新的阅读对象"
+      "en": "EVERY BOOK, CONNECTED",
+      "zh": "每一本纸书，皆可入云"
     },
     {
       "id": "arrival.title",
       "chapter": "00-arrival",
       "role": "title",
       "limit": "title",
-      "en": "CODEX 1.",
-      "zh": "CODEX 1."
+      "en": "THE BOOK.",
+      "zh": "纸质书，重获新生。"
     },
     {
       "id": "arrival.subtitle",
@@ -42,15 +42,15 @@
       "role": "subtitle",
       "limit": "subtitle",
       "en": "The Zero-Watt Cognitive Engine.",
-      "zh": "零功耗认知引擎。"
+      "zh": "零功耗认知引擎，由书链 Bookln 唤醒。"
     },
     {
       "id": "arrival.annotation",
       "chapter": "00-arrival",
       "role": "annotation",
       "limit": "annotation",
-      "en": "Local by nature. Silent by design. Pure cellulose display matrix.",
-      "zh": "纯本地运行 / 零辐射 / 纯天然纤维显示矩阵。"
+      "en": "Local by nature. Silent by design. Any physical book, connected to the cloud.",
+      "zh": "纯本地运行 / 零辐射 / 赋予任意实体纸书云端伴读灵魂。"
     },
     {
       "id": "arrival.scrollCue",
@@ -413,8 +413,8 @@
       "chapter": "05-deployment",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "One object. Three ways to begin.",
-      "zh": "一件实体，三种进入方式。"
+      "en": "Any book. Three ways to connect.",
+      "zh": "任意实体书，三种接入方式。"
     },
     {
       "id": "deployment.cta",

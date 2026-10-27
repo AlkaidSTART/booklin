@@ -526,7 +526,106 @@ def build_desk_and_pedestal() -> None:
     print("PEDESTAL_TRIS", sum(len(p.vertices) - 2 for p in ped.data.polygons))
 
 
+def build_shelf() -> None:
+    """Asset C1/C2: shared shelf for chapters 00 (Shelf) and 06 (Return).
+
+    Local axes (mm, Blender Z-up): X along the shelf, Y depth (+Y is the back panel),
+    Z height. Sleeping spines are one object so they can be hidden independently; the
+    hero spine and its 0.00 W breathing strip are separate objects.
+    """
+    import random
+
+    reset()
+    rng = random.Random(1042)
+    wood = create_simple_material("Shelf_Walnut", (0.045, 0.030, 0.018, 1), 0.0, 0.78)
+    back = create_simple_material("Shelf_Back_Panel", (0.020, 0.016, 0.012, 1), 0.0, 0.92)
+    spine_palette = [
+        create_simple_material(f"Sleeping_Spine_{i}", color, 0.0, 0.82)
+        for i, color in enumerate(
+            [
+                (0.030, 0.026, 0.022, 1),
+                (0.040, 0.030, 0.024, 1),
+                (0.024, 0.028, 0.030, 1),
+                (0.046, 0.038, 0.028, 1),
+                (0.034, 0.022, 0.020, 1),
+            ]
+        )
+    ]
+    hero = create_simple_material("Hero_Spine_Cloth", (0.050, 0.040, 0.030, 1), 0.0, 0.7)
+    glow = create_simple_material("Hero_Spine_Glow", (0.80, 0.58, 0.24, 1), 0.0, 0.5)
+    bsdf = glow.node_tree.nodes.get("Principled BSDF")
+    bsdf.inputs["Emission Color"].default_value = (1.0, 0.68, 0.28, 1)
+    bsdf.inputs["Emission Strength"].default_value = 0.6
+
+    width, depth, height, board = 1400.0, 300.0, 1800.0, 24.0
+    region = (0.04, 0.04, 0.96, 0.96)
+    objects = []
+
+    frame = MeshBuilder()
+    frame.add_grid_box("Side_L", -width / 2, -width / 2 + board, 0, depth, 0, height, region, 0)
+    frame.add_grid_box("Side_R", width / 2 - board, width / 2, 0, depth, 0, height, region, 0)
+    board_heights = [330.0, 800.0, 1270.0, height - board]
+    for i, z in enumerate(board_heights):
+        frame.add_grid_box(f"Board_{i}", -width / 2, width / 2, 0, depth, z, z + board, region, 0)
+    objects.append(frame.to_object("Shelf_Frame", [wood]))
+
+    panel = MeshBuilder()
+    panel.add_grid_box("Back", -width / 2, width / 2, depth - 10, depth, 0, height, region, 0)
+    objects.append(panel.to_object("Shelf_Back_Panel", [back]))
+
+    sleeping = MeshBuilder()
+    inner_l, inner_r = -width / 2 + board + 8, width / 2 - board - 8
+    hero_x, hero_w, hero_h = -140.0, 38.0, 232.0
+    for row, board_z in enumerate((800.0 + board, 1270.0 + board)):
+        x = inner_l
+        while x < inner_r - 20:
+            w = rng.uniform(20, 46)
+            h = rng.uniform(190, 262)
+            if row == 0 and hero_x - 14 < x + w and x < hero_x + hero_w + 14:
+                x = hero_x + hero_w + 14  # leave a gap for the hero book
+                continue
+            if x + w > inner_r:
+                break
+            sleeping.add_grid_box(
+                f"Sleep_{row}_{int(x)}", x, x + w, 40, 40 + rng.uniform(150, 205), board_z, board_z + h,
+                region, rng.randrange(len(spine_palette)),
+            )
+            x += w + rng.uniform(0.5, 3.0)
+    objects.append(sleeping.to_object("Shelf_Books_Sleeping", spine_palette))
+
+    hero_b = MeshBuilder()
+    hero_z = 800.0 + board
+    hero_b.add_grid_box("Hero_Spine", hero_x, hero_x + hero_w, 40, 40 + 190, hero_z, hero_z + hero_h, region, 0)
+    objects.append(hero_b.to_object("Shelf_Hero_Spine", [hero]))
+    glow_b = MeshBuilder()
+    glow_b.add_grid_box("Hero_Glow", hero_x + 9, hero_x + hero_w - 9, 40 - 0.6, 40.0, hero_z + 28, hero_z + hero_h - 28, region, 0)
+    gl = glow_b.to_object("Shelf_Hero_Glow", [glow])
+    gl["breathing"] = "0.00 W emissive strip; animate emissiveIntensity in the web scene"
+    objects.append(gl)
+
+    for o in objects:
+        o.select_set(True)
+    bpy.context.view_layer.objects.active = objects[0]
+    bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE / "shelf.blend"))
+    bpy.ops.export_scene.gltf(
+        filepath=str(MODELS / "shelf.glb"),
+        export_format="GLB", use_selection=True, export_apply=True,
+        export_texcoords=True, export_normals=True, export_materials="EXPORT",
+        export_cameras=False, export_lights=False, export_extras=True,
+        export_draco_mesh_compression_enable=True, export_draco_mesh_compression_level=6,
+        export_yup=True,
+    )
+    print("SHELF_OBJECTS", [o.name for o in objects])
+    print("SHELF_TRIS", sum(sum(len(p.vertices) - 2 for p in o.data.polygons) for o in objects))
+
+
 if __name__ == "__main__":
+    import os
+
+    if os.environ.get("BOOKLN_ONLY") == "shelf":
+        build_shelf()
+        raise SystemExit
     build_book()
     build_slipcase()
     build_desk_and_pedestal()
+    build_shelf()

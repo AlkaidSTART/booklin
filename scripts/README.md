@@ -44,13 +44,13 @@ node scripts/build-asset-manifest.mjs
 
 | Script | Output |
 | --- | --- |
-| `build-models.py` | `public/models/*.glb`, source `.blend` files |
-| `generate-textures.py` | `public/textures/**/*.ktx2`, source PNGs |
+| `build-models.py` | `public/models/*.glb` (incl. `shelf.glb`; `BOOKLN_ONLY=shelf` builds just the shelf), source `.blend` files |
+| `generate-textures.py` | `public/hdri/*.hdr`, `public/textures/**/*.ktx2`, source PNGs |
 | `build-fonts.py` | `public/fonts/*.woff2`, `*.ttf`, licence files |
 | `render-book-preview.py` | `docs/design/book-preview-*.png` |
 | `capture-visual-spec.mjs` | `docs/design/visual-spec-*.png` and `.webp` |
 | `build-brand-assets.py` | `public/brand/*.svg`, `public/favicon.svg` |
-| `build-qr.mjs` | `public/qr/one-code-entry.{svg,png}`, card assets |
+| `build-qr.mjs` | `public/qr/spine-mark.svg`, `public/qr/one-code-entry.{svg,png}`, card assets |
 | `build-knowledge-graph.mjs` | `public/design/knowledge-graph.svg` |
 | `render-media.mjs` | brand PNGs/favicons, QR card PNG/WebP, graph PNG/WebP, fallback posters |
 | `render-lesson-preview.mjs` | `public/video/lesson-preview.mp4`, poster WebP |

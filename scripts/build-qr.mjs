@@ -148,11 +148,38 @@ writePng(path.join(outDir, 'one-code-entry.png'), pngSize, pngSize, (x, y) => {
   return qr.isDark(row, col) ? inkRgb : paperRgb;
 });
 
+// Asset C3: spine mark — a narrow, ink-on-paper QR variant for the book spine.
+const spineLink = links.spine;
+let spineModules = null;
+if (spineLink) {
+  const spineQr = qrcode(0, spineLink.errorCorrection || 'Q');
+  spineQr.addData(spineLink.qrTarget);
+  spineQr.make();
+  spineModules = spineQr.getModuleCount();
+  const spineQuiet = Number(spineLink.quietZoneModules || 2);
+  const spineTotal = spineModules + spineQuiet * 2;
+  const spineParts = [];
+  for (let row = 0; row < spineModules; row += 1) {
+    for (let col = 0; col < spineModules; col += 1) {
+      if (spineQr.isDark(row, col)) spineParts.push(`M${col + spineQuiet} ${row + spineQuiet}h1v1h-1z`);
+    }
+  }
+  const spineSvg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 ${spineTotal} ${spineTotal}" width="512" height="512" shape-rendering="crispEdges">
+  <title id="title">Bookln spine mark</title>
+  <desc id="desc">Scan the spine to open the public preview layer: contents, sample chapter, lesson sample and graph outline. Target: ${xmlEscape(spineLink.qrTarget)}</desc>
+  <rect width="${spineTotal}" height="${spineTotal}" fill="${paper}"/>
+  <path d="${spineParts.join('')}" fill="${ink}"/>
+</svg>
+`;
+  fs.writeFileSync(path.join(outDir, 'spine-mark.svg'), spineSvg);
+}
+
 console.log(JSON.stringify({
   target,
   errorCorrection,
   modules,
   total,
   png: `${pngSize}x${pngSize}`,
-  outputs: ['one-code-entry.svg', 'one-code-entry.png', 'one-code-entry-card.svg'],
+  outputs: ['one-code-entry.svg', 'one-code-entry.png', 'one-code-entry-card.svg', ...(spineLink ? ['spine-mark.svg'] : [])],
+  spineModules,
 }, null, 2));

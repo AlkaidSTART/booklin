@@ -1,16 +1,16 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-27T03:45:50.984Z",
+  "generatedAt": "2026-10-27T10:30:29.079Z",
   "source": "docs/assets.md",
   "statusCounts": {
-    "delivered": 12,
-    "placeholder": 2,
+    "delivered": 15,
+    "placeholder": 3,
     "pending-external": 1
   },
   "totals": {
-    "groups": 15,
-    "files": 84,
-    "bytes": 19168929,
+    "groups": 19,
+    "files": 91,
+    "bytes": 22368865,
     "missing": 0
   },
   "assets": [
@@ -252,32 +252,32 @@
       "files": [
         {
           "path": "docs/design/visual-spec.html",
-          "bytes": 39612,
-          "sha256": "26c093619b537329c6c804c6a0d05b01e65e49e4c55fd2801d70f446d059bf10",
+          "bytes": 48183,
+          "sha256": "7107a5d7ebafaabe6dfd3657a2cbba4601436b620244e6913d69f19c338469e2",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-desktop.png",
-          "bytes": 1478064,
-          "sha256": "7fc96b5c3c5313f03ef020fb50692a2d6bdda740e41af01f6430dc79ae08ef97",
+          "bytes": 1836277,
+          "sha256": "5b45c3b67c529a0bf77d8a21769d1460fac7a19ee6499d2b81f1b91f0621ea7e",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-desktop.webp",
-          "bytes": 365678,
-          "sha256": "09403b64aadcab44f1632d5e69318f65885e4a1bc71f8aec43e6df17c4fe07fd",
+          "bytes": 501206,
+          "sha256": "3df309f82cc587ea25311a2df30e1b16ba17230bd367d4981216f14273033638",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-mobile.png",
-          "bytes": 955041,
-          "sha256": "8d0b136717f0a6c36cbe108195b2814f53788e026c29ac183464704926a888dc",
+          "bytes": 1232605,
+          "sha256": "899058ccace0d922f7dde55d72b179fe74967ed40a5eab822443379f63cac66a",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-mobile.webp",
-          "bytes": 265942,
-          "sha256": "3eda33312663c9f267215b118984c9f47ece02a93472ce8a9adea4ebc2e5faef",
+          "bytes": 372592,
+          "sha256": "e64d79bd4684baadf7dee3a71b9db126392d09d8817c561a6b5a7708106fac6a",
           "missing": false
         },
         {
@@ -311,7 +311,7 @@
           "missing": false
         }
       ],
-      "bytes": 6043496,
+      "bytes": 6930022,
       "missing": []
     },
     {
@@ -323,8 +323,8 @@
       "files": [
         {
           "path": "docs/script-final.md",
-          "bytes": 7577,
-          "sha256": "187b1c28a3b255a26371d8e572f0ea28b03ec7a2b1b27095531435f879305b14",
+          "bytes": 13727,
+          "sha256": "b94ec626287d52a064d1eb3a7ad4c5f27da3d03bd0d84fba68f3ba790131e03b",
           "missing": false
         },
         {
@@ -335,12 +335,12 @@
         },
         {
           "path": "docs/copy-fields.json",
-          "bytes": 15191,
-          "sha256": "21f4185e86f165bfd85dd392c516fecb1e196789cb4e35a9d8eb1b7d8afcb3e7",
+          "bytes": 20926,
+          "sha256": "735cafc8b3d25228ba8939beff82e849f0682b0563ee6406ee4c4a4051f7f067",
           "missing": false
         }
       ],
-      "bytes": 30475,
+      "bytes": 42360,
       "missing": []
     },
     {
@@ -352,8 +352,8 @@
       "files": [
         {
           "path": "public/data/links.json",
-          "bytes": 947,
-          "sha256": "3921aae3b020ee63a4937c3e090bc2982d4f1b150c0d38ecc47b07894c2172dc",
+          "bytes": 1485,
+          "sha256": "e9d7c4bd64888ffbf9ecdb10b265d7b3d7fc21d230ceab1eb3c5ac7c23cfb944",
           "missing": false
         },
         {
@@ -387,7 +387,7 @@
           "missing": false
         }
       ],
-      "bytes": 157610,
+      "bytes": 158148,
       "missing": []
     },
     {
@@ -416,14 +416,14 @@
       "files": [
         {
           "path": "public/video/lesson-preview.mp4",
-          "bytes": 1541756,
-          "sha256": "96cbcb9546d9b2d6c3289dab08184926239fa58961f25c656bf0e719f4616a0c",
+          "bytes": 1566039,
+          "sha256": "7cc292cc813dd977f3fdf22fa58461e6061a8d528f123e48eb447783721af9b9",
           "missing": false
         },
         {
           "path": "public/video/lesson-preview-poster.webp",
-          "bytes": 28546,
-          "sha256": "43516281b4ff80836b5aba1584bf04ee88e4b651c7f4d336dcb021cb55e9c455",
+          "bytes": 30408,
+          "sha256": "f4c8bef0350de35af5b9d7207976606c2ce9d735a24b22b1dac9133c4c977834",
           "missing": false
         },
         {
@@ -434,14 +434,14 @@
         },
         {
           "path": "docs/design/lesson-preview-poster.png",
-          "bytes": 598999,
-          "sha256": "f6f31d41d32fc02656e377f7b40fcc69dac4c32f4b6b6e27709f5a23b6b054f4",
+          "bytes": 602660,
+          "sha256": "d8cb6b85af8c53223fa74b49ebc8840885a913ef5adcd9b380d5b94970774abf",
           "missing": false
         },
         {
           "path": "docs/design/lesson-preview.html",
-          "bytes": 22293,
-          "sha256": "582f56e3ca9903d7e95edd3cb0e0fb420667eb51ac116befc54e6d84576aff78",
+          "bytes": 22321,
+          "sha256": "3ad7a46f0c7cde06a6a4c2e61c765c7e9f8477a8f07940d6917ca4fa9bf02c3a",
           "missing": false
         },
         {
@@ -451,7 +451,7 @@
           "missing": false
         }
       ],
-      "bytes": 2196035,
+      "bytes": 2225869,
       "missing": []
     },
     {
@@ -681,6 +681,92 @@
         }
       ],
       "bytes": 16439,
+      "missing": []
+    },
+    {
+      "id": "C1",
+      "label": "Shelf model",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "≈1,000 triangles, Draco. Independent groups: frame, back panel, sleeping spines, hero spine, hero glow strip. Shared by 00 Shelf and 06 Return.",
+      "files": [
+        {
+          "path": "public/models/shelf.glb",
+          "bytes": 17956,
+          "sha256": "2b5d573a8b5cdb23d4dfaf907f7b22c6ce8fbd962745b2455af9fcea71c8a7c9",
+          "missing": false
+        },
+        {
+          "path": "public/models/source/shelf.blend",
+          "bytes": 120750,
+          "sha256": "3292faebbc42b3e9f076c0025aaaca2290b25616c521f1d0772b5943c552b615",
+          "missing": false
+        }
+      ],
+      "bytes": 138706,
+      "missing": []
+    },
+    {
+      "id": "C2",
+      "label": "Sleeping spines and hero glow",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Dark spine materials in Shelf_Books_Sleeping; only Hero_Spine_Glow is emissive and breathes (0.00 W).",
+      "files": [
+        {
+          "path": "public/models/shelf.glb",
+          "bytes": 17956,
+          "sha256": "2b5d573a8b5cdb23d4dfaf907f7b22c6ce8fbd962745b2455af9fcea71c8a7c9",
+          "missing": false
+        }
+      ],
+      "bytes": 17956,
+      "missing": []
+    },
+    {
+      "id": "C3",
+      "label": "Spine mark",
+      "status": "placeholder",
+      "role": "delivery",
+      "notes": "QR variant for the preview layer; uses the reserved .example host until the production URL is supplied.",
+      "files": [
+        {
+          "path": "public/qr/spine-mark.svg",
+          "bytes": 14810,
+          "sha256": "da88f85317f6809cf9409c78409c7583229dfcbbd2a10fb7721c58e912ff8876",
+          "missing": false
+        },
+        {
+          "path": "public/data/shelf.json",
+          "bytes": 969,
+          "sha256": "1b84cf4361db716a61b1a555c929544976a26d1625625ddc312599a9d7d84542",
+          "missing": false
+        },
+        {
+          "path": "public/data/links.json",
+          "bytes": 1485,
+          "sha256": "e9d7c4bd64888ffbf9ecdb10b265d7b3d7fc21d230ceab1eb3c5ac7c23cfb944",
+          "missing": false
+        }
+      ],
+      "bytes": 17264,
+      "missing": []
+    },
+    {
+      "id": "C4",
+      "label": "Night desk HDRI and lamp light",
+      "status": "delivered",
+      "role": "delivery",
+      "notes": "Small warm lamp pool; loaded lazily when the reader nears 05 Loop. Scene lights dim and a practical lamp fades in.",
+      "files": [
+        {
+          "path": "public/hdri/night-desk.hdr",
+          "bytes": 2097227,
+          "sha256": "e4222893420907562e91ba7dc28abfab7ec01fbe12bb3438f9fe99b6e9c63cbc",
+          "missing": false
+        }
+      ],
+      "bytes": 2097227,
       "missing": []
     }
   ]

@@ -31,4 +31,14 @@ for (const c of captures) {
   execFileSync('cwebp', ['-quiet', '-q', '88', png, '-o', webp]);
   console.log(c.name, metrics);
 }
+// C8: reading-journey concept screen
+{
+  const journey = path.join(root, 'docs', 'design', 'reading-journey.html');
+  await page.setViewport({ width: 900, height: 820, deviceScaleFactor: 1 });
+  await page.goto(pathToFileURL(journey).href, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => document.fonts.ready);
+  const png = path.join(root, 'docs', 'design', 'reading-journey.png');
+  await page.screenshot({ path: png, fullPage: true });
+  console.log('reading-journey');
+}
 await browser.close();

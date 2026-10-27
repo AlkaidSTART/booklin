@@ -295,6 +295,31 @@
       .table-wrap { overflow-x: auto; }
       table { min-width: 610px; }
     }
+
+    /* C7 — loop chapters 00 / 01 / 05 / 06 */
+    .telemetry-strip { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 26px 0 0; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); color: var(--faint); font: 9px/1.5 ui-monospace, monospace; letter-spacing: .12em; }
+    .telemetry-strip b { color: var(--gold); font-weight: 500; }
+    .telemetry-strip i { color: var(--rust-text); font-style: normal; }
+    .shelf-art { position: relative; width: min(100%, 420px); height: 300px; border-bottom: 10px solid var(--ink-3); display: flex; align-items: flex-end; gap: 4px; padding: 0 14px; }
+    .shelf-art span { flex: 1; background: var(--ink-2); border: 1px solid var(--line); border-bottom: 0; }
+    .shelf-art span:nth-child(3n) { height: 78%; } .shelf-art span:nth-child(3n+1) { height: 68%; } .shelf-art span:nth-child(3n+2) { height: 85%; }
+    .shelf-art span.hero-spine { background: var(--ink-3); border-color: var(--gold-2); box-shadow: 0 0 22px rgba(200, 169, 109, .55), inset 0 0 0 3px rgba(200, 169, 109, .35); height: 80%; }
+    .shelf-art small { position: absolute; left: 14px; top: 0; color: var(--faint); font-size: 8px; letter-spacing: .14em; }
+    .claim-flow { display: grid; gap: 10px; width: min(100%, 380px); }
+    .claim-flow div { padding: 14px 16px; border: 1px solid var(--line-strong); color: var(--muted); font-size: 11px; display: flex; justify-content: space-between; }
+    .claim-flow div.on { border-color: var(--gold); color: var(--text); }
+    .claim-flow div em { color: var(--gold); font: 500 16px/1 var(--display); font-style: normal; }
+    .loop-ring { position: relative; width: 300px; height: 300px; border: 1px dashed var(--line-strong); border-radius: 50%; }
+    .loop-ring span { position: absolute; width: 112px; padding: 9px 6px; text-align: center; background: var(--ink-1); border: 1px solid var(--line-strong); color: var(--muted); font-size: 10px; }
+    .loop-ring { margin: 20px auto 0; }
+    .loop-ring span:nth-child(1) { left: 94px; top: -18px; } .loop-ring span:nth-child(2) { right: -26px; top: 130px; border-color: var(--gold); color: var(--text); }
+    .loop-ring span:nth-child(3) { left: 94px; bottom: -18px; } .loop-ring span:nth-child(4) { left: -26px; top: 130px; border-color: var(--rust); color: var(--rust-text); }
+    .loop-ring p { position: absolute; inset: 0; padding: 0 100px; line-height: 1.8; font-size: 8px; display: grid; place-items: center; margin: 0; color: var(--faint); font-size: 9px; letter-spacing: .14em; text-align: center; }
+    .margin-rail { display: grid; gap: 8px; width: min(100%, 300px); margin: 40px auto 28px; }
+    .margin-rail div { padding: 8px 12px; border-left: 2px solid var(--gold-2); background: var(--ink-1); color: var(--muted); font-size: 10px; }
+    .archive-card { width: min(100%, 300px); padding: 26px 22px; border: 1px solid var(--line-strong); background: var(--ink-1); }
+    .archive-card strong { display: block; margin-top: 10px; font: 500 30px/1.1 var(--display); color: var(--gold); }
+    .archive-card span { color: var(--muted); font-size: 11px; }
   </style>
 </head>
 <body>
@@ -531,6 +556,67 @@
             <article class="edition"><span class="no">03 / ENTERPRISE</span><h4>Enterprise</h4><p>Classroom dashboard + shared reading.</p></article>
           </div>
         </div>
+      </article>
+    </section>
+
+
+    <section class="chapters" aria-labelledby="loop-ext-title">
+      <div class="section-head" style="padding-top:76px">
+        <div class="section-index">05 / 07</div>
+        <h2 id="loop-ext-title">Loop chapters</h2>
+        <p>C7 extension of the chapter set: 00 Shelf, 01 Carry, 05 Loop and 06 Return. Each shows desktop 1440 and mobile 390 telemetry. In-world red lines apply: no full-page reading on screen, no push, no red dots, no pop-ups, no reader data stored in the book.</p>
+      </div>
+
+      <article class="chapter" id="shelf-ext">
+        <div class="chapter-rail"><span class="chapter-no">00</span><div class="chapter-progress"><span class="active">0–11</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Dormancy</div>
+          <h3>On the <em>shelf.</em></h3>
+          <p class="chapter-sub">One spine breathes at 0.00 W. Everything else sleeps.</p>
+          <p>书架上，一本书脊在 0.00W 微光中呼吸；其余沉睡。任何人扫脊码，都能先遇见试读层。</p>
+          <div class="telemetry-strip"><span><b>DESKTOP 1440</b> · ON SHELF · DORMANT · 0.00W · PREVIEW ONLY</span><span><b>MOBILE 390</b> · 架上沉睡 · 仅试读层开放</span></div>
+          <p>Chips: contents, sample chapter, lesson sample, graph outline. Hero strip breathing 0.18–0.60 emissive. Composition is reused verbatim by 06.</p>
+        </div>
+        <div class="chapter-art" data-caption="Shelf / spine mark / preview layer"><div class="shelf-art"><small>PREVIEW LAYER ONLY</small><span></span><span></span><span></span><span></span><span></span><span class="hero-spine"></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+      </article>
+
+      <article class="chapter" id="carry-ext">
+        <div class="chapter-rail"><span class="chapter-no">01</span><div class="chapter-progress"><span class="active">11–22</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Paid &amp; sealed</div>
+          <h3>Two bodies, <em>one bag.</em></h3>
+          <p class="chapter-sub">Paper body and cloud soul leave together.</p>
+          <p>封签已烙，纸身与云魂一同带走；第一次页边扫码即「认领」。</p>
+          <div class="telemetry-strip"><span><b>DESKTOP 1440</b> · PAID &amp; SEALED · TWO BODIES</span><span><b>MOBILE 390</b> · 封签已烙 · 两个身体一同带走</span></div>
+          <p>The Claim happens in chapter 04; this chapter only sets the promise. Seal uses the foil medallion from the slipcase.</p>
+        </div>
+        <div class="chapter-art" data-caption="Seal / two bodies / claim"><div class="claim-flow"><div><span>Paid &amp; sealed</span><em>01</em></div><div class="on"><span>Two bodies, one bag</span><em>02</em></div><div><span>First page-edge scan = the Claim</span><em>03</em></div></div></div>
+      </article>
+
+      <article class="chapter" id="loop-ext">
+        <div class="chapter-rail"><span class="chapter-no">05</span><div class="chapter-progress"><span class="active">66–78</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Companion</div>
+          <h3>Read on paper. <em>Understand in the cloud.</em></h3>
+          <p class="chapter-sub">Four steps, head to tail: stuck, scan, explained, back to paper.</p>
+          <p>每晚，一个小闭环。浮窗只贴页边，不遮挡正文；每次伴读的终点都是回到纸页。</p>
+          <div class="telemetry-strip"><span><b>DESKTOP 1440</b> · LOOP ACTIVE · RIBBON P.042 · MIND L.07</span><span><b>MOBILE 390</b> · 伴读运行 · 书签停 042 页 · 脑到第 7 讲</span></div>
+          <p>Night-desk lighting (night-desk.hdr + lamp). Interaction response 400 ms easeOutCubic. Windows dock to the page edge; mobile stacks them below the loop.</p>
+        </div>
+        <div class="chapter-art" data-caption="Night desk / dual anchors / margin dock"><div><div class="loop-ring"><span>Stuck on a line</span><span>Look up, scan</span><span>Companion answers</span><span>Back to paper</span><p>READ ON PAPER<br/>UNDERSTAND IN THE CLOUD</p></div><div class="margin-rail"><div>Lesson window · page edge</div><div>Graph thumbnail · page edge</div><div>AI question box · page edge</div></div></div></div>
+      </article>
+
+      <article class="chapter" id="return-ext">
+        <div class="chapter-rail"><span class="chapter-no">06</span><div class="chapter-progress"><span class="active">78–90</span></div></div>
+        <div class="chapter-copy">
+          <div class="eyebrow">Return</div>
+          <h3>Back to the <em>shelf.</em></h3>
+          <p class="chapter-sub">The journey stays in your account, never in the book.</p>
+          <p>解绑归架，恢复沉睡；里程归档进读者账户。对下一位读者，这是一场初见。</p>
+          <div class="telemetry-strip"><span><b>DESKTOP 1440</b> · UNBOUND · BACK ON SHELF · 0.00W</span><span><b>MOBILE 390</b> · 解绑归架 · 恢复沉睡</span></div>
+          <p>Camera mirrors 00 frame for frame. The archive moment is a single concept screen (see reading-journey.html).</p>
+        </div>
+        <div class="chapter-art" data-caption="Archive / ring closure"><div class="archive-card"><span>ARCHIVED TO YOUR ACCOUNT</span><strong>Book N · 47 nights</strong><span>The book keeps nothing of you.</span></div></div>
       </article>
     </section>
 

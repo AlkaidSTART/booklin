@@ -277,7 +277,11 @@ def write_radiance_hdr(path: Path, width: int = 1024, height: int = 512) -> None
     # Floor bounce.
     floor = np.clip((-lat - 0.3) / 1.2, 0, 1)[..., None]
     sky += floor * np.array([0.06, 0.035, 0.018], dtype=np.float32)
-    rgb = sky.astype(np.float32)
+    _write_rgbe(path, sky.astype(np.float32), "Bookln warm studio HDRI")
+
+
+def _write_rgbe(path: Path, rgb: np.ndarray, title: str) -> None:
+    height, width = rgb.shape[:2]
     maxc = rgb.max(axis=-1, keepdims=True)
     exponent = np.where(maxc > 1e-6, np.ceil(np.log2(np.maximum(maxc, 1e-6))), -128).astype(np.int32)
     scale = np.exp2(exponent) / np.maximum(maxc, 1e-6)
@@ -286,10 +290,33 @@ def write_radiance_hdr(path: Path, width: int = 1024, height: int = 512) -> None
     rgbe[..., :3] = mantissa
     rgbe[..., 3] = np.clip(exponent[..., 0] + 128, 0, 255).astype(np.uint8)
     header = (
-        f"#?RADIANCE\n# Bookln warm studio HDRI\nFORMAT=32-bit_rle_rgbe\n\n"
+        f"#?RADIANCE\n# {title}\nFORMAT=32-bit_rle_rgbe\n\n"
         f"-Y {height} +X {width}\n"
     ).encode("ascii")
     path.write_bytes(header + rgbe.tobytes())
+
+
+def write_night_desk_hdr(path: Path, width: int = 1024, height: int = 512) -> None:
+    """Asset C4: night reading desk. Small warm lamp pool, near-black cool room, low noise."""
+    yy, xx = np.mgrid[0:height, 0:width].astype(np.float32)
+    lon = (xx / width) * 2 * math.pi - math.pi
+    lat = (yy / height) * math.pi - math.pi / 2
+    up = np.clip(np.cos(lat), 0, 1)
+    sky = np.stack((0.012 + 0.012 * up, 0.014 + 0.016 * up, 0.022 + 0.03 * up), axis=-1)
+    # Desk lamp: small, hot, warm; high above and to the front-left (small radius = tight pool).
+    for cx, cy, sx, sy, power, tint in [
+        (-1.05, 0.62, 0.20, 0.14, 26.0, (1.0, 0.70, 0.38)),
+        (-1.05, 0.30, 0.55, 0.40, 2.2, (1.0, 0.64, 0.34)),  # wide soft spill
+        (1.9, 0.2, 0.9, 0.5, 0.35, (0.55, 0.65, 0.9)),  # faint cool window
+    ]:
+        dlon = (lon - cx + math.pi) % (2 * math.pi) - math.pi
+        d = (dlon / sx) ** 2 + ((lat - cy) / sy) ** 2
+        light = np.exp(-d * 2.4) * power
+        for c in range(3):
+            sky[..., c] += light * tint[c]
+    floor = np.clip((-lat - 0.2) / 1.2, 0, 1)[..., None]
+    sky += floor * np.array([0.02, 0.012, 0.006], dtype=np.float32)
+    _write_rgbe(path, sky.astype(np.float32), "Bookln night desk HDRI")
 
 
 def main() -> None:
@@ -313,6 +340,7 @@ def main() -> None:
     oak_normal.save(OUT / "oak-normal.png", optimize=True)
     oak_rough.save(OUT / "oak-roughness.png", optimize=True)
     write_radiance_hdr(ROOT / "public" / "hdri" / "warm-studio.hdr")
+    write_night_desk_hdr(ROOT / "public" / "hdri" / "night-desk.hdr")
 
     # Export standalone 512x768 book cover art for static fallback & previews.
     base_2k = Image.open(OUT / "book-basecolor.png")

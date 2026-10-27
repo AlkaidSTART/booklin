@@ -210,6 +210,38 @@ const groups = [
     files: ['public/data/benchmark.json', 'docs/benchmark-sources.md'],
     notes: 'Claim register, source URLs, caveats and legal disclaimers. All † claims still need a technical evidence pack.',
   },
+  {
+    id: 'C1',
+    label: 'Shelf model',
+    status: 'delivered',
+    role: 'delivery',
+    files: ['public/models/shelf.glb', 'public/models/source/shelf.blend'],
+    notes: '≈1,000 triangles, Draco. Independent groups: frame, back panel, sleeping spines, hero spine, hero glow strip. Shared by 00 Shelf and 06 Return.',
+  },
+  {
+    id: 'C2',
+    label: 'Sleeping spines and hero glow',
+    status: 'delivered',
+    role: 'delivery',
+    files: ['public/models/shelf.glb'],
+    notes: 'Dark spine materials in Shelf_Books_Sleeping; only Hero_Spine_Glow is emissive and breathes (0.00 W).',
+  },
+  {
+    id: 'C3',
+    label: 'Spine mark',
+    status: 'placeholder',
+    role: 'delivery',
+    files: ['public/qr/spine-mark.svg', 'public/data/shelf.json', 'public/data/links.json'],
+    notes: 'QR variant for the preview layer; uses the reserved .example host until the production URL is supplied.',
+  },
+  {
+    id: 'C4',
+    label: 'Night desk HDRI and lamp light',
+    status: 'delivered',
+    role: 'delivery',
+    files: ['public/hdri/night-desk.hdr'],
+    notes: 'Small warm lamp pool; loaded lazily when the reader nears 05 Loop. Scene lights dim and a practical lamp fades in.',
+  },
 ];
 
 function sha256(file) {

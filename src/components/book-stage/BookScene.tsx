@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, useRef } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { ContactShadows, Environment, useTexture } from '@react-three/drei';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
@@ -964,12 +964,15 @@ function BookRig({
   const deskGroupRef = useRef<THREE.Group>(null);
   const pedestalGroupRef = useRef<THREE.Group>(null);
   const slipcaseGroupRef = useRef<THREE.Group>(null);
+  const shelfGroupRef = useRef<THREE.Group>(null);
+  const shelfGlowRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const introRef = useRef(0);
 
   const book = useAssetGLTF('/models/book-transformed.glb');
   const desk = useAssetGLTF('/models/oak-desk.glb');
   const pedestal = useAssetGLTF('/models/display-pedestal.glb');
   const slipcase = useAssetGLTF('/models/slipcase.glb');
+  const shelf = useAssetGLTF('/models/shelf.glb');
   const bookCoverAtlas = useTexture('/textures/source/book-basecolor.png');
 
   const bookMorphMesh = useMorphMesh(book.scene);
@@ -977,6 +980,7 @@ function BookRig({
   const deskMaterials = useSceneMaterials(desk.scene);
   const pedestalMaterials = useSceneMaterials(pedestal.scene);
   const slipcaseMaterials = useSceneMaterials(slipcase.scene);
+  const shelfMaterials = useSceneMaterials(shelf.scene);
 
   useEffect(() => {
     bookCoverAtlas.flipY = false;
@@ -1022,7 +1026,24 @@ function BookRig({
       envMapIntensity: 1.1,
       normalScale: 0.55,
     });
-  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials]);
+
+    shelfGlowRef.current =
+      (shelfMaterials.find((m) => m.name === 'Hero_Spine_Glow') as THREE.MeshStandardMaterial | undefined) ?? null;
+
+    // Shelf (C1/C2): dark, sleeping spines; only the hero strip carries the 0.00 W glow.
+    for (const material of shelfMaterials) {
+      const m = material as THREE.MeshStandardMaterial;
+      if (!m.isMeshStandardMaterial) continue;
+      m.envMapIntensity = 0.28;
+      if (m.name !== 'Hero_Spine_Glow') m.color.multiplyScalar(0.6);
+      if (m.name === 'Hero_Spine_Glow') {
+        m.emissive.set('#ffae47');
+        m.emissiveIntensity = 0.5;
+        m.toneMapped = false;
+      }
+      m.needsUpdate = true;
+    }
+  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
 
   useEffect(() => {
     if (bookMorphMesh) {
@@ -1084,6 +1105,19 @@ function BookRig({
     // Slipcase appears on the desk for Epilogue B (Deployment)
     const slipcaseTarget = phase >= 8.35 && edition !== 'standard' ? 1 : phase >= 8.35 ? 0.65 : 0.001;
 
+    // Shelf (00 Shelf and 06 Return share one composition: ring closure)
+    const shelfTarget = phase < 1.75 || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
+    if (shelfGroupRef.current) {
+      const next = THREE.MathUtils.damp(shelfGroupRef.current.scale.x, shelfTarget, 5, delta);
+      shelfGroupRef.current.scale.setScalar(Math.max(0.001, next));
+      shelfGroupRef.current.visible = next > 0.005;
+    }
+    const glowMaterial = shelfGlowRef.current;
+    if (glowMaterial) {
+      const breath = reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(performance.now() * 0.0016);
+      glowMaterial.emissiveIntensity = 0.18 + 0.42 * breath;
+    }
+
     if (pedestalGroupRef.current) {
       const next = THREE.MathUtils.damp(pedestalGroupRef.current.scale.x, pedestalTarget, 6, delta);
       pedestalGroupRef.current.scale.setScalar(Math.max(0.001, next));
@@ -1109,6 +1143,12 @@ function BookRig({
       <group ref={deskGroupRef}>
         <group scale={0.001}>
           <primitive object={desk.scene} dispose={null} />
+        </group>
+      </group>
+
+      <group ref={shelfGroupRef} position={[0.0, 0, -0.98]} visible={false}>
+        <group scale={0.001}>
+          <primitive object={shelf.scene} dispose={null} />
         </group>
       </group>
 
@@ -1161,6 +1201,98 @@ function BookRig({
   );
 }
 
+/**
+ * Day studio light with a night-desk grade for 05 Loop (asset C4).
+ * The night HDRI is only requested when the reader approaches the loop chapter.
+ */
+function LightRig({
+  progressRef,
+  reducedMotion,
+}: {
+  progressRef: MutableRefObject<number>;
+  reducedMotion: boolean;
+}) {
+  const [nightEnv, setNightEnv] = useState(false);
+  const nightRef = useRef(0);
+  const hemiRef = useRef<THREE.HemisphereLight>(null);
+  const keyRef = useRef<THREE.DirectionalLight>(null);
+  const fillRef = useRef<THREE.DirectionalLight>(null);
+  const rimRef = useRef<THREE.DirectionalLight>(null);
+  const spotRef = useRef<THREE.SpotLight>(null);
+  const lampRef = useRef<THREE.PointLight>(null);
+  const sceneRef = useThree((state) => state.scene);
+
+  useFrame((_, delta) => {
+    const phase = clamp01(progressRef.current) * PHASE_COUNT;
+    const target = smoothstep(band(phase, 6, 0.9));
+    nightRef.current = THREE.MathUtils.damp(nightRef.current, target, reducedMotion ? 30 : 4, delta);
+    const night = nightRef.current;
+    const wantsNightEnv = phase > 4.7 && phase < 7.3;
+    setNightEnv((prev) => (prev === wantsNightEnv ? prev : wantsNightEnv));
+
+    const dim = 1 - night * 0.82;
+    if (hemiRef.current) hemiRef.current.intensity = 0.38 * (1 - night * 0.75);
+    if (keyRef.current) keyRef.current.intensity = 1.85 * dim;
+    if (fillRef.current) fillRef.current.intensity = 0.72 * (1 - night * 0.9);
+    if (rimRef.current) rimRef.current.intensity = 1.1 * (1 - night * 0.6);
+    if (spotRef.current) spotRef.current.intensity = 11 * (1 - night * 0.85);
+    if (lampRef.current) lampRef.current.intensity = night * 2.6;
+    sceneRef.environmentIntensity = 0.95 * (1 - night * 0.55);
+  });
+
+  return (
+    <>
+      {/* HDR environment: warm studio by day, small lamp pool at night */}
+      <Suspense fallback={null}>
+        <Environment
+          files={nightEnv ? '/hdri/night-desk.hdr' : '/hdri/warm-studio.hdr'}
+          background={false}
+        />
+      </Suspense>
+
+      {/* Hemisphere sky/ground fill — gradient bounce instead of flat ambient */}
+      <hemisphereLight ref={hemiRef} args={['#ddc89a', '#3a2810', 0.38]} />
+
+      {/* Key: warm window light from upper-left-front */}
+      <directionalLight ref={keyRef} position={[-1.4, 2.8, 1.6]} intensity={1.85} color="#fff3d6" />
+
+      {/* Fill: cool overcast from the right — softens key shadows */}
+      <directionalLight ref={fillRef} position={[2.1, 1.2, -0.4]} intensity={0.72} color="#c4d4e8" />
+
+      {/* Rim: warm terracotta backlight — separates book silhouette from bg */}
+      <directionalLight ref={rimRef} position={[-0.6, 0.8, -1.8]} intensity={1.1} color="#cc7744" />
+
+      {/* Desk bounce: gentle glow simulating light reflecting off the desk */}
+      <pointLight position={[0, 0.72, 0.28]} intensity={0.48} color="#c9941e" distance={1.4} decay={2.2} />
+
+      {/* Spine accent: skims across the spine to reveal cloth texture */}
+      <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.55} color="#ffe4b0" distance={1.1} decay={2} />
+
+      {/* Practical reading spot: principal light for the hero view */}
+      <spotLight
+        ref={spotRef}
+        position={[0.68, 2.1, 1.05]}
+        angle={0.34}
+        penumbra={0.92}
+        intensity={11}
+        color="#fdefc0"
+        distance={5}
+        decay={2}
+      />
+
+      {/* Night desk lamp: small warm radius, only live in 05 Loop */}
+      <pointLight
+        ref={lampRef}
+        position={[-0.42, 1.08, 0.2]}
+        intensity={0}
+        color="#ffb15e"
+        distance={1.5}
+        decay={2}
+      />
+    </>
+  );
+}
+
 function SceneContents({
   progressRef,
   pointerRef,
@@ -1180,37 +1312,7 @@ function SceneContents({
       <color attach="background" args={['#0e0d0b']} />
       <fog attach="fog" args={['#0e0d0b', 2.4, 5.2]} />
 
-      {/* HDR environment at moderate strength — lets PBR materials self-illuminate */}
-      <Environment files="/hdri/warm-studio.hdr" background={false} environmentIntensity={0.95} />
-
-      {/* Hemisphere sky/ground fill — gradient bounce instead of flat ambient */}
-      <hemisphereLight args={['#ddc89a', '#3a2810', 0.38]} />
-
-      {/* Key: warm window light from upper-left-front */}
-      <directionalLight position={[-1.4, 2.8, 1.6]} intensity={1.85} color="#fff3d6" />
-
-      {/* Fill: cool overcast from the right — softens key shadows */}
-      <directionalLight position={[2.1, 1.2, -0.4]} intensity={0.72} color="#c4d4e8" />
-
-      {/* Rim: warm terracotta backlight — separates book silhouette from bg */}
-      <directionalLight position={[-0.6, 0.8, -1.8]} intensity={1.1} color="#cc7744" />
-
-      {/* Desk bounce: gentle glow simulating light reflecting off the desk */}
-      <pointLight position={[0, 0.72, 0.28]} intensity={0.48} color="#c9941e" distance={1.4} decay={2.2} />
-
-      {/* Spine accent: skims across the spine to reveal cloth texture */}
-      <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.55} color="#ffe4b0" distance={1.1} decay={2} />
-
-      {/* Practical reading spot: principal light for the hero view */}
-      <spotLight
-        position={[0.68, 2.1, 1.05]}
-        angle={0.34}
-        penumbra={0.92}
-        intensity={11}
-        color="#fdefc0"
-        distance={5}
-        decay={2}
-      />
+      <LightRig progressRef={progressRef} reducedMotion={reducedMotion} />
 
       <Suspense fallback={null}>
         <BookRig

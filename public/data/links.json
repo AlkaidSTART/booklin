@@ -23,6 +23,17 @@
   "notes": [
     "The .example host is an intentional placeholder reserved for documentation.",
     "Replace landing.url and landing.qrTarget with production URLs, then run node scripts/build-qr.mjs.",
-    "Keep the UTM parameters on the QR target so print scans can be attributed separately from direct visits."
-  ]
+    "Keep the UTM parameters on the QR target so print scans can be attributed separately from direct visits.",
+    "spine.qrTarget feeds public/qr/spine-mark.svg (asset C3); rebuild with node scripts/build-qr.mjs."
+  ],
+  "spine": {
+    "url": "https://bookln.example/s/codex-1",
+    "qrTarget": "https://bookln.example/s/codex-1?utm_source=print&utm_medium=spine&utm_campaign=bookln",
+    "label": "Spine mark",
+    "labelZh": "脊码",
+    "file": "/qr/spine-mark.svg",
+    "errorCorrection": "Q",
+    "quietZoneModules": 2,
+    "note": "Public preview layer entry; resolves before the book is claimed and carries no reader data (worldview D4)."
+  }
 }

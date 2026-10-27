@@ -29,8 +29,8 @@ public/data/          Links, editions, benchmark, knowledge-graph and asset-mani
 public/design/        Design tokens and knowledge-graph preview
 public/fallback/      Static posters for low-power / reduced-motion fallback
 public/fonts/         Licensed display and text fonts
-public/hdri/          Studio environment
-public/models/        Book, slipcase, desk and pedestal GLBs
+public/hdri/          Warm studio and night-desk environments
+public/models/        Book, slipcase, desk, pedestal and shelf GLBs
 public/qr/            Page-edge QR assets
 public/textures/      KTX2 PBR textures
 public/video/         Lesson-preview placeholder, poster and captions

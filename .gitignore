@@ -24,6 +24,10 @@ public/models/source/*-raw.glb
 .env
 .env.production
 
+# scratch / temporary scripts and dumps
+.tmp-*
+*.tmp
+
 # macOS-specific files
 .DS_Store
 

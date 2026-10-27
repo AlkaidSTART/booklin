@@ -138,10 +138,8 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
         </h1>
 
         <p class="sx-hero-zh">{chapterById.arrival.line}</p>
-        <p class="sx-hero-line">
-          不装电池。不装 App。翻一页，就醒了。
-          <span lang="en">{chapterById.arrival.lineEn}</span>
-        </p>
+        <p class="sx-hero-line">不装电池。不装 App。翻一页，就醒了。</p>
+        <p class="sx-line-en">{chapterById.arrival.lineEn}</p>
         <p class="sx-meta">{chapterById.arrival.meta}</p>
       </div>
 
@@ -481,7 +479,7 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           </figure>
 
           <figure data-step="1">
-            <div class="sx-trio__frame">
+            <div class="sx-trio__frame sx-trio__frame--qr">
               <span class="sx-trio__tag">ONE CODE</span>
               <img
                 src="/qr/one-code-entry-card.webp"
@@ -722,7 +720,7 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
 
     <section
       id="chain"
-      class="sx-sec sx-sec--wide"
+      class="sx-sec sx-sec--wide sx-sec--paper"
       data-chapter="chain"
       data-no-phase
       data-number="C"
@@ -757,6 +755,8 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
           云魂不是凭空设定：它是书链既有 B2B 服务在读者端的化身。数据截至 {bookln.facts.asOf}。
         </p>
       </div>
+
+      <div class="sx-paper-mark" aria-hidden="true">BOOKLN</div>
 
       <div class="sx-notes" aria-hidden="true">
         {popMarkup(chapterById.chain).map((pop: Record<string, any>, index: number) => (
@@ -880,6 +880,8 @@ const popMarkup = (chapter: Record<string, any>) => chapter.pops ?? [];
         if (active) link.setAttribute('aria-current', 'true');
         else link.removeAttribute('aria-current');
       }
+
+      document.documentElement.classList.toggle('is-paper', current.id === 'chain');
 
       if (ticker) {
         ticker.textContent = `${current.dataset.number ?? 'P'} — ${current.dataset.label ?? 'PROLOGUE'}`;

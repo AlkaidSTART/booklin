@@ -166,8 +166,8 @@
       "lineEn": "The myth runs on a real network.",
       "meta": "BOOKLN.CN · LIVE",
       "pops": [
-        { "kind": "stamp", "x": 76, "y": 18, "rot": -5, "lines": ["2,600+", "PUBLISHERS"] },
-        { "kind": "mono", "x": 58, "y": 82, "rot": 3, "lines": ["1M+ TITLES", "250M+ READERS"] }
+        { "kind": "stamp", "x": 74, "y": 26, "rot": -5, "lines": ["2,600+", "PUBLISHERS"] },
+        { "kind": "mono", "x": 58, "y": 84, "rot": 3, "lines": ["1M+ TITLES", "250M+ READERS"] }
       ]
     }
   ]

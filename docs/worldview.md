@@ -165,8 +165,9 @@
 | **06 传承** The Return | 书架 | 读毕归架，环闭合，回到 00 构图 | 🆕 新增 |
 | 07 基准 Benchmark | 台座 | 为什么是纸 + 云 | 现有 04，降为尾声章 |
 | 08 部署 Deployment | 桌面 | 三种版本接入现实 | 现有 05，降为尾声章 |
+| **C 书链** The Chain | 静态附录 | 真实供给数据 + B2B 服务映射 + 待确认政策 | 🆕 业务附录（不占 3D 关键帧） |
 
-分镜细节与文案草案见 [`script-loop.md`](script-loop.md)。
+分镜细节与文案草案见 [`script-loop.md`](script-loop.md)。业务附录 C 只做静态阅读：`BookStage` 以 `data-no-phase` 跳过该章，3D 机位保持在尾声 B，既有相位常量不变。
 
 **对数据契约的影响（实现期再落地，当前不改 JSON）**：
 

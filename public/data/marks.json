@@ -1,0 +1,82 @@
+{
+  "version": "2026-10-27",
+  "status": "concept-data",
+  "source": "docs/worldview.md#3",
+  "intro": {
+    "label": "TWO MARKS · TWO MEANINGS",
+    "labelZh": "两码两义 · 扫哪一枚，决定你遇见什么"
+  },
+  "states": [
+    { "id": "unclaimed", "label": "Unclaimed", "labelZh": "未认领" },
+    { "id": "claimed", "label": "Claimed", "labelZh": "已认领" }
+  ],
+  "marks": [
+    {
+      "id": "spine",
+      "name": "Spine mark",
+      "nameZh": "脊码",
+      "ritual": "The Encounter",
+      "ritualZh": "邂逅",
+      "position": "Spine / back cover",
+      "positionZh": "书脊 / 封底"
+    },
+    {
+      "id": "pageEdge",
+      "name": "Page-edge mark",
+      "nameZh": "页边码",
+      "ritual": "The Claim",
+      "ritualZh": "认领",
+      "position": "Page-edge matrix",
+      "positionZh": "每页页边矩阵"
+    }
+  ],
+  "layers": {
+    "preview": {
+      "label": "Preview layer",
+      "labelZh": "试读层"
+    },
+    "soul": {
+      "label": "Full cloud soul",
+      "labelZh": "完整云魂"
+    }
+  },
+  "outcomes": {
+    "spine:unclaimed": {
+      "status": "PUBLIC · PREVIEW LAYER",
+      "statusZh": "公开 · 试读层",
+      "tone": "preview",
+      "layer": "preview",
+      "note": "Anyone can meet the book. The spine mark is the shop window, not the door.",
+      "noteZh": "任何人都能遇见这本书。脊码是橱窗，不是家门。"
+    },
+    "spine:claimed": {
+      "status": "CLAIMED · STILL PUBLIC",
+      "statusZh": "已认领 · 仍对所有人开放",
+      "tone": "preview",
+      "layer": "preview",
+      "note": "Claiming does not privatise the spine mark. The preview layer stays open to the next reader.",
+      "noteZh": "认领不会把脊码变成私有码；试读层对下一位读者依然开放。"
+    },
+    "pageEdge:unclaimed": {
+      "status": "UNCLAIMED · PREVIEW FALLBACK",
+      "statusZh": "未认领 · 回落试读层",
+      "tone": "fallback",
+      "layer": "preview",
+      "note": "Anyone may scan it, but before purchase it falls back to the preview layer. The soul is not yours yet.",
+      "noteZh": "谁都能扫，但购前只回落到试读层——云魂尚未归你。"
+    },
+    "pageEdge:claimed": {
+      "status": "CLAIMED · SOUL ACTIVE",
+      "statusZh": "已认领 · 云魂应答",
+      "tone": "soul",
+      "layer": "soul",
+      "note": "The first page-edge scan after purchase is the claim. The full cloud soul now answers.",
+      "noteZh": "购后第一次页边扫码即认领；完整云魂从此只应答你。"
+    }
+  },
+  "dataNotes": [
+    "Scanning a page-edge mark before purchase must never unlock the full cloud soul (worldview D1).",
+    "The preview layer carries no reader data (worldview D4).",
+    "The spine mark stays public after claiming; only the page-edge mark changes meaning."
+  ]
+}

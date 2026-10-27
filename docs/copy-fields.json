@@ -429,6 +429,50 @@
       "enMobile": "Your journey lives in your account — never in the book."
     },
     {
+      "id": "chain.eyebrow",
+      "chapter": "07-chain",
+      "role": "eyebrow",
+      "limit": "eyebrow",
+      "en": "THE CHAIN",
+      "zh": "书链"
+    },
+    {
+      "id": "chain.title",
+      "chapter": "07-chain",
+      "role": "title",
+      "limit": "title",
+      "en": "The Machine Behind the Myth.",
+      "zh": "神话背后，是真实的机器。",
+      "enMobile": "Behind the Myth."
+    },
+    {
+      "id": "chain.subtitle",
+      "chapter": "07-chain",
+      "role": "subtitle",
+      "limit": "subtitle",
+      "en": "The concept site tells the myth. bookln.cn is the machine.",
+      "zh": "概念站讲的是神话；bookln.cn 是那台机器。",
+      "enMobile": "The myth is the site. The machine is bookln.cn."
+    },
+    {
+      "id": "chain.annotation",
+      "chapter": "07-chain",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "Bookln's publisher network already exists; the cloud soul is its reader-side embodiment.",
+      "zh": "书链的出版网络已经存在；云魂只是它在读者端的化身。",
+      "enMobile": "The cloud soul is Bookln's existing publisher network, seen from the reader's side."
+    },
+    {
+      "id": "chain.footnote",
+      "chapter": "07-chain",
+      "role": "annotation",
+      "limit": "annotation",
+      "en": "† Illustrative concept copy. Supply figures are Bookln official figures as of 2023-07; confirm before launch.",
+      "zh": "† 概念文案。供给数据为书链 2023-07 官方口径，发布前须确认最新数值。",
+      "enMobile": "† Concept copy. Supply figures: Bookln official, 2023-07. Confirm before launch."
+    },
+    {
       "id": "benchmark.title",
       "chapter": "04-benchmark",
       "role": "title",

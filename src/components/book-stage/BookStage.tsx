@@ -143,7 +143,11 @@ export default function BookStage() {
   useEffect(() => {
     let frame = 0;
 
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-chapter]'));
+    // Static appendices (e.g. the Chain business chapter) opt out of the 3D
+    // keyframe timeline so the existing phase constants stay untouched.
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-chapter]:not([data-no-phase])'),
+    );
 
     const update = () => {
       const limit = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
@@ -288,7 +292,7 @@ export default function BookStage() {
               onCreated={({ gl }) => {
                 gl.toneMapping = THREE.ACESFilmicToneMapping;
                 // Bump exposure a touch — richer blacks without blowing highlights
-                gl.toneMappingExposure = 1.22;
+                gl.toneMappingExposure = 1.1;
               }}
             >
               <AdaptiveDpr pixelated={false} />

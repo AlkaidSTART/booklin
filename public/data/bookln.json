@@ -1,0 +1,164 @@
+{
+  "version": "2026-10-27",
+  "status": "concept-data",
+  "source": "docs/worldview.md#2, #7, #7.1",
+  "haven": {
+    "name": "Bookln Haven",
+    "nameZh": "书链馆",
+    "nature": "A library you can buy from.",
+    "natureZh": "一家可购买的图书馆。",
+    "rules": [
+      {
+        "id": "take",
+        "label": "Take freely from the shelf",
+        "labelZh": "随手可取",
+        "detail": "Every spine on the display face is real inventory.",
+        "detailZh": "陈列面上的每一本书，都来自真实库存。"
+      },
+      {
+        "id": "spine",
+        "label": "Spine marks are public",
+        "labelZh": "脊码永远公开",
+        "detail": "Anyone may scan and meet the book before claiming.",
+        "detailZh": "任何人都可扫开试读层，先遇见这本书。"
+      },
+      {
+        "id": "exit",
+        "label": "Settle at the exit",
+        "labelZh": "出口结算",
+        "detail": "Paper and soul change hands together.",
+        "detailZh": "纸身与云魂，在出口同时归属。"
+      },
+      {
+        "id": "home",
+        "label": "Claim at home",
+        "labelZh": "认领在家",
+        "detail": "The first page-edge scan is the binding.",
+        "detailZh": "第一次页边扫码，才是链结仪式。"
+      }
+    ]
+  },
+  "settlement": {
+    "tag": "EXIT RECEIPT",
+    "tagZh": "出口结算",
+    "nameRule": "NO NAME TAKEN",
+    "nameRuleZh": "不记名",
+    "bodies": [
+      {
+        "id": "paper",
+        "label": "Paper body",
+        "labelZh": "纸身",
+        "status": "Carried home",
+        "statusZh": "已带走",
+        "detail": "Sealed · 封签已烙",
+        "detailZh": "纸身离开书架，随你回家。"
+      },
+      {
+        "id": "soul",
+        "label": "Cloud soul",
+        "labelZh": "云魂",
+        "status": "Follows, dormant",
+        "statusZh": "随行沉睡",
+        "detail": "0.00W · until claimed",
+        "detailZh": "认领前零响应，等待第一次页边扫码。"
+      }
+    ],
+    "note": "Ownership moves at the till. The claim happens at home, on Page 042.",
+    "noteZh": "馆内只完成归属转移；认领，留给家里的第 042 页。",
+    "policy": {
+      "id": "soulFollowsBook",
+      "label": "Soul travels with the book",
+      "labelZh": "魂随书走",
+      "statusLabel": "Business confirmation pending",
+      "statusLabelZh": "待商务确认"
+    }
+  },
+  "facts": {
+    "asOf": "2023-07",
+    "label": "Bookln official figures",
+    "labelZh": "书链官方口径",
+    "items": [
+      {
+        "id": "publishers",
+        "value": "2,600+",
+        "label": "Partner education publishers",
+        "labelZh": "合作教育图书出版商"
+      },
+      {
+        "id": "titles",
+        "value": "1M+",
+        "label": "Education book titles",
+        "labelZh": "教育图书品种"
+      },
+      {
+        "id": "visits",
+        "value": "2.7B+",
+        "label": "Reader visits to books",
+        "labelZh": "被读者访问过的图书（册）"
+      },
+      {
+        "id": "readers",
+        "value": "250M+",
+        "label": "Readers",
+        "labelZh": "读者"
+      }
+    ],
+    "disclaimer": "Quoted in an 'about Bookln' context only. Confirm the latest values with business before launch; do not mix them with concept claims.",
+    "disclaimerZh": "仅用于「关于书链」语境。发布前须向商务确认最新数值，不得与世界观的未来式承诺混写。"
+  },
+  "services": [
+    {
+      "id": "qr",
+      "service": "Book QR / micro-site",
+      "serviceZh": "图书二维码 / 微官网",
+      "world": "Spine mark / preview layer",
+      "worldZh": "脊码 / 试读层"
+    },
+    {
+      "id": "lessons",
+      "service": "Teacher walkthroughs / audio / courseware",
+      "serviceZh": "名师讲题 / 音频录音 / 课件制作",
+      "world": "Lesson video / audio in the cloud soul",
+      "worldZh": "云魂中的讲题视频 / 音频讲解"
+    },
+    {
+      "id": "bank",
+      "service": "Digitised question bank / image library",
+      "serviceZh": "数字化题库 / 数字化图库",
+      "world": "Knowledge-graph material pipeline",
+      "worldZh": "知识图谱的素材管线"
+    },
+    {
+      "id": "ops",
+      "service": "Traffic operations / private domain",
+      "serviceZh": "流量运营 / 私域",
+      "world": "Companion sessions / learning record (mind anchor)",
+      "worldZh": "伴读会话 / 学情记录（脑锚）"
+    },
+    {
+      "id": "enterprise",
+      "service": "Enterprise class dashboard / group reading",
+      "serviceZh": "Enterprise 班级看板 / 群组共读",
+      "world": "Shared reading constellation",
+      "worldZh": "共读星座"
+    }
+  ],
+  "policies": [
+    {
+      "id": "soulFollowsBook",
+      "label": "Soul travels with the book",
+      "labelZh": "魂随书走",
+      "status": "pending-business",
+      "note": "Default in-world rule; awaiting commercial confirmation.",
+      "noteZh": "世界观默认规则；待商务确认。"
+    },
+    {
+      "id": "noReaderData",
+      "label": "The book stores no reader",
+      "labelZh": "书不存储读者",
+      "status": "locked",
+      "note": "No identity, notes or progress are written into the paper body.",
+      "noteZh": "纸身内不写入任何身份、批注或进度数据。"
+    }
+  ]
+}

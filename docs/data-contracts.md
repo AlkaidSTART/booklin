@@ -160,3 +160,38 @@ node scripts/build-asset-manifest.mjs
 ```
 
 `validate-copy.mjs` checks every field against the limits in `copy-fields.json` and reports any field that lacks English or Chinese copy. Build the page only from validated copy.
+
+---
+
+## 11. `public/data/marks.json`
+
+**Purpose:** the two-mark interaction in Chapter 00 — spine mark vs. page-edge mark, and the four outcomes of claim state × mark.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `intro.label` / `.labelZh` | string | Console header: “Two marks, two meanings”. |
+| `states[]` | array | `unclaimed` / `claimed` with bilingual labels. |
+| `marks[]` | array | `spine` / `pageEdge`, each with ritual name (`The Encounter` / `The Claim`) and position. |
+| `layers.preview` / `.soul` | object | Bilingual layer labels; item lists are pulled from `shelf.json` and `companion.json`. |
+| `outcomes` | object | Keyed `mark:state`; each gives status, tone (`preview` / `fallback` / `soul`), target layer and bilingual note. |
+| `dataNotes` | string[] | Encodes D1 (page-edge before purchase must fall back) and D4 (no reader data). |
+
+**Update rule:** keep `pageEdge:unclaimed.layer` at `preview`. A page-edge scan before purchase must never unlock the full cloud soul. The spine mark stays public in both states.
+
+---
+
+## 12. `public/data/bookln.json`
+
+**Purpose:** the business layer — Bookln Haven rules, the exit receipt, real supply figures and the B2B → worldview service map.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `haven.nature` / `.natureZh` | string | “A library you can buy from.” |
+| `haven.rules[]` | array | Take, public spine marks, settle at exit, claim at home. |
+| `settlement` | object | Exit receipt: paper body / cloud soul states, note and pending soul policy. |
+| `facts.asOf` | string | `2023-07` — must be displayed with the figures. |
+| `facts.items[]` | array | Publisher / title / visit / reader counts. Display the source label and disclaimer together. |
+| `services[]` | array | bookln.cn B2B service → reader-side embodiment. |
+| `policies[]` | array | `pending-business` or `locked`, with bilingual notes. |
+
+**Update rule:** supply figures are the Bookln official 2023-07 values. Confirm the latest numbers with business before launch and do not mix them with `†` concept claims. Commerce owns the policy status of “soul travels with the book”.

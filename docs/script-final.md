@@ -186,6 +186,22 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 ---
 
+## 附录 C · 书链 The Chain（🆕 业务附录）
+
+> 静态阅读章，不进入 3D 关键帧；数据见 [`../public/data/bookln.json`](../public/data/bookln.json)。
+
+| Field | English | 中文 |
+| --- | --- | --- |
+| Eyebrow `chain.eyebrow` | THE CHAIN | 书链 |
+| Main title `chain.title` | **The Machine Behind the Myth.** | **神话背后，是真实的机器。** |
+| Subtitle `chain.subtitle` | The concept site tells the myth. bookln.cn is the machine. | 概念站讲的是神话；bookln.cn 是那台机器。 |
+| Annotation `chain.annotation` | Bookln's publisher network already exists; the cloud soul is its reader-side embodiment. | 书链的出版网络已经存在；云魂只是它在读者端的化身。 |
+| Footnote `chain.footnote` | † Illustrative concept copy. Supply figures are Bookln official figures as of 2023-07; confirm before launch. | † 概念文案。供给数据为书链 2023-07 官方口径，发布前须确认最新数值。 |
+
+供给数据（2,600+ 出版商 / 100 万+ 品种 / 27 亿+ 册访问 / 2.5 亿+ 读者）必须与「书链官方口径 · 截至 2023-07」同屏出现，且不得与 `†` 未来式概念承诺混写。B2B → 世界观映射与政策状态见 `docs/script-loop.md` 附录 C。
+
+---
+
 ## Copy constraints
 
 | Field | Desktop max | Mobile max | Notes |

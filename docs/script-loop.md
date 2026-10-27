@@ -189,6 +189,39 @@
 
 ---
 
+## 附录 C · 书链 The Chain — 业务附录（🆕 2026-10-27 补充）
+
+> 只做静态阅读，不进入 3D 关键帧；`BookStage` 以 `data-no-phase` 跳过，尾声 B 机位保持。依据 [`worldview.md`](worldview.md) §7 / §7.1 / §9 Q2。
+
+### 内容
+
+- **真实供给**：2,600+ 合作教育图书出版商、100 万+ 教育图书品种、27 亿+ 册读者访问、2.5 亿+ 读者；标注「书链官方口径 · 截至 2023-07」，并与未来式概念承诺分栏书写。
+- **B2B → 世界观映射**：图书二维码/微官网 → 脊码/试读层；名师讲题/音频/课件 → 讲题视频/音频；题库/图库 → 图谱素材管线；流量运营/私域 → 伴读会话/学情记录；Enterprise → 共读星座。
+- **政策状态**：魂随书走（PENDING，待商务确认）；书不存储读者（LOCKED，D4）。
+
+### 文案编排
+
+| Field | English | 中文 |
+| --- | --- | --- |
+| Eyebrow | THE CHAIN | 书链 |
+| Main title | **The Machine Behind the Myth.** | **神话背后，是真实的机器。** |
+| Subtitle | The concept site tells the myth. bookln.cn is the machine. | 概念站讲的是神话；bookln.cn 是那台机器。 |
+| Annotation | Bookln's publisher network already exists; the cloud soul is its reader-side embodiment. | 书链的出版网络已经存在；云魂只是它在读者端的化身。 |
+| Footnote | † Illustrative concept copy. Supply figures are Bookln official figures as of 2023-07; confirm before launch. | † 概念文案。供给数据为书链 2023-07 官方口径，发布前须确认最新数值。 |
+
+**Telemetry:** `C · REAL NETWORK · 2,600+ PUBLISHERS · 1M+ TITLES` / `C · 真实网络 · 2,600+ 出版商 · 100 万+ 品种`
+
+---
+
+## 页面补充：业务与交互（2026-10-27）
+
+- **00 停泊 · 书链馆规则卡**：可购买的图书馆、随手可取、脊码公开、出口结算、认领在家（数据：`public/data/bookln.json`）。
+- **00 停泊 · 两码两义模拟器**：未认领/已认领 × 脊码/页边码 四种结果；购前扫页边码必须回落到试读层，购后第一次页边扫码才打开完整云魂（数据：`public/data/marks.json`）。
+- **01 携归 · 出口结算单**：纸身「已带走 / 封签已烙」，云魂「随行沉睡 / 0.00W」，并标注魂随书走待商务确认。
+- **附录 C · 书链**：真实供给数据与 B2B 映射，见上节。
+
+---
+
 ## 并稿与校验流程
 
 1. ✅ 世界观 Q1 拍板（2026-10-27，书链馆）→ 00/01 章分镜定稿（v0.2）。

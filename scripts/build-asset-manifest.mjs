@@ -28,6 +28,7 @@ const groups = [
     files: [
       'public/textures/book-ao.ktx2',
       'public/textures/book-basecolor.ktx2',
+      'public/textures/book-basecolor.webp',
       'public/textures/book-metalness.ktx2',
       'public/textures/book-normal.ktx2',
       'public/textures/book-roughness.ktx2',
@@ -37,7 +38,8 @@ const groups = [
       'public/textures/mobile/book-normal.ktx2',
       'public/textures/mobile/book-roughness.ktx2',
     ],
-    notes: 'Desktop and mobile KTX2 / Basis Universal sets. Source PNGs remain under public/textures/source for regeneration.',
+    notes:
+      'Desktop and mobile KTX2 / Basis Universal sets. book-basecolor.webp is the 36 KB runtime override for the current atlas while the GLB basecolor is rebuilt. Source PNGs remain under public/textures/source for regeneration.',
   },
   {
     id: 'A3',

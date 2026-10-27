@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-27T10:30:29.079Z",
+  "generatedAt": "2026-10-27T11:35:40.640Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 15,
@@ -9,8 +9,8 @@
   },
   "totals": {
     "groups": 19,
-    "files": 91,
-    "bytes": 22368865,
+    "files": 92,
+    "bytes": 22408611,
     "missing": 0
   },
   "assets": [
@@ -36,7 +36,7 @@
       "label": "Book PBR textures",
       "status": "delivered",
       "role": "delivery",
-      "notes": "Desktop and mobile KTX2 / Basis Universal sets. Source PNGs remain under public/textures/source for regeneration.",
+      "notes": "Desktop and mobile KTX2 / Basis Universal sets. book-basecolor.webp is the 36 KB runtime override for the current atlas while the GLB basecolor is rebuilt. Source PNGs remain under public/textures/source for regeneration.",
       "files": [
         {
           "path": "public/textures/book-ao.ktx2",
@@ -48,6 +48,12 @@
           "path": "public/textures/book-basecolor.ktx2",
           "bytes": 91071,
           "sha256": "52403076c9e9a32a1d616b3b86dc0b81e6984dec7673c3516655d0bba5e1f418",
+          "missing": false
+        },
+        {
+          "path": "public/textures/book-basecolor.webp",
+          "bytes": 36826,
+          "sha256": "0ae51be405c06c8f845e24ac681c51c7f97361bd1c5b35173db39e5229951262",
           "missing": false
         },
         {
@@ -99,7 +105,7 @@
           "missing": false
         }
       ],
-      "bytes": 2650540,
+      "bytes": 2687366,
       "missing": []
     },
     {
@@ -323,8 +329,8 @@
       "files": [
         {
           "path": "docs/script-final.md",
-          "bytes": 13727,
-          "sha256": "b94ec626287d52a064d1eb3a7ad4c5f27da3d03bd0d84fba68f3ba790131e03b",
+          "bytes": 14990,
+          "sha256": "a2f5bd53d91d9cf77e26f954686971cab8f551ef6c701bf75cbd6a3bdf1187bc",
           "missing": false
         },
         {
@@ -335,12 +341,12 @@
         },
         {
           "path": "docs/copy-fields.json",
-          "bytes": 20926,
-          "sha256": "735cafc8b3d25228ba8939beff82e849f0682b0563ee6406ee4c4a4051f7f067",
+          "bytes": 22583,
+          "sha256": "a1b4be4c3354666bcec667c4210af6022154aaf5ee459c205e7f0f75312740b2",
           "missing": false
         }
       ],
-      "bytes": 42360,
+      "bytes": 45280,
       "missing": []
     },
     {

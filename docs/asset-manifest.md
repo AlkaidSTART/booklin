@@ -1,6 +1,6 @@
 # Asset Manifest / 资产交付清单
 
-> Generated: `2026-10-27T10:30:29.079Z`  
+> Generated: `2026-10-27T11:35:40.640Z`  
 > Source: [`assets.md`](assets.md)  
 > Machine-readable: [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)  
 > Excludes raw source masters under `public/models/source/`, `public/textures/source/`, `public/fonts/source/`, and the pre-existing `public/voice/voice.mp3` (not part of the current asset scope).
@@ -14,8 +14,8 @@
 | pending-external | 1 |
 
 - Groups: **19**
-- Files: **91**
-- Total inventory bytes: **21.33 MB** (includes source/reference docs; not first-screen transfer)
+- Files: **92**
+- Total inventory bytes: **21.37 MB** (includes source/reference docs; not first-screen transfer)
 - Missing files: **0**
 
 ## Assets
@@ -23,12 +23,12 @@
 | ID | Asset | Status | Bytes | Files |
 | --- | --- | --- | ---: | --- |
 | A1 | Book 3D model | delivered | 1377.0 KB | `public/models/book-transformed.glb` |
-| A2 | Book PBR textures | delivered | 2588.4 KB | `public/textures/book-ao.ktx2`<br />`public/textures/book-basecolor.ktx2`<br />`public/textures/book-metalness.ktx2`<br />`public/textures/book-normal.ktx2`<br />`public/textures/book-roughness.ktx2`<br />`public/textures/mobile/book-ao.ktx2`<br />`public/textures/mobile/book-basecolor.ktx2`<br />`public/textures/mobile/book-metalness.ktx2`<br />`public/textures/mobile/book-normal.ktx2`<br />`public/textures/mobile/book-roughness.ktx2` |
+| A2 | Book PBR textures | delivered | 2624.4 KB | `public/textures/book-ao.ktx2`<br />`public/textures/book-basecolor.ktx2`<br />`public/textures/book-basecolor.webp`<br />`public/textures/book-metalness.ktx2`<br />`public/textures/book-normal.ktx2`<br />`public/textures/book-roughness.ktx2`<br />`public/textures/mobile/book-ao.ktx2`<br />`public/textures/mobile/book-basecolor.ktx2`<br />`public/textures/mobile/book-metalness.ktx2`<br />`public/textures/mobile/book-normal.ktx2`<br />`public/textures/mobile/book-roughness.ktx2` |
 | A3 | Slipcase 3D model | delivered | 10.6 KB | `public/models/slipcase.glb` |
 | A4 | Desk and pedestal | delivered | 1192.9 KB | `public/models/oak-desk.glb`<br />`public/models/display-pedestal.glb`<br />`public/textures/oak-basecolor.ktx2`<br />`public/textures/oak-normal.ktx2`<br />`public/textures/oak-roughness.ktx2` |
 | A5 | Fonts | delivered | 1244.1 KB | `public/fonts/cormorant-garamond-medium.woff2`<br />`public/fonts/cormorant-garamond-semibold.woff2`<br />`public/fonts/noto-sans-sc-regular.woff2`<br />`public/fonts/noto-sans-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-semibold.woff2`<br />`public/fonts/cormorant-garamond-medium.ttf`<br />`public/fonts/cormorant-garamond-semibold.ttf`<br />`public/fonts/noto-sans-sc-regular.ttf`<br />`public/fonts/noto-sans-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-semibold.ttf` |
 | A6 | Visual specification and design references | delivered | 6767.6 KB | `docs/design/visual-spec.html`<br />`docs/design/visual-spec-desktop.png`<br />`docs/design/visual-spec-desktop.webp`<br />`docs/design/visual-spec-mobile.png`<br />`docs/design/visual-spec-mobile.webp`<br />`docs/design/book-cover-art.png`<br />`docs/design/book-preview-closed.png`<br />`docs/design/book-preview-open.png`<br />`public/design/tokens.json`<br />`public/design/tokens.css` |
-| A7 | Final bilingual copy | delivered | 41.4 KB | `docs/script-final.md`<br />`docs/script.md`<br />`docs/copy-fields.json` |
+| A7 | Final bilingual copy | delivered | 44.2 KB | `docs/script-final.md`<br />`docs/script.md`<br />`docs/copy-fields.json` |
 | B1 | One-code entry QR and links | placeholder | 154.4 KB | `public/data/links.json`<br />`public/qr/one-code-entry.svg`<br />`public/qr/one-code-entry.png`<br />`public/qr/one-code-entry-card.svg`<br />`public/qr/one-code-entry-card.png`<br />`public/qr/one-code-entry-card.webp` |
 | B2 | Editions, prices and checkout | pending-external | 2.6 KB | `public/data/editions.json` |
 | B3 | Lesson video and poster | placeholder | 2173.7 KB | `public/video/lesson-preview.mp4`<br />`public/video/lesson-preview-poster.webp`<br />`public/video/lesson-preview.vtt`<br />`docs/design/lesson-preview-poster.png`<br />`docs/design/lesson-preview.html`<br />`docs/video-spec.md` |

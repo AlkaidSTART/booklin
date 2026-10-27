@@ -286,6 +286,8 @@ type MaterialPreset = {
   normalScale?: number;
   emissive?: string;
   emissiveIntensity?: number;
+  /** Override only the basecolor slot (used for the current cover atlas). */
+  map?: THREE.Texture;
   /** Tile every texture map on the material (used by the oak desk). */
   repeat?: readonly [number, number];
 };
@@ -299,6 +301,7 @@ function applyPreset(materials: THREE.Material[], preset: MaterialPreset): void 
     const m = material as THREE.MeshStandardMaterial;
     if (!m.isMeshStandardMaterial) continue;
 
+    if (preset.map !== undefined) m.map = preset.map;
     if (preset.color !== undefined) m.color.set(preset.color);
     if (preset.roughness !== undefined) m.roughness = preset.roughness;
     if (preset.metalness !== undefined) m.metalness = preset.metalness;
@@ -983,6 +986,11 @@ function BookRig({
   const pedestal = useAssetGLTF('/models/display-pedestal.glb');
   const slipcase = useAssetGLTF('/models/slipcase.glb');
   const shelf = useAssetGLTF('/models/shelf.glb');
+  // Current "THE BOOK." atlas. The GLB's embedded basecolor still carries the
+  // earlier "CODEX" artwork, so only the basecolor slot is overridden while the
+  // embedded normal / AO / roughness / metalness maps stay in place. The WebP is
+  // a 36 KB derivative of the 2048² source atlas.
+  const bookCoverAtlas = useTexture('/textures/book-basecolor.webp');
 
   const bookMorphMesh = useMorphMesh(book.scene);
   const bookMaterials = useSceneMaterials(book.scene);
@@ -992,14 +1000,19 @@ function BookRig({
   const shelfMaterials = useSceneMaterials(shelf.scene);
 
   useEffect(() => {
-    // Book cover (A1/A2): keep the GLB's embedded KTX2 PBR atlas intact.
-    // BaseColor carries the cover art; Normal / AO / Roughness / Metalness carry
-    // the cloth fibre, page edge and gold-foil response. Stripping these maps
-    // flattens the object into a single colour, so only grade the response here.
+    bookCoverAtlas.flipY = false;
+    bookCoverAtlas.colorSpace = THREE.SRGBColorSpace;
+    bookCoverAtlas.needsUpdate = true;
+
+    // Book cover (A1/A2): keep the GLB's embedded KTX2 PBR maps intact and swap
+    // only the stale basecolor for the current atlas. BaseColor carries the cover
+    // art; Normal / AO / Roughness / Metalness carry the cloth fibre, page edge
+    // and gold-foil response. Stripping those maps flattens the object.
     applyPreset(bookMaterials, {
+      map: bookCoverAtlas,
       color: '#ffffff',
       metalness: 1,
-      envMapIntensity: 1.45,
+      envMapIntensity: 0.15,
       normalScale: 0.65,
     });
 
@@ -1038,10 +1051,10 @@ function BookRig({
         envMapIntensity: 0.35,
       },
       Slipcase_Foil_Seal: {
-        color: '#c8a96d',
-        roughness: 0.26,
+        color: '#b8965d',
+        roughness: 0.34,
         metalness: 0.92,
-        envMapIntensity: 1.9,
+        envMapIntensity: 1.05,
       },
     });
 
@@ -1067,18 +1080,18 @@ function BookRig({
         Sleeping_Spine_3: { color: '#3a3024', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
         Sleeping_Spine_4: { color: '#2c211d', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
         Hero_Spine_Cloth: {
-          color: '#6b5336',
-          roughness: 0.68,
+          color: '#241b12',
+          roughness: 0.8,
           metalness: 0,
-          envMapIntensity: 0.55,
+          envMapIntensity: 0.25,
         },
         Hero_Spine_Glow: {
-          color: '#ffcf7a',
+          color: '#3a2f20',
           emissive: '#ffae47',
-          emissiveIntensity: 0.5,
+          emissiveIntensity: 0.05,
           roughness: 0.5,
           metalness: 0,
-          envMapIntensity: 0.7,
+          envMapIntensity: 0.2,
         },
       },
       { roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
@@ -1091,7 +1104,7 @@ function BookRig({
       glow.toneMapped = false;
       shelfGlowRef.current = glow;
     }
-  }, [bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
+  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
 
   useEffect(() => {
     if (bookMorphMesh) {
@@ -1153,8 +1166,11 @@ function BookRig({
     // Slipcase appears on the desk for Epilogue B (Deployment)
     const slipcaseTarget = phase >= 8.35 && edition !== 'standard' ? 1 : phase >= 8.35 ? 0.65 : 0.001;
 
-    // Shelf (00 Shelf and 06 Return share one composition: ring closure)
-    const shelfTarget = phase < 1.75 || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
+    // Shelf (00 Shelf and 06 Return share one composition: ring closure).
+    // The prologue stays single-book on the desk; the shelf only fades in as
+    // chapter 00 begins.
+    const shelfTarget =
+      (phase > 0.85 && phase < 1.85) || (phase > 6.55 && phase < 7.75) ? 1 : 0.001;
     if (shelfGroupRef.current) {
       const next = THREE.MathUtils.damp(shelfGroupRef.current.scale.x, shelfTarget, 5, delta);
       shelfGroupRef.current.scale.setScalar(Math.max(0.001, next));
@@ -1163,7 +1179,8 @@ function BookRig({
     const glowMaterial = shelfGlowRef.current;
     if (glowMaterial) {
       const breath = reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(performance.now() * 0.0016);
-      glowMaterial.emissiveIntensity = 0.18 + 0.42 * breath;
+      // 0.00 W is a barely-there breath, not a practical light.
+      glowMaterial.emissiveIntensity = 0.05 + 0.12 * breath;
     }
 
     if (pedestalGroupRef.current) {
@@ -1279,13 +1296,13 @@ function LightRig({
     setNightEnv((prev) => (prev === wantsNightEnv ? prev : wantsNightEnv));
 
     const dim = 1 - night * 0.82;
-    if (hemiRef.current) hemiRef.current.intensity = 0.38 * (1 - night * 0.75);
-    if (keyRef.current) keyRef.current.intensity = 1.85 * dim;
-    if (fillRef.current) fillRef.current.intensity = 0.72 * (1 - night * 0.9);
-    if (rimRef.current) rimRef.current.intensity = 1.1 * (1 - night * 0.6);
-    if (spotRef.current) spotRef.current.intensity = 11 * (1 - night * 0.85);
+    if (hemiRef.current) hemiRef.current.intensity = 0.3 * (1 - night * 0.75);
+    if (keyRef.current) keyRef.current.intensity = 1.35 * dim;
+    if (fillRef.current) fillRef.current.intensity = 0.5 * (1 - night * 0.9);
+    if (rimRef.current) rimRef.current.intensity = 0.85 * (1 - night * 0.6);
+    if (spotRef.current) spotRef.current.intensity = 5.5 * (1 - night * 0.85);
     if (lampRef.current) lampRef.current.intensity = night * 2.6;
-    sceneRef.environmentIntensity = 0.95 * (1 - night * 0.55);
+    sceneRef.environmentIntensity = 0.7 * (1 - night * 0.55);
   });
 
   return (
@@ -1299,22 +1316,22 @@ function LightRig({
       </Suspense>
 
       {/* Hemisphere sky/ground fill — gradient bounce instead of flat ambient */}
-      <hemisphereLight ref={hemiRef} args={['#ddc89a', '#3a2810', 0.38]} />
+      <hemisphereLight ref={hemiRef} args={['#ddc89a', '#3a2810', 0.3]} />
 
       {/* Key: warm window light from upper-left-front */}
-      <directionalLight ref={keyRef} position={[-1.4, 2.8, 1.6]} intensity={1.85} color="#fff3d6" />
+      <directionalLight ref={keyRef} position={[-1.4, 2.8, 1.6]} intensity={1.35} color="#fff3d6" />
 
       {/* Fill: cool overcast from the right — softens key shadows */}
-      <directionalLight ref={fillRef} position={[2.1, 1.2, -0.4]} intensity={0.72} color="#c4d4e8" />
+      <directionalLight ref={fillRef} position={[2.1, 1.2, -0.4]} intensity={0.5} color="#c4d4e8" />
 
       {/* Rim: warm terracotta backlight — separates book silhouette from bg */}
-      <directionalLight ref={rimRef} position={[-0.6, 0.8, -1.8]} intensity={1.1} color="#cc7744" />
+      <directionalLight ref={rimRef} position={[-0.6, 0.8, -1.8]} intensity={0.85} color="#cc7744" />
 
       {/* Desk bounce: gentle glow simulating light reflecting off the desk */}
-      <pointLight position={[0, 0.72, 0.28]} intensity={0.48} color="#c9941e" distance={1.4} decay={2.2} />
+      <pointLight position={[0, 0.72, 0.28]} intensity={0.08} color="#c9941e" distance={1.4} decay={2.2} />
 
       {/* Spine accent: skims across the spine to reveal cloth texture */}
-      <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.55} color="#ffe4b0" distance={1.1} decay={2} />
+      <pointLight position={[-0.22, 0.98, 0.12]} intensity={0.1} color="#ffe4b0" distance={1.1} decay={2} />
 
       {/* Practical reading spot: principal light for the hero view */}
       <spotLight
@@ -1322,7 +1339,7 @@ function LightRig({
         position={[0.68, 2.1, 1.05]}
         angle={0.34}
         penumbra={0.92}
-        intensity={11}
+        intensity={5.5}
         color="#fdefc0"
         distance={5}
         decay={2}

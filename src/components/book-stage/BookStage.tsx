@@ -3,7 +3,7 @@ import type { ErrorInfo, ReactNode } from 'react';
 import { AdaptiveDpr, useProgress } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
-import Lenis from 'lenis';
+import { createWheelScroll } from '../../lib/scroll/wheelScroll';
 import { BookScene } from './BookScene';
 import type { StageInteractionState } from './BookScene';
 
@@ -223,21 +223,7 @@ export default function BookStage() {
   useEffect(() => {
     if (!mounted || reduced) return;
 
-    const lenis = new Lenis({
-      lerp: 0.085,
-      wheelMultiplier: 0.92,
-      touchMultiplier: 1.15,
-      smoothWheel: true,
-      syncTouch: false,
-      anchors: false,
-    });
-
-    let frame = 0;
-    const raf = (time: number) => {
-      lenis.raf(time);
-      frame = window.requestAnimationFrame(raf);
-    };
-    frame = window.requestAnimationFrame(raf);
+    const wheelScroll = createWheelScroll({ speed: 1.2, lead: 0.7, ease: 11 });
 
     const handleAnchor = (event: MouseEvent) => {
       const target = event.target as Element | null;
@@ -248,15 +234,14 @@ export default function BookStage() {
       const section = document.querySelector(href);
       if (!section) return;
       event.preventDefault();
-      lenis.scrollTo(section as HTMLElement, { offset: -84, duration: 1.25 });
+      wheelScroll.scrollToElement(section, { offset: 84 });
     };
 
     document.addEventListener('click', handleAnchor);
 
     return () => {
-      window.cancelAnimationFrame(frame);
       document.removeEventListener('click', handleAnchor);
-      lenis.destroy();
+      wheelScroll.destroy();
     };
   }, [mounted, reduced]);
 

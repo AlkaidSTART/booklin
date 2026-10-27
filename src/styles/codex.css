@@ -908,6 +908,24 @@ main,
   font-size: 7px;
 }
 
+.layer-pill__swatch {
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--swatch, var(--gold));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    0 0 0 1px rgba(0, 0, 0, 0.45);
+}
+
+.layer-pill:hover .layer-pill__swatch,
+.layer-pill.is-active .layer-pill__swatch {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    0 0 0 1px var(--gold);
+}
+
 .layer-pill:hover,
 .layer-pill.is-active {
   border-color: var(--gold);
@@ -935,6 +953,39 @@ main,
 .layer-readout .zh-block {
   margin-top: 3px;
   font-size: 10.5px;
+}
+
+.material-provenance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 540px;
+  margin-top: 9px;
+  color: var(--faint);
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  line-height: 1.55;
+  text-transform: uppercase;
+}
+
+.material-provenance__tag {
+  padding: 3px 6px;
+  border: 1px solid rgba(200, 169, 109, 0.35);
+  color: var(--gold);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+}
+
+.material-provenance .zh-block {
+  flex-basis: 100%;
+  margin-top: 0;
+  color: var(--faint);
+  font-family: var(--font-serif);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  text-transform: none;
 }
 
 .story-bridge {

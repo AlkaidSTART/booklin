@@ -58,17 +58,20 @@
 - **分辨率**：桌面端 2048×2048，移动端回退 1024×1024。
 - **格式**：KTX2 / Basis Universal，保持压缩态直接入显存。
 - **命名**：`book-basecolor.ktx2`、`book-normal.ktx2`、`book-roughness.ktx2`、`book-metalness.ktx2`、`book-ao.ktx2`。
+- **运行时消费**：`book-transformed.glb` 内嵌的 KTX2 PBR 图集由 `KTX2Loader` 直接解码；`BookScene` 保留 BaseColor / Normal / AO / Roughness / Metalness 全部通道，仅调节法线强度与环境反射，不再额外下载 `source/book-basecolor.png`（减少首屏 1.5 MB 传输）。
 
 ### A3 函套模型
 
 - 极简黑色定制函套（Slipcase）+ 封签细节，风格与书本一致。
 - 面数 ≤ 10,000；含开合所需的独立网格分组（书可被装入/抽出）。
+- **运行时材质**：按网格区分哑光黑色布面（`Slipcase_Black_Cloth`）、深色绒面内托（`Slipcase_Inner_Tray`）与烫金封签（`Slipcase_Foil_Seal`，金属度 0.92），不再统一染成暖褐色。
 
 ### A4 桌面与台座
 
 - **橡木书桌**：写实木质纹理，供序章落地镜头使用。
 - **展示台座**：第五章书本 45° 立于其上旋转；简洁几何体即可。
 - 若采用程序化几何，需提供材质贴图与尺寸参数。
+- **运行时材质**：橡木 BaseColor / Normal / Roughness 随 `oak-desk.glb` 内嵌加载，并按桌面尺度平铺（2×2），以深胡桃色表现；台座按资产命名使用青铜黑（`Pedestal_Bronze_Black`，金属度 0.58）。
 
 ### A5 字体
 

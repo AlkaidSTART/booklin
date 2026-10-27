@@ -125,6 +125,7 @@ const materialLayers = [
     index: 0,
     en: 'Cloth cover',
     zh: '触感精装布面',
+    swatch: 'repeating-linear-gradient(45deg, #8c6745 0 2px, #735337 2px 4px)',
     spec: 'Tactile woven outer skin · resists glare and fingerprints.',
     specZh: '织物纹理外封，温润防眩光，隔绝冷冰冰的金属触感。',
   },
@@ -132,6 +133,7 @@ const materialLayers = [
     index: 1,
     en: 'Board',
     zh: '高密环保灰板',
+    swatch: '#6d6255',
     spec: '2.4 mm rigid core · structural protection without glass.',
     specZh: '2.4 mm 高密支撑层，耐摔防跌，无碎屏焦虑。',
   },
@@ -139,6 +141,7 @@ const materialLayers = [
     index: 2,
     en: 'Ink',
     zh: '植物油墨矩阵',
+    swatch: 'linear-gradient(135deg, #e8dcc4 0 58%, #2b2620 58% 100%)',
     spec: 'High-contrast pigment + page-edge Bookln matrix code.',
     specZh: '高对比植物油墨印刷正文，并在页边印制微型「书链码」。',
   },
@@ -146,6 +149,7 @@ const materialLayers = [
     index: 3,
     en: 'Fibre sheet',
     zh: '原生木浆纤维纸',
+    swatch: 'repeating-linear-gradient(90deg, #e8dcc4 0 1px, #d9c9a7 1px 3px)',
     spec: '179.9° ambient diffuse reflection · zero blue-light emission.',
     specZh: '自然光漫反射阅读表面，零频闪、零蓝光辐射。',
   },
@@ -153,6 +157,7 @@ const materialLayers = [
     index: 4,
     en: 'Sewn spine',
     zh: '锁线阻尼书脊',
+    swatch: 'repeating-linear-gradient(45deg, #9c3f2f 0 2px, #7c3024 2px 4px)',
     spec: 'Cotton thread hinge · enables 180° lay-flat reading on the desk.',
     specZh: '多股棉线锁线装订，为下一章 180° 纯平摊开提供力学基础。',
   },
@@ -160,6 +165,7 @@ const materialLayers = [
     index: 5,
     en: 'Endpaper',
     zh: '环衬缓冲页',
+    swatch: '#c8a96d',
     spec: 'Bridges cover board and book block for decades of page turns.',
     specZh: '连接书壳与书芯的结构缓冲层，经受成千上万次翻阅。',
   },
@@ -510,15 +516,17 @@ const pageDescription =
           </p>
 
           <div class="material-inspector reveal" aria-label="Interactive six material layers">
-            <div class="material-layers" role=" list">
+            <div class="material-layers" role="list">
               {materialLayers.map((layer) => (
                 <button
                   type="button"
                   class={`layer-pill${layer.index === 2 ? ' is-active' : ''}`}
+                  aria-pressed={layer.index === 2 ? 'true' : 'false'}
                   data-layer-btn={layer.index}
                   data-layer-en={`${String(layer.index + 1).padStart(2, '0')} · ${layer.en} — ${layer.spec}`}
                   data-layer-zh={`${layer.zh}：${layer.specZh}`}
                 >
+                  <i class="layer-pill__swatch" style={`--swatch: ${layer.swatch}`} aria-hidden="true"></i>
                   <small>{String(layer.index + 1).padStart(2, '0')}</small>
                   <span>{layer.en}</span>
                 </button>
@@ -530,6 +538,13 @@ const pageDescription =
                 植物油墨矩阵：高对比植物油墨印刷正文，并在页边印制微型「书链码」。
               </span>
             </div>
+            <p class="material-provenance reveal">
+              <span class="material-provenance__tag">PBR ATLAS</span>
+              2048² · baseColor / normal / AO / roughness / metalness · KTX2 · AO baked
+              <span class="zh-block" lang="zh-Hans">
+                运行时直接读取 GLB 内嵌 KTX2 PBR 贴图：颜色、法线、AO、粗糙度与金属度同源，AO 已烘焙进贴图。
+              </span>
+            </p>
           </div>
         </div>
 
@@ -1289,7 +1304,9 @@ const pageDescription =
 
     const activateLayer = (btn: HTMLButtonElement | null) => {
       for (const item of layerButtons) {
-        item.classList.toggle('is-active', item === btn);
+        const active = item === btn;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', active ? 'true' : 'false');
       }
       if (!btn) {
         window.dispatchEvent(new CustomEvent('bookln:layer', { detail: { index: null } }));

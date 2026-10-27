@@ -284,12 +284,10 @@ type MaterialPreset = {
   envMapIntensity?: number;
   /** Uniform XY normal scale. */
   normalScale?: number;
-  /** Only applied to MeshPhysicalMaterial (e.g. glTF clearcoat extension). */
-  clearcoat?: number;
-  clearcoatRoughness?: number;
-  map?: THREE.Texture | null;
-  /** Wipe all texture maps before applying the rest of the preset. */
-  stripMaps?: boolean;
+  emissive?: string;
+  emissiveIntensity?: number;
+  /** Tile every texture map on the material (used by the oak desk). */
+  repeat?: readonly [number, number];
 };
 
 /**
@@ -298,26 +296,38 @@ type MaterialPreset = {
  */
 function applyPreset(materials: THREE.Material[], preset: MaterialPreset): void {
   for (const material of materials) {
-    const m = material as THREE.MeshPhysicalMaterial;
+    const m = material as THREE.MeshStandardMaterial;
     if (!m.isMeshStandardMaterial) continue;
 
-    if (preset.stripMaps) {
-      m.map = null;
-      m.normalMap = null;
-      m.roughnessMap = null;
-      m.metalnessMap = null;
-    }
-    if (preset.map !== undefined) m.map = preset.map;
     if (preset.color !== undefined) m.color.set(preset.color);
     if (preset.roughness !== undefined) m.roughness = preset.roughness;
     if (preset.metalness !== undefined) m.metalness = preset.metalness;
     if (preset.envMapIntensity !== undefined) m.envMapIntensity = preset.envMapIntensity;
     if (preset.normalScale !== undefined) m.normalScale.set(preset.normalScale, preset.normalScale);
-    if (m.isMeshPhysicalMaterial) {
-      if (preset.clearcoat !== undefined) m.clearcoat = preset.clearcoat;
-      if (preset.clearcoatRoughness !== undefined) m.clearcoatRoughness = preset.clearcoatRoughness;
+    if (preset.emissive !== undefined) m.emissive.set(preset.emissive);
+    if (preset.emissiveIntensity !== undefined) m.emissiveIntensity = preset.emissiveIntensity;
+    if (preset.repeat) {
+      const maps = [m.map, m.normalMap, m.roughnessMap, m.metalnessMap, m.aoMap];
+      for (const texture of maps) {
+        if (!texture) continue;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(preset.repeat[0], preset.repeat[1]);
+        texture.needsUpdate = true;
+      }
     }
     m.needsUpdate = true;
+  }
+}
+
+function applyNamedPresets(
+  materials: THREE.Material[],
+  presets: Record<string, MaterialPreset>,
+  fallback?: MaterialPreset,
+): void {
+  for (const material of materials) {
+    const preset = presets[material.name] ?? fallback;
+    if (preset) applyPreset([material], preset);
   }
 }
 
@@ -973,7 +983,6 @@ function BookRig({
   const pedestal = useAssetGLTF('/models/display-pedestal.glb');
   const slipcase = useAssetGLTF('/models/slipcase.glb');
   const shelf = useAssetGLTF('/models/shelf.glb');
-  const bookCoverAtlas = useTexture('/textures/source/book-basecolor.png');
 
   const bookMorphMesh = useMorphMesh(book.scene);
   const bookMaterials = useSceneMaterials(book.scene);
@@ -983,67 +992,106 @@ function BookRig({
   const shelfMaterials = useSceneMaterials(shelf.scene);
 
   useEffect(() => {
-    bookCoverAtlas.flipY = false;
-    bookCoverAtlas.colorSpace = THREE.SRGBColorSpace;
-    bookCoverAtlas.needsUpdate = true;
-
-    // Book cover: the atlas drives color fully; satin cloth, subtle lacquer if available.
+    // Book cover (A1/A2): keep the GLB's embedded KTX2 PBR atlas intact.
+    // BaseColor carries the cover art; Normal / AO / Roughness / Metalness carry
+    // the cloth fibre, page edge and gold-foil response. Stripping these maps
+    // flattens the object into a single colour, so only grade the response here.
     applyPreset(bookMaterials, {
-      stripMaps: true,
-      map: bookCoverAtlas,
       color: '#ffffff',
-      roughness: 0.52,
-      metalness: 0,
-      envMapIntensity: 2.2,
-      normalScale: 0.72,
-      clearcoat: 0.12,
-      clearcoatRoughness: 0.55,
+      metalness: 1,
+      envMapIntensity: 1.45,
+      normalScale: 0.65,
     });
 
-    // Oak desk: flat dark walnut, no maps.
+    // Oak desk (A4): use the delivered oak PBR maps with a dark-walnut grade.
     applyPreset(deskMaterials, {
-      stripMaps: true,
-      color: '#1a1007',
-      roughness: 0.85,
+      color: '#8a6a45',
+      roughness: 0.92,
       metalness: 0,
       envMapIntensity: 0.55,
+      normalScale: 0.8,
+      repeat: [2, 2],
     });
 
-    // Display pedestal: medium rosewood.
-    applyPreset(pedestalMaterials, {
-      color: '#5c4632',
-      roughness: 0.58,
-      metalness: 0,
-      envMapIntensity: 0.85,
-      normalScale: 0.38,
+    // Display pedestal (A4): cast bronze-black base, not a second wood tone.
+    applyNamedPresets(pedestalMaterials, {
+      Pedestal_Bronze_Black: {
+        color: '#2a2118',
+        roughness: 0.38,
+        metalness: 0.58,
+        envMapIntensity: 1.15,
+      },
     });
 
-    // Clothbound slipcase: warm tan cloth.
-    applyPreset(slipcaseMaterials, {
-      color: '#8c6745',
-      roughness: 0.72,
-      metalness: 0,
-      envMapIntensity: 1.1,
-      normalScale: 0.55,
+    // Slipcase (A3): black cloth body, dark felt tray, real gold foil seal.
+    applyNamedPresets(slipcaseMaterials, {
+      Slipcase_Black_Cloth: {
+        color: '#161311',
+        roughness: 0.88,
+        metalness: 0,
+        envMapIntensity: 0.55,
+      },
+      Slipcase_Inner_Tray: {
+        color: '#2a221a',
+        roughness: 0.96,
+        metalness: 0,
+        envMapIntensity: 0.35,
+      },
+      Slipcase_Foil_Seal: {
+        color: '#c8a96d',
+        roughness: 0.26,
+        metalness: 0.92,
+        envMapIntensity: 1.9,
+      },
     });
 
-    shelfGlowRef.current =
-      (shelfMaterials.find((m) => m.name === 'Hero_Spine_Glow') as THREE.MeshStandardMaterial | undefined) ?? null;
+    // Shelf (C1/C2): walnut case, dark sleeping spines, one breathing hero strip.
+    applyNamedPresets(
+      shelfMaterials,
+      {
+        Shelf_Back_Panel: {
+          color: '#17120d',
+          roughness: 0.92,
+          metalness: 0,
+          envMapIntensity: 0.28,
+        },
+        Shelf_Walnut: {
+          color: '#3a2a1b',
+          roughness: 0.78,
+          metalness: 0,
+          envMapIntensity: 0.34,
+        },
+        Sleeping_Spine_0: { color: '#2a2620', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+        Sleeping_Spine_1: { color: '#332b22', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+        Sleeping_Spine_2: { color: '#242a2b', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+        Sleeping_Spine_3: { color: '#3a3024', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+        Sleeping_Spine_4: { color: '#2c211d', roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+        Hero_Spine_Cloth: {
+          color: '#6b5336',
+          roughness: 0.68,
+          metalness: 0,
+          envMapIntensity: 0.55,
+        },
+        Hero_Spine_Glow: {
+          color: '#ffcf7a',
+          emissive: '#ffae47',
+          emissiveIntensity: 0.5,
+          roughness: 0.5,
+          metalness: 0,
+          envMapIntensity: 0.7,
+        },
+      },
+      { roughness: 0.82, metalness: 0, envMapIntensity: 0.26 },
+    );
 
-    // Shelf (C1/C2): dark, sleeping spines; only the hero strip carries the 0.00 W glow.
-    for (const material of shelfMaterials) {
-      const m = material as THREE.MeshStandardMaterial;
-      if (!m.isMeshStandardMaterial) continue;
-      m.envMapIntensity = 0.28;
-      if (m.name !== 'Hero_Spine_Glow') m.color.multiplyScalar(0.6);
-      if (m.name === 'Hero_Spine_Glow') {
-        m.emissive.set('#ffae47');
-        m.emissiveIntensity = 0.5;
-        m.toneMapped = false;
-      }
-      m.needsUpdate = true;
+    const glow = shelfMaterials.find(
+      (material) => material.name === 'Hero_Spine_Glow',
+    ) as THREE.MeshStandardMaterial | undefined;
+    if (glow) {
+      glow.toneMapped = false;
+      shelfGlowRef.current = glow;
     }
-  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
+  }, [bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
 
   useEffect(() => {
     if (bookMorphMesh) {

@@ -3,7 +3,7 @@
   "status": "concept",
   "source": "docs/script-final.md#04--benchmark--a-different-kind-of-engine--另一种引擎",
   "method": "Manufacturer-published specifications and product descriptions only. No comparative lab testing was performed by Bookln.",
-  "disclaimer": "Third-party devices are referenced for context only. Their names and marks belong to their respective owners. CODEX 1 values marked † are forward-looking concept claims and must be validated before launch.",
+  "disclaimer": "Third-party devices are referenced for context only. Their names and marks belong to their respective owners. Bookln Edition values marked † are forward-looking concept claims and must be validated before launch.",
   "devices": [
     {
       "id": "ipad-pro",
@@ -21,7 +21,7 @@
     },
     {
       "id": "codex-1",
-      "name": "CODEX 1",
+      "name": "Paper Book + Bookln",
       "vendor": "Bookln",
       "role": "concept",
       "sourceIds": []

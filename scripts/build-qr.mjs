@@ -50,7 +50,7 @@ function svgModuleRects(scale = 1) {
 
 const rawSvg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 ${total} ${total}" width="1024" height="1024" shape-rendering="crispEdges">
   <title id="title">Bookln one-code entry QR</title>
-  <desc id="desc">Scan to open the companion knowledge layer for CODEX 1. Target: ${xmlEscape(target)}</desc>
+  <desc id="desc">Scan to open the companion knowledge layer for any Bookln-connected book. Target: ${xmlEscape(target)}</desc>
   <rect width="${total}" height="${total}" fill="${paper}"/>
   <path d="${svgModuleRects(1)}" fill="${ink}"/>
 </svg>
@@ -72,7 +72,7 @@ const cardSvg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelle
   <rect width="${cardWidth}" height="${cardHeight}" fill="${paper}"/>
   <rect x="18.5" y="18.5" width="${cardWidth - 37}" height="${cardHeight - 37}" fill="none" stroke="${ink}" stroke-opacity=".18"/>
   <rect x="${cardWidth - 66}" y="34" width="24" height="24" fill="#9C3F2F"/>
-  <text x="48" y="58" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" letter-spacing="2.2" fill="${ink}">BOOKLN / CODEX 1.</text>
+  <text x="48" y="58" font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="10" letter-spacing="2.2" fill="${ink}">BOOKLN / PAGE 042</text>
   <g transform="translate(${qrX} ${qrY})">
     <rect width="${qrSize}" height="${qrSize}" fill="${paper}"/>
     <path d="${cardModules}" fill="${ink}"/>

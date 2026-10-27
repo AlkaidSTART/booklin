@@ -103,7 +103,7 @@ const legend = data.legend
   .join('\n');
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
-  <title id="title">CODEX 1 page 042 knowledge layer</title>
+  <title id="title">Bookln page 042 knowledge layer</title>
   <desc id="desc">A deterministic concept graph with nine nodes: the physical page, a concept, a citation, a lesson, margin discussion, glossary, author note, a related chapter and an AI companion.</desc>
   <defs>
     <radialGradient id="bg" cx="50%" cy="42%" r="72%">

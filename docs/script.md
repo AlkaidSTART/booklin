@@ -1,7 +1,7 @@
-# Bookln / CODEX 1. 双语定稿文案
+# Bookln / THE BOOK. 双语定稿文案
 
 > Status: **concept copy — launch review required**<br>
-> Version: `2026-10-26`<br>
+> Version: `2026-10-27`<br>
 > Canonical copy deck: [`script-final.md`](script-final.md). This file is kept for legacy links and mirrors the same content.<br>
 > Source storyboard: [`script-source.md`](script-source.md)<br>
 > Copy fields and length limits: [`copy-fields.json`](copy-fields.json)
@@ -14,10 +14,10 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 | Field | English | 中文 |
 | --- | --- | --- |
-| Eyebrow | A NEW READING OBJECT | 一件新的阅读对象 |
-| Main title | **CODEX 1.** | **CODEX 1.** |
-| Subtitle | The Zero-Watt Cognitive Engine. | 零功耗认知引擎。 |
-| Annotation | Local by nature. Silent by design. Pure cellulose display matrix. | 纯本地运行 / 零辐射 / 纯天然纤维显示矩阵。 |
+| Eyebrow | EVERY BOOK, CONNECTED | 每一本纸书，皆可入云 |
+| Main title | **THE BOOK.** | **纸质书，重获新生。** |
+| Subtitle | The Zero-Watt Cognitive Engine. | 零功耗认知引擎，由书链 Bookln 唤醒。 |
+| Annotation | Local by nature. Silent by design. Any physical book, connected to the cloud. | 纯本地运行 / 零辐射 / 赋予任意实体纸书云端伴读灵魂。 |
 
 **Scroll cue:** `Scroll to unfold.` / `向下滚动，展开。`
 

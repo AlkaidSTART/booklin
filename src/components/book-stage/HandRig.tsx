@@ -20,7 +20,6 @@ import { createSkinMaterial } from './skinMaterial';
 const HAND_URL = '/models/hand.glb';
 
 const CURL_AXIS = new THREE.Vector3(1, 0, 0);
-const ADDUCT_AXIS = new THREE.Vector3(0, 0, 1);
 const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 
 /** 01 Carry: palm on the camera-facing cover, fingers up it, arm out below.
@@ -28,19 +27,26 @@ const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 const BOOK_ANCHOR: [number, number, number] = [20, 0, 6];
 const BOOK_ROLL = -0.42;
 const BOOK_CURL: [number, number, number] = [0.12, 0.16, 0.08];
-const BOOK_THUMB: [number, number] = [0.24, -0.08];
+/** thumb_01 local XYZ euler; lifts the relaxed thumb onto the cover. */
+const BOOK_THUMB: [number, number, number] = [0.24, 0, -0.08];
+const BOOK_THUMB_TIP = 0;
 
 /** 00 Scan: the hand sits behind the phone, palm on the back cover, four
- * fingers up the back and the thumb around the front-left edge. */
-const PHONE_ANCHOR: [number, number, number] = [0, 20, 9.5];
+ * fingers up the back and the thumb around the front-left edge. The 8 mm X
+ * shift keeps the thumb's wrap outside the body instead of through it. */
+const PHONE_ANCHOR: [number, number, number] = [8, 20, 9.5];
 const PHONE_CURL: [number, number, number] = [0.02, 0.03, 0.02];
-const PHONE_THUMB: [number, number] = [0.1, -0.35];
+/** Tip lands on the front-left edge at (x 50, z 10) mm; the wrap crosses the
+ * phone's mid-plane at x 48, clear of the 46 mm half-width. */
+const PHONE_THUMB: [number, number, number] = [-0.14, -0.48, -0.27];
+const PHONE_THUMB_TIP = 0.15;
 
 /** How far the arm waits below the frame before it rises in. */
 const ENTER_DISTANCE = 120;
 
 const tmpCurl = new THREE.Quaternion();
-const tmpAdduct = new THREE.Quaternion();
+const tmpThumb = new THREE.Quaternion();
+const tmpEuler = new THREE.Euler();
 
 type Phalanx = { bone: THREE.Bone; rest: THREE.Quaternion; stage: number };
 
@@ -48,6 +54,7 @@ type RiggedHand = {
   mesh: THREE.SkinnedMesh;
   phalanges: Phalanx[];
   thumb: Phalanx;
+  thumbTip: Phalanx;
 };
 
 function smoothstep(value: number) {
@@ -109,6 +116,7 @@ function buildRig(root: THREE.Object3D): RiggedHand {
     mesh,
     phalanges,
     thumb: phalanx('thumb_01', 0),
+    thumbTip: phalanx('thumb_02', 0),
   };
 }
 
@@ -122,7 +130,8 @@ function useRiggedHand() {
 function applyPose(
   rig: RiggedHand,
   curl: [number, number, number],
-  thumb: [number, number],
+  thumb: [number, number, number],
+  thumbTip: number,
   weight: number,
   flutter: number,
 ) {
@@ -132,9 +141,12 @@ function applyPose(
     bone.quaternion.copy(rest).multiply(tmpCurl);
   }
 
-  tmpCurl.setFromAxisAngle(CURL_AXIS, thumb[0] * weight);
-  tmpAdduct.setFromAxisAngle(ADDUCT_AXIS, thumb[1] * weight);
-  rig.thumb.bone.quaternion.copy(rig.thumb.rest).multiply(tmpCurl).multiply(tmpAdduct);
+  tmpEuler.set(thumb[0] * weight, thumb[1] * weight, thumb[2] * weight, 'XYZ');
+  tmpThumb.setFromEuler(tmpEuler);
+  rig.thumb.bone.quaternion.copy(rig.thumb.rest).multiply(tmpThumb);
+
+  tmpCurl.setFromAxisAngle(CURL_AXIS, thumbTip * weight);
+  rig.thumbTip.bone.quaternion.copy(rig.thumbTip.rest).multiply(tmpCurl);
 }
 
 /** 01 carry. The hand rises from below the frame, holds the book's bottom
@@ -181,7 +193,7 @@ export function HandRig({
     const t = performance.now() * 0.001;
     const amount = reducedMotion ? 0 : 1;
     const flutter = Math.sin(t * 0.62) * 0.012 * amount * weight;
-    applyPose(rig, BOOK_CURL, BOOK_THUMB, weight, flutter);
+    applyPose(rig, BOOK_CURL, BOOK_THUMB, BOOK_THUMB_TIP, weight, flutter);
 
     // A hand that holds perfectly still reads as a prop.
     const grip = gripRef.current;
@@ -236,6 +248,8 @@ export function PhoneHandRig({
   useFrame(() => {
     const opacity = Math.min(1, Math.max(0, opacityRef.current));
     skin.opacity = opacity;
+    // Invisible but still depth-writing would punch a hole through the phone.
+    rig.mesh.visible = opacity > 0.002;
 
     const hand = handRef.current;
     if (!hand) return;
@@ -245,7 +259,7 @@ export function PhoneHandRig({
     const t = performance.now() * 0.001;
     const amount = reducedMotion ? 0 : opacity;
     const flutter = Math.sin(t * 0.5 + 1.1) * 0.01 * amount;
-    applyPose(rig, PHONE_CURL, PHONE_THUMB, opacity, flutter);
+    applyPose(rig, PHONE_CURL, PHONE_THUMB, PHONE_THUMB_TIP, opacity, flutter);
 
     hand.rotation.x = Math.sin(t * 0.23 + 0.7) * 0.006 * amount;
     hand.rotation.z = Math.sin(t * 0.17 + 2.1) * 0.008 * amount;

@@ -24,7 +24,6 @@ blender -b --python scripts/build-models.py
 blender -b --python scripts/build-hand.py
 python scripts/generate-textures.py
 uv run --with fonttools python scripts/build-fonts.py
-python scripts/render-book-preview.py
 node scripts/capture-visual-spec.mjs
 
 # 2. Brand SVGs, QR, knowledge graph
@@ -48,7 +47,6 @@ node scripts/build-asset-manifest.mjs
 | `build-models.py` | `public/models/*.glb` (incl. `shelf.glb`; `BOOKLN_ONLY=shelf` builds just the shelf), source `.blend` files |
 | `generate-textures.py` | `public/hdri/*.hdr`, `public/textures/**/*.ktx2`, source PNGs |
 | `build-fonts.py` | `public/fonts/*.woff2`, `*.ttf`, licence files |
-| `render-book-preview.py` | `docs/design/book-preview-*.png` |
 | `capture-visual-spec.mjs` | `docs/design/visual-spec-*.png` and `.webp` |
 | `build-brand-assets.py` | `public/brand/*.svg`, `public/favicon.svg` |
 | `build-qr.mjs` | `public/qr/spine-mark.svg`, `public/qr/one-code-entry.{svg,png}`, card assets |

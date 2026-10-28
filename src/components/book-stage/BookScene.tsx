@@ -230,15 +230,15 @@ const PAGE_MARK_Y = 42;
 // the open page and z rises out of the paper. Parenting it to the book keeps
 // the graph welded to Page 042 through the lift and the chapter hand-off.
 const GRAPH_NODES_3D: GraphNodeSpec[] = [
-  { id: 'page', type: 'page', pos: [PAGE_MARK_X, PAGE_MARK_Y, 26], color: '#e8dcc4', size: 10 },
-  { id: 'concept', type: 'concept', pos: [60, 104, 62], color: '#c8a96d', size: 9 },
-  { id: 'citation', type: 'citation', pos: [66, 62, 48], color: '#d27c65', size: 7.5 },
-  { id: 'lecture', type: 'video', pos: [46, 22, 42], color: '#e0b872', size: 9 },
-  { id: 'discussion', type: 'discussion', pos: [14, 16, 34], color: '#b9af9e', size: 7.5 },
-  { id: 'glossary', type: 'glossary', pos: [-14, 66, 58], color: '#a78750', size: 7.2 },
-  { id: 'author', type: 'author', pos: [-32, 112, 54], color: '#f3ead8', size: 7.5 },
-  { id: 'related', type: 'chapter', pos: [12, 142, 70], color: '#c8a96d', size: 8 },
-  { id: 'ai', type: 'ai', pos: [28, 168, 92], color: '#d27c65', size: 10 },
+  { id: 'page', type: 'page', pos: [PAGE_MARK_X, PAGE_MARK_Y, 34], color: '#e8dcc4', size: 13 },
+  { id: 'concept', type: 'concept', pos: [78, 118, 92], color: '#c8a96d', size: 11 },
+  { id: 'citation', type: 'citation', pos: [96, 70, 70], color: '#d27c65', size: 9.5 },
+  { id: 'lecture', type: 'video', pos: [58, 18, 62], color: '#e0b872', size: 11 },
+  { id: 'discussion', type: 'discussion', pos: [10, 8, 50], color: '#b9af9e', size: 9.5 },
+  { id: 'glossary', type: 'glossary', pos: [-26, 62, 80], color: '#a78750', size: 9 },
+  { id: 'author', type: 'author', pos: [-56, 118, 76], color: '#f3ead8', size: 9.5 },
+  { id: 'related', type: 'chapter', pos: [6, 156, 96], color: '#c8a96d', size: 10 },
+  { id: 'ai', type: 'ai', pos: [26, 188, 132], color: '#d27c65', size: 12 },
 ];
 
 const GRAPH_LINKS_3D: Array<readonly [string, string]> = [
@@ -886,7 +886,7 @@ function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) 
   const ribbonMaterial = useMemo(
     () =>
       new THREE.MeshStandardMaterial({
-        color: '#b4422f',
+        color: '#9c3325',
         roughness: 0.66,
         metalness: 0,
         envMapIntensity: 0.35,
@@ -1091,7 +1091,7 @@ function NeuralGraph3D({
   const anchorStem = useMemo(() => {
     const geometry = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 1),
-      new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 17),
+      new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 24),
     ]);
     const material = new THREE.LineBasicMaterial({
       color: '#e8dcc4',
@@ -1159,8 +1159,8 @@ function NeuralGraph3D({
       const isConnected = GRAPH_LINKS_3D.some(
         ([s, t]) => (s === activeNode && t === node.id) || (t === activeNode && s === node.id),
       );
-      const nodeAlpha = strength * (isFocused ? 1 : isConnected ? 0.92 : 0.55);
-      const haloAlpha = strength * (isFocused ? 0.85 : isConnected ? 0.38 : 0.16);
+      const nodeAlpha = strength * (isFocused ? 1 : isConnected ? 0.95 : 0.7);
+      const haloAlpha = strength * (isFocused ? 0.85 : isConnected ? 0.44 : 0.22);
 
       nodeMaterials[idx].opacity = THREE.MathUtils.damp(nodeMaterials[idx].opacity, nodeAlpha, 7, delta);
       haloMaterials[idx].opacity = THREE.MathUtils.damp(haloMaterials[idx].opacity, haloAlpha, 7, delta);
@@ -1182,7 +1182,7 @@ function NeuralGraph3D({
 
     for (const item of linkItems) {
       const highlighted = item.sourceId === activeNode || item.targetId === activeNode;
-      const linkTarget = strength * (highlighted ? 0.82 : 0.24);
+      const linkTarget = strength * (highlighted ? 0.9 : 0.38);
       item.material.opacity = THREE.MathUtils.damp(item.material.opacity, linkTarget, 7, delta);
     }
 
@@ -1402,6 +1402,9 @@ function BookRig({
   const shelfGroupRef = useRef<THREE.Group>(null);
   const shelfFocusRef = useRef<ShelfFocus | null>(null);
   const qrMarkRef = useRef<THREE.Group>(null);
+  // Page-block openness this frame, shared with the cover mark so the printed
+  // code turns with the front board instead of hanging where it used to be.
+  const opennessRef = useRef(0);
   // What the phone's rear camera is allowed to see. Refs are stable, so the
   // scanner's layer setup runs once per mount.
   const scanCameraSubjects = useMemo(
@@ -1459,6 +1462,9 @@ function BookRig({
         texture.anisotropy = anisotropy;
         texture.needsUpdate = true;
       }
+    }
+    if (import.meta.env.DEV) {
+      (window as unknown as { __bookMaterials?: THREE.Material[] }).__bookMaterials = bookMaterials;
     }
 
     // Oak desk (A4): use the delivered oak PBR maps with a dark-walnut grade.
@@ -1605,6 +1611,7 @@ function BookRig({
     const { phase, index, t } = timeline(progressRef.current);
     const a = BOOK_KEYS[index];
     const b = BOOK_KEYS[Math.min(index + 1, BOOK_KEYS.length - 1)];
+    opennessRef.current = lerp(a.open, b.open, t);
 
     introRef.current = THREE.MathUtils.damp(introRef.current, 1, 1.5, delta);
     const intro = 1 - introRef.current;
@@ -1832,7 +1839,12 @@ function BookRig({
             <PageRibbon progressRef={progressRef} />
             <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
             <ScanRing progressRef={progressRef} />
-            <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} markRef={qrMarkRef} />
+            <QrCoverMark
+              progressRef={progressRef}
+              reducedMotion={reducedMotion}
+              markRef={qrMarkRef}
+              opennessRef={opennessRef}
+            />
             <HandRig progressRef={progressRef} reducedMotion={reducedMotion} />
           </group>
         </group>

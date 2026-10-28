@@ -1,6 +1,6 @@
 # Asset Manifest / 资产交付清单
 
-> Generated: `2026-10-28T11:21:31.041Z`  
+> Generated: `2026-10-28T11:28:56.429Z`  
 > Source: [`assets.md`](assets.md)  
 > Machine-readable: [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)  
 > Excludes raw source masters under `public/models/source/`, `public/textures/source/`, `public/fonts/source/`, and the pre-existing `public/voice/voice.mp3` (not part of the current asset scope).
@@ -14,8 +14,8 @@
 | pending-external | 1 |
 
 - Groups: **21**
-- Files: **99**
-- Total inventory bytes: **21.72 MB** (includes source/reference docs; not first-screen transfer)
+- Files: **97**
+- Total inventory bytes: **18.99 MB** (includes source/reference docs; not first-screen transfer)
 - Missing files: **0**
 
 ## Assets
@@ -27,7 +27,7 @@
 | A3 | Slipcase 3D model | delivered | 10.6 KB | `public/models/slipcase.glb` |
 | A4 | Desk and pedestal | delivered | 1192.9 KB | `public/models/oak-desk.glb`<br />`public/models/display-pedestal.glb`<br />`public/textures/oak-basecolor.ktx2`<br />`public/textures/oak-normal.ktx2`<br />`public/textures/oak-roughness.ktx2` |
 | A5 | Fonts | delivered | 1244.1 KB | `public/fonts/cormorant-garamond-medium.woff2`<br />`public/fonts/cormorant-garamond-semibold.woff2`<br />`public/fonts/noto-sans-sc-regular.woff2`<br />`public/fonts/noto-sans-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-semibold.woff2`<br />`public/fonts/cormorant-garamond-medium.ttf`<br />`public/fonts/cormorant-garamond-semibold.ttf`<br />`public/fonts/noto-sans-sc-regular.ttf`<br />`public/fonts/noto-sans-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-semibold.ttf` |
-| A6 | Visual specification and design references | delivered | 6720.5 KB | `docs/design/visual-spec.html`<br />`docs/design/visual-spec-desktop.png`<br />`docs/design/visual-spec-desktop.webp`<br />`docs/design/visual-spec-mobile.png`<br />`docs/design/visual-spec-mobile.webp`<br />`docs/design/book-cover-art.png`<br />`docs/design/book-preview-closed.png`<br />`docs/design/book-preview-open.png`<br />`public/design/tokens.json`<br />`public/design/tokens.css` |
+| A6 | Visual specification and design references | delivered | 3918.5 KB | `docs/design/visual-spec.html`<br />`docs/design/visual-spec-desktop.png`<br />`docs/design/visual-spec-desktop.webp`<br />`docs/design/visual-spec-mobile.png`<br />`docs/design/visual-spec-mobile.webp`<br />`docs/design/book-cover-art.png`<br />`public/design/tokens.json`<br />`public/design/tokens.css` |
 | A7 | Final bilingual copy | delivered | 42.1 KB | `docs/script-final.md`<br />`docs/script.md`<br />`docs/copy-fields.json` |
 | A8 | Rigged right hand | delivered | 363.5 KB | `public/models/hand.glb`<br />`public/models/source/hand-rig.blend`<br />`public/hand/hand.OBJ`<br />`scripts/build-hand.py` |
 | A10 | P.042 page-edge mark | delivered | 81.5 KB | `public/qr/page-edge-p042.svg`<br />`public/qr/page-edge-p042.png`<br />`public/data/links.json` |

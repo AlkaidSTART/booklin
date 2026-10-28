@@ -116,6 +116,46 @@ function makePageTexture() {
   return texture;
 }
 
+/**
+ * Neutral cloth weave for the modelled front covers. It is almost white so the
+ * per-book instance colour still owns the hue; the weave only breaks up the
+ * flat board when a cover is presented square to the camera.
+ */
+function makeCoverTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  ctx.fillStyle = '#f4f1eb';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  for (let x = 0; x < canvas.width; x += 2) {
+    const alpha = 0.02 + Math.random() * 0.03;
+    ctx.fillStyle = `rgba(20, 16, 12, ${alpha})`;
+    ctx.fillRect(x, 0, 1, canvas.height);
+  }
+  for (let y = 0; y < canvas.height; y += 2) {
+    const alpha = 0.02 + Math.random() * 0.03;
+    ctx.fillStyle = `rgba(255, 252, 244, ${alpha})`;
+    ctx.fillRect(0, y, canvas.width, 1);
+  }
+  for (let i = 0; i < 1400; i += 1) {
+    const alpha = 0.01 + Math.random() * 0.035;
+    ctx.fillStyle = `rgba(24, 18, 12, ${alpha})`;
+    ctx.fillRect(Math.random() * canvas.width, Math.random() * canvas.height, 1, 1);
+  }
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(2, 3);
+  texture.anisotropy = 4;
+  return texture;
+}
+
 const CLOTH_PALETTE = [
   '#241b16',
   '#1e1714',
@@ -226,6 +266,7 @@ export function ShelfBooks({
 }) {
   const specs = useMemo(() => buildShelfBooks(pick.x), [pick.x]);
   const pageTexture = useMemo(makePageTexture, []);
+  const coverTexture = useMemo(makeCoverTexture, []);
 
   const pageRef = useRef<THREE.InstancedMesh>(null);
   const coverRef = useRef<THREE.InstancedMesh>(null);
@@ -233,6 +274,9 @@ export function ShelfBooks({
   const roundedSpineRef = useRef<THREE.InstancedMesh>(null);
   const bandRef = useRef<THREE.InstancedMesh>(null);
   const labelRef = useRef<THREE.InstancedMesh>(null);
+  const coverPanelRef = useRef<THREE.InstancedMesh>(null);
+  const coverGoldRef = useRef<THREE.InstancedMesh>(null);
+  const coverLabelRef = useRef<THREE.InstancedMesh>(null);
   const hitRef = useRef<THREE.InstancedMesh>(null);
 
   const hoverRef = useRef<number | null>(null);
@@ -240,6 +284,8 @@ export function ShelfBooks({
   const focusTickRef = useRef(0);
   const pullRef = useRef(new Float32Array(specs.length));
   const tiltRef = useRef(new Float32Array(specs.length));
+  const yawRef = useRef(new Float32Array(specs.length));
+  const presentRef = useRef(new Float32Array(specs.length));
   const dummy = useMemo(() => new THREE.Object3D(), []);
   const gl = useThree((state) => state.gl);
 
@@ -292,6 +338,20 @@ export function ShelfBooks({
     [],
   );
 
+  // Front-cover board. Tinted per instance from the book's cloth colour, so
+  // every book gets its own simple cover without a texture per book.
+  const coverMaterial = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: '#ffffff',
+        map: coverTexture ?? undefined,
+        roughness: 0.9,
+        metalness: 0,
+        envMapIntensity: 0.18,
+      }),
+    [coverTexture],
+  );
+
   // Invisible pick proxy: one box per book, on the same pivot as the modelled
   // spine, so a click resolves to a single index. Keeping this separate from
   // the visible instanced meshes means bands and labels can never steal a hit.
@@ -330,18 +390,31 @@ export function ShelfBooks({
   }, [specs]);
 
   /**
-   * Writes one book into every instanced mesh at once. `pull` slides it out of
-   * the case along +Z; `tilt` rotates the whole book forward around the bottom
-   * of its spine, which is what actually reads from the front-on camera.
+   * Writes one book into every instanced mesh at once.
+   *
+   * `pull` slides the book out along +Z. `yaw` turns it about its own centre so
+   * the front board faces the reader, and `tilt` leans it forward around the
+   * bottom of the spine for the small hover nudge.
    */
-  const writeBook = (index: number, pull: number, tilt: number) => {
+  const writeBook = (index: number, pull: number, tilt: number, yaw: number) => {
     const spec = specs[index];
     if (!spec) return;
 
-    const pivotY = spec.rowY;
-    const pivotZ = -0.6;
-    const cos = Math.cos(tilt);
-    const sin = Math.sin(tilt);
+    const w = spec.w;
+    const h = spec.h;
+    const d = spec.d;
+
+    // Yaw pivots on the book's centre; tilt pivots on the bottom of the spine.
+    // Composing the two keeps the presented cover square to the camera while
+    // the hover peek still hinges from the shelf lip.
+    const yawPivotY = spec.rowY + h / 2;
+    const yawPivotZ = -d / 2;
+    const tiltPivotY = spec.rowY;
+    const tiltPivotZ = -0.6;
+    const cosY = Math.cos(yaw);
+    const sinY = Math.sin(yaw);
+    const cosX = Math.cos(tilt);
+    const sinX = Math.sin(tilt);
 
     const place = (
       mesh: THREE.InstancedMesh | null,
@@ -354,23 +427,26 @@ export function ShelfBooks({
       scaleZ: number,
     ) => {
       if (!mesh || slot < 0) return;
-      const dy = baseY - pivotY;
-      const dz = baseZ - pivotZ;
+
+      const dx0 = baseX - spec.x;
+      const dy0 = baseY - yawPivotY;
+      const dz0 = baseZ - yawPivotZ;
+      const dx1 = dx0 * cosY + dz0 * sinY;
+      const dz1 = -dx0 * sinY + dz0 * cosY;
+
+      const dy1 = baseY - tiltPivotY;
+      const dzTilt = yawPivotZ + dz1 - tiltPivotZ;
       dummy.position.set(
-        baseX,
-        pivotY + dy * cos - dz * sin,
-        pivotZ + dy * sin + dz * cos + pull,
+        spec.x + dx1,
+        tiltPivotY + dy1 * cosX - dzTilt * sinX,
+        tiltPivotZ + dy1 * sinX + dzTilt * cosX + pull,
       );
-      dummy.rotation.set(tilt, 0, spec.lean);
+      dummy.rotation.set(tilt, yaw, spec.lean);
       dummy.scale.set(scaleX, scaleY, scaleZ);
       dummy.updateMatrix();
       mesh.setMatrixAt(slot, dummy.matrix);
       mesh.instanceMatrix.needsUpdate = true;
     };
-
-    const w = spec.w;
-    const h = spec.h;
-    const d = spec.d;
 
     place(pageRef.current, index, spec.x, spec.rowY + h / 2, -d / 2, w - 5, h - 8, d - 8);
     place(
@@ -426,6 +502,29 @@ export function ShelfBooks({
       );
     }
 
+    // Simple modelled front cover on the outer +X board: cloth panel, gold
+    // keyline, label and one rule. Instanced once per book, so all ~120 books
+    // gain a cover for three extra draw calls.
+    const coverX = spec.x + w / 2;
+    place(coverPanelRef.current, index, coverX + 0.25, spec.rowY + h / 2, -d / 2, 0.5, h - 16, d - 16);
+    const goldX = coverX + 0.6;
+    const gold = index * 5;
+    place(coverGoldRef.current, gold, goldX, spec.rowY + h - 8, -d / 2, 0.6, 1.6, d - 16);
+    place(coverGoldRef.current, gold + 1, goldX, spec.rowY + 8, -d / 2, 0.6, 1.6, d - 16);
+    place(coverGoldRef.current, gold + 2, goldX, spec.rowY + h / 2, -8, 0.6, h - 16, 1.6);
+    place(coverGoldRef.current, gold + 3, goldX, spec.rowY + h / 2, -d + 8, 0.6, h - 16, 1.6);
+    place(coverGoldRef.current, gold + 4, goldX, spec.rowY + h * 0.5, -d / 2, 0.6, 1.1, d * 0.42);
+    place(
+      coverLabelRef.current,
+      index,
+      coverX + 0.55,
+      spec.rowY + h * 0.66,
+      -d / 2,
+      0.5,
+      Math.max(10, h * 0.075),
+      d * 0.6,
+    );
+
     place(hitRef.current, index, spec.x, spec.rowY + h / 2, -d / 2, w + 2, h + 2, d + 4);
   };
 
@@ -477,22 +576,60 @@ export function ShelfBooks({
     clothMaterial.color.setScalar(level);
     goldMaterial.color.copy(goldBase).multiplyScalar(level);
     labelMaterial.color.setScalar(level);
+    coverMaterial.color.setScalar(level);
 
     const active = activeRef.current;
     const hovered = hoverRef.current;
 
     for (let index = 0; index < specs.length; index += 1) {
-      const targetPull = index === active ? 26 : index === hovered ? 9 : 0;
-      const targetTilt = index === active ? 0.085 : index === hovered ? 0.03 : 0;
-      const pull = THREE.MathUtils.damp(pullRef.current[index], targetPull, 10, delta);
+      const spec = specs[index];
+      const isActive = index === active;
+
+      // One progress value drives the whole take-down: clear the case, swing
+      // the cover square to the reader, then settle back toward the shelf.
+      const present = THREE.MathUtils.damp(
+        presentRef.current[index],
+        isActive ? 1 : 0,
+        6,
+        delta,
+      );
+      presentRef.current[index] = present;
+
+      const clearance = smoothstep(present / 0.5);
+      const settle = smoothstep((present - 0.82) / 0.18);
+      const swing = smoothstep((present - 0.48) / 0.52);
+
+      // The book must travel far enough out that its trailing corner clears
+      // the shelf while it turns; once facing the camera it can come back in.
+      const reach =
+        spec.d / 2 + Math.hypot(spec.d / 2, spec.w / 2) + 14;
+      const home = spec.d / 2 + 40;
+      const presenting = isActive || present > 0.002;
+      const presentPull = reach * clearance - (reach - home) * settle;
+
+      const targetPull = presenting ? presentPull : 0;
+      const targetTilt = !isActive && index === hovered ? 0.03 : 0;
+      const targetYaw = (-Math.PI / 2) * swing;
+      const hoverPull = index === hovered && !isActive ? 9 : 0;
+
+      const pull = THREE.MathUtils.damp(
+        pullRef.current[index],
+        presenting ? targetPull : hoverPull,
+        10,
+        delta,
+      );
       const tilt = THREE.MathUtils.damp(tiltRef.current[index], targetTilt, 10, delta);
+      const yaw = THREE.MathUtils.damp(yawRef.current[index], targetYaw, 12, delta);
+
       if (
         Math.abs(pull - pullRef.current[index]) > 0.01 ||
-        Math.abs(tilt - tiltRef.current[index]) > 0.0002
+        Math.abs(tilt - tiltRef.current[index]) > 0.0002 ||
+        Math.abs(yaw - yawRef.current[index]) > 0.0002
       ) {
         pullRef.current[index] = pull;
         tiltRef.current[index] = tilt;
-        writeBook(index, pull, tilt);
+        yawRef.current[index] = yaw;
+        writeBook(index, pull, tilt, yaw);
       }
     }
   });
@@ -503,10 +640,12 @@ export function ShelfBooks({
       roundedSpineGeometry.dispose();
       hitMaterial.dispose();
       pageTexture?.dispose();
+      coverTexture?.dispose();
       pageMaterial.dispose();
       clothMaterial.dispose();
       goldMaterial.dispose();
       labelMaterial.dispose();
+      coverMaterial.dispose();
       gl.domElement.style.cursor = '';
     };
   }, [
@@ -514,18 +653,21 @@ export function ShelfBooks({
     roundedSpineGeometry,
     hitMaterial,
     pageTexture,
+    coverTexture,
     pageMaterial,
     clothMaterial,
     goldMaterial,
     labelMaterial,
+    coverMaterial,
     gl,
   ]);
 
   useLayoutEffect(() => {
     const color = new THREE.Color();
+    const white = new THREE.Color('#ffffff');
 
     specs.forEach((spec, index) => {
-      writeBook(index, 0, 0);
+      writeBook(index, 0, 0, 0);
 
       pageRef.current?.setColorAt(index, color.set(spec.pageTint));
 
@@ -534,6 +676,8 @@ export function ShelfBooks({
 
       spineRef.current?.setColorAt(index, color.set(spec.color));
       roundedSpineRef.current?.setColorAt(index, color.set(spec.color));
+      coverPanelRef.current?.setColorAt(index, color.set(spec.color).lerp(white, 0.04));
+      coverLabelRef.current?.setColorAt(index, color.set(spec.labelTint).lerp(white, 0.3));
 
       const band = bandStart[index];
       if (band >= 0) {
@@ -547,6 +691,10 @@ export function ShelfBooks({
       }
     });
 
+    // The cover board is the only user of this material. Recompile now that a
+    // per-instance colour buffer exists, so the shader picks up the tint.
+    coverMaterial.needsUpdate = true;
+
     for (const mesh of [
       pageRef.current,
       coverRef.current,
@@ -554,6 +702,9 @@ export function ShelfBooks({
       roundedSpineRef.current,
       bandRef.current,
       labelRef.current,
+      coverPanelRef.current,
+      coverGoldRef.current,
+      coverLabelRef.current,
       hitRef.current,
     ]) {
       if (!mesh) continue;
@@ -581,6 +732,21 @@ export function ShelfBooks({
       <instancedMesh
         ref={labelRef}
         args={[geometry, labelMaterial, specs.filter((spec) => spec.label).length]}
+        frustumCulled={false}
+      />
+      <instancedMesh
+        ref={coverPanelRef}
+        args={[geometry, coverMaterial, specs.length]}
+        frustumCulled={false}
+      />
+      <instancedMesh
+        ref={coverGoldRef}
+        args={[geometry, goldMaterial, specs.length * 5]}
+        frustumCulled={false}
+      />
+      <instancedMesh
+        ref={coverLabelRef}
+        args={[geometry, labelMaterial, specs.length]}
         frustumCulled={false}
       />
       <instancedMesh
@@ -871,16 +1037,19 @@ export function QrCoverMark({
   progressRef,
   reducedMotion,
   markRef,
+  opennessRef,
 }: {
   progressRef: MutableRefObject<number>;
   reducedMotion: boolean;
   markRef?: MutableRefObject<THREE.Object3D | null>;
+  opennessRef?: MutableRefObject<number>;
 }) {
   const qr = useTexture('/qr/one-code-entry.png');
   const sweepRef = useRef<THREE.Mesh>(null);
   const sweepMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const haloRef = useRef<THREE.MeshBasicMaterial>(null);
   const frameRef = useRef<THREE.Group>(null);
+  const coverRef = useRef<THREE.Group>(null);
   const spineGlowRef = useRef<THREE.MeshBasicMaterial>(null);
 
   const frameMaterial = useMemo(
@@ -933,6 +1102,12 @@ export function QrCoverMark({
       sweepRef.current.position.y = 42.5 - Math.max(0, Math.min(1, sweep)) * 25;
       sweepRef.current.visible = strength > 0.01;
     }
+    // The printed code sits on the front board, so it hinges on the spine with
+    // the board: same angle the page-turn rig gives the cover leaf.
+    if (coverRef.current) {
+      const openness = opennessRef?.current ?? 0;
+      coverRef.current.rotation.x = Math.PI * smoothstep(openness);
+    }
     if (spineGlowRef.current) {
       const onShelf = phase > 0.8 && phase < 1.6;
       const breathe = reducedMotion ? 0.1 : 0.08 + Math.sin(performance.now() * 0.0021) * 0.08;
@@ -961,57 +1136,59 @@ export function QrCoverMark({
         />
       </mesh>
 
-      <group ref={markRef} position={[46, 43.5, 15.5]}>
-      <mesh position={[0, 0, 0.15]}>
-        <planeGeometry args={[31.5, 31.5]} />
-        <meshStandardMaterial
-          map={qr}
-          roughness={0.72}
-          metalness={0}
-          envMapIntensity={0.4}
-          transparent
-          opacity={0.96}
-        />
-      </mesh>
-
-      <mesh position={[0, 0, 0.12]}>
-        <planeGeometry args={[38, 38]} />
-        <meshBasicMaterial
-          ref={haloRef}
-          color="#d4a55f"
-          transparent
-          opacity={0.08}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
-
-      <group ref={frameRef} position={[0, 0, 0.3]}>
-        {[
-          [-17.6, -17.6, 0, 0],
-          [17.6, -17.6, Math.PI / 2, 0],
-          [17.6, 17.6, Math.PI, 0],
-          [-17.6, 17.6, -Math.PI / 2, 0],
-        ].map(([x, y, rot], index) => (
-          <mesh key={index} position={[x, y, 0]} rotation={[0, 0, rot]} material={frameMaterial}>
-            <planeGeometry args={[8, 0.7]} />
+      <group ref={coverRef} position={[-74, 0, 0]}>
+        <group ref={markRef} position={[120, 43.5, 15.5]}>
+          <mesh position={[0, 0, 0.15]}>
+            <planeGeometry args={[31.5, 31.5]} />
+            <meshStandardMaterial
+              map={qr}
+              roughness={0.72}
+              metalness={0}
+              envMapIntensity={0.4}
+              transparent
+              opacity={0.96}
+            />
           </mesh>
-        ))}
-      </group>
 
-      <mesh ref={sweepRef} position={[0, 0, 0.45]} visible={false}>
-        <planeGeometry args={[31.5, 0.9]} />
-        <meshBasicMaterial
-          ref={sweepMatRef}
-          color="#ffd79a"
-          transparent
-          opacity={0}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
+          <mesh position={[0, 0, 0.12]}>
+            <planeGeometry args={[38, 38]} />
+            <meshBasicMaterial
+              ref={haloRef}
+              color="#d4a55f"
+              transparent
+              opacity={0.08}
+              depthWrite={false}
+              blending={THREE.AdditiveBlending}
+              toneMapped={false}
+            />
+          </mesh>
+
+          <group ref={frameRef} position={[0, 0, 0.3]}>
+            {[
+              [-17.6, -17.6, 0],
+              [17.6, -17.6, Math.PI / 2],
+              [17.6, 17.6, Math.PI],
+              [-17.6, 17.6, -Math.PI / 2],
+            ].map(([x, y, rot], index) => (
+              <mesh key={index} position={[x, y, 0]} rotation={[0, 0, rot]} material={frameMaterial}>
+                <planeGeometry args={[8, 0.7]} />
+              </mesh>
+            ))}
+          </group>
+
+          <mesh ref={sweepRef} position={[0, 0, 0.45]} visible={false}>
+            <planeGeometry args={[31.5, 0.9]} />
+            <meshBasicMaterial
+              ref={sweepMatRef}
+              color="#ffd79a"
+              transparent
+              opacity={0}
+              depthWrite={false}
+              blending={THREE.AdditiveBlending}
+              toneMapped={false}
+            />
+          </mesh>
+        </group>
       </group>
     </>
   );

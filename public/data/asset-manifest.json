@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-28T11:21:31.041Z",
+  "generatedAt": "2026-10-28T11:28:56.429Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 17,
@@ -9,8 +9,8 @@
   },
   "totals": {
     "groups": 21,
-    "files": 99,
-    "bytes": 22777973,
+    "files": 97,
+    "bytes": 19908682,
     "missing": 0
   },
   "assets": [
@@ -254,7 +254,7 @@
       "label": "Visual specification and design references",
       "status": "delivered",
       "role": "reference",
-      "notes": "Desktop and mobile visual spec, book previews, and implementation-ready design tokens. Figma handoff is not required for the concept build.",
+      "notes": "Desktop and mobile visual spec, cover art, and implementation-ready design tokens. Figma handoff is not required for the concept build.",
       "files": [
         {
           "path": "docs/design/visual-spec.html",
@@ -293,18 +293,6 @@
           "missing": false
         },
         {
-          "path": "docs/design/book-preview-closed.png",
-          "bytes": 1477670,
-          "sha256": "e5dfaabdb3cbb4104af4bf892d7d3fdf225ce69daf61d690fcc5ccaa6294e0e8",
-          "missing": false
-        },
-        {
-          "path": "docs/design/book-preview-open.png",
-          "bytes": 1391554,
-          "sha256": "798d08eadea1d5b6fb7714b3d28ecb3c52571f3bab36aa1eb3483f77fac8296c",
-          "missing": false
-        },
-        {
           "path": "public/design/tokens.json",
           "bytes": 3451,
           "sha256": "08f2e39b155b95356ca53036ad6293f94e8c45bdaafa7934a700c58032660478",
@@ -317,7 +305,7 @@
           "missing": false
         }
       ],
-      "bytes": 6881805,
+      "bytes": 4012581,
       "missing": []
     },
     {
@@ -354,7 +342,7 @@
       "label": "Rigged right hand",
       "status": "delivered",
       "role": "delivery",
-      "notes": "Final rigged right hand built from the ZBrush sculpt in public/hand. 2,704 triangles, 1,368 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.",
+      "notes": "Final rigged right hand built from the ZBrush sculpt in public/hand. 2,728 triangles, 1,368 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.",
       "files": [
         {
           "path": "public/models/hand.glb",
@@ -364,8 +352,8 @@
         },
         {
           "path": "public/models/source/hand-rig.blend",
-          "bytes": 161857,
-          "sha256": "289dc75f65470412bd246725fa16b35167839f2b0734cfcba89ad29646d3b5e0",
+          "bytes": 161883,
+          "sha256": "e75c76aad8ee48f9c9f84c6691cba102ac140120c272746b0ad18ab20355cd42",
           "missing": false
         },
         {
@@ -376,12 +364,12 @@
         },
         {
           "path": "scripts/build-hand.py",
-          "bytes": 16618,
-          "sha256": "da66ce842ac29a87e8e05536c8d56085ec7e6f822a312472bc48c97630a55d07",
+          "bytes": 16525,
+          "sha256": "95e3b35e43d02270d0873936525169e85480a904dfe0efa8d19b6fca4b8c6746",
           "missing": false
         }
       ],
-      "bytes": 372248,
+      "bytes": 372181,
       "missing": []
     },
     {

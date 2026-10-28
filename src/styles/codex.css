@@ -385,8 +385,8 @@ html.is-shelf-hot .book-stage__canvas {
   background: linear-gradient(
     90deg,
     rgba(44, 30, 15, 0.5),
-    rgba(44, 30, 15, 0.1) 42%,
-    rgba(255, 250, 236, 0.16) 82%,
+    rgba(44, 30, 15, 0.14) 42%,
+    rgba(255, 250, 236, 0.1) 82%,
     transparent
   );
   animation: page-loader-shade-front var(--leaf-turn) linear var(--leaf-delay) infinite;
@@ -396,8 +396,8 @@ html.is-shelf-hot .book-stage__canvas {
   background: linear-gradient(
     270deg,
     rgba(44, 30, 15, 0.46),
-    rgba(44, 30, 15, 0.12) 40%,
-    rgba(255, 250, 236, 0.1) 80%,
+    rgba(44, 30, 15, 0.16) 40%,
+    rgba(255, 250, 236, 0.06) 80%,
     transparent
   );
   animation-name: page-loader-shade-back;
@@ -615,10 +615,10 @@ html.is-shelf-hot .book-stage__canvas {
     transform: translateX(-42%);
   }
   38% {
-    opacity: 0.5;
+    opacity: 0.24;
   }
   64% {
-    opacity: 0.12;
+    opacity: 0.06;
   }
   84%, 100% {
     opacity: 0;

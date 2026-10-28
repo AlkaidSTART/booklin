@@ -212,7 +212,7 @@ function BookHand({
     const release =
       side > 0
         ? 1 - smoothstep((openness - 0.35) / 0.2)
-        : 1 - smoothstep((openness - 0.1) / 0.2);
+        : 1 - smoothstep((openness - 0.3) / 0.15);
 
     const enter = smoothstep((phase - 2.14) / 0.16);
     const leave = 1 - smoothstep((phase - 3.05) / 0.15);

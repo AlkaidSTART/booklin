@@ -881,7 +881,6 @@ function CameraRig({
 // instead of floating over the desk in world space.
 function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
 
   const ribbonMaterial = useMemo(
     () =>
@@ -894,19 +893,6 @@ function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) 
         transparent: true,
         opacity: 0,
         depthWrite: false,
-      }),
-    [],
-  );
-
-  const ringMaterial = useMemo(
-    () =>
-      new THREE.MeshBasicMaterial({
-        color: '#e0a05a',
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-        side: THREE.DoubleSide,
-        toneMapped: false,
       }),
     [],
   );
@@ -957,9 +943,8 @@ function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) 
     () => () => {
       ribbonGeometry.dispose();
       ribbonMaterial.dispose();
-      ringMaterial.dispose();
     },
-    [ribbonGeometry, ribbonMaterial, ringMaterial],
+    [ribbonGeometry, ribbonMaterial],
   );
 
   useFrame((_, delta) => {
@@ -968,22 +953,12 @@ function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) 
     // it must not trail across the cover while the block is still turning.
     const active = lightEnvelope(phase, 2.96, 3.12, 3.62, 3.82);
     ribbonMaterial.opacity = THREE.MathUtils.damp(ribbonMaterial.opacity, active * 0.95, 6, delta);
-    ringMaterial.opacity = THREE.MathUtils.damp(ringMaterial.opacity, active * 0.62, 6, delta);
-
     if (groupRef.current) groupRef.current.visible = ribbonMaterial.opacity > 0.01;
-    if (ringRef.current) {
-      const pulse = 1 + Math.sin(performance.now() * 0.0035) * 0.08;
-      ringRef.current.scale.setScalar(pulse);
-    }
   });
 
   return (
     <group ref={groupRef} visible={false}>
       <mesh geometry={ribbonGeometry} material={ribbonMaterial} renderOrder={1} />
-      <mesh ref={ringRef} position={[PAGE_MARK_X, PAGE_MARK_Y, 0.9]} renderOrder={2}>
-        <ringGeometry args={[10.6, 12.6, 40]} />
-        <primitive object={ringMaterial} attach="material" />
-      </mesh>
     </group>
   );
 }
@@ -1002,7 +977,7 @@ function PageEdgeMark() {
 
   return (
     <mesh position={[PAGE_MARK_X, PAGE_MARK_Y, 0.8]} renderOrder={1}>
-      <planeGeometry args={[19, 19]} />
+      <planeGeometry args={[22, 22]} />
       <meshBasicMaterial
         map={qr}
         transparent
@@ -1075,8 +1050,10 @@ function NeuralGraph3D({
       // Bow each cord out of the page so the web reads in three dimensions.
       mid.z += 16 + (idx % 2) * 9;
       const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
-      const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(28));
-      const material = new THREE.LineBasicMaterial({
+      // A 1 px line disappears at this distance and in the additive haze; a
+      // 1 mm cord keeps the web legible without becoming a neon tube.
+      const geometry = new THREE.TubeGeometry(curve, 24, 0.5, 5, false);
+      const material = new THREE.MeshBasicMaterial({
         color: '#c8a96d',
         transparent: true,
         opacity: 0,
@@ -1089,11 +1066,12 @@ function NeuralGraph3D({
 
   // Gold stem from the printed P.042 code up into the root node.
   const anchorStem = useMemo(() => {
-    const geometry = new THREE.BufferGeometry().setFromPoints([
+    const curve = new THREE.LineCurve3(
       new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 1),
       new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 24),
-    ]);
-    const material = new THREE.LineBasicMaterial({
+    );
+    const geometry = new THREE.TubeGeometry(curve, 8, 0.55, 5, false);
+    const material = new THREE.MeshBasicMaterial({
       color: '#e8dcc4',
       transparent: true,
       opacity: 0,
@@ -1196,9 +1174,9 @@ function NeuralGraph3D({
 
   return (
     <group ref={groupRef} visible={false}>
-      <line geometry={anchorStem.geometry as never} material={anchorStem.material as never} />
+      <mesh geometry={anchorStem.geometry} material={anchorStem.material} />
       {linkItems.map((item, idx) => (
-        <line key={idx} geometry={item.geometry as never} material={item.material as never} />
+        <mesh key={idx} geometry={item.geometry} material={item.material} />
       ))}
       {GRAPH_NODES_3D.map((node, idx) => (
         <group key={node.id}>
@@ -1279,11 +1257,11 @@ function ScanRing({ progressRef }: { progressRef: MutableRefObject<number> }) {
         />
       </mesh>
       <mesh ref={innerRingRef} position={[PAGE_MARK_X, PAGE_MARK_Y, 0.9]} visible={false}>
-        <ringGeometry args={[12, 14, 48]} />
+        <ringGeometry args={[17, 18.4, 48]} />
         <meshBasicMaterial
-          color="#e8dcc4"
+          color="#c8a96d"
           transparent
-          opacity={0.45}
+          opacity={0.3}
           depthWrite={false}
           side={THREE.DoubleSide}
           blending={THREE.AdditiveBlending}

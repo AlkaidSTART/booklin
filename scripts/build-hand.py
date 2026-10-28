@@ -259,33 +259,50 @@ def add_forearm(hand: bpy.types.Object) -> None:
     """
     verts = [v.co for v in hand.data.vertices]
     wrist_z = canonical_to_blender(WRIST_JOINT).z
-    seam_z = wrist_z + 24.0
+    # The sculpt keeps a 25 mm forearm stub past the wrist joint; start inside
+    # it. Starting higher (in the palm or at the thumb base) makes the tube
+    # wider than the wrist and shows a cuff.
+    seam_z = wrist_z - 14.0
     ring = [v for v in verts if abs(v.z - seam_z) < 2.5]
     if len(ring) < 12:
-        ring = [v for v in verts if wrist_z + 16.0 < v.z < wrist_z + 34.0]
-    cx = sum(v.x for v in ring) / len(ring)
-    cy = sum(v.y for v in ring) / len(ring)
-    rx = max(abs(v.x - cx) for v in ring)
-    ry = max(abs(v.y - cy) for v in ring)
+        ring = [v for v in verts if seam_z - 8.0 < v.z < seam_z + 8.0]
+    # Centre from the ring's bounding box, not its mean: the sculpt's vertex
+    # density is uneven and a mean centre offsets the tube by several
+    # millimetres, which shows up as a lopsided cuff.
+    min_x = min(v.x for v in ring)
+    max_x = max(v.x for v in ring)
+    min_y = min(v.y for v in ring)
+    max_y = max(v.y for v in ring)
+    cx = (min_x + max_x) * 0.5
+    cy = (min_y + max_y) * 0.5
+    rx = (max_x - min_x) * 0.5
+    ry = (max_y - min_y) * 0.5
 
     rings = 18
     segments = 30
-    length = FOREARM_LENGTH + 24.0
+    length = FOREARM_LENGTH + 14.0
     sleeve_verts: list[tuple[float, float, float]] = []
     sleeve_faces: list[list[int]] = []
 
     for ring_index in range(rings + 1):
         t = ring_index / rings
         z = seam_z - length * t
-        # 0.995 at the seam keeps the tube just inside the skin, then a gentle
-        # 1.38x flare at the elbow. Steeper than 1.5 reads as a tree trunk.
-        widen = 0.995 + 0.385 * (t**0.8)
+        # 0.97 at the seam keeps the tube inside the skin all the way round,
+        # then a gentle 1.38x flare at the elbow. Steeper than 1.5 reads as a
+        # tree trunk; starting flush leaves a cuff ring.
+        widen = 0.96 + 0.42 * (t**0.8)
+        # A wrist is a flat ellipse; a forearm is rounder. Ease the section
+        # toward circular so the arm does not read as a plank.
+        round_mix = 1.0 + (0.6 * t)
+        mean_r = (rx + ry) * 0.5
+        rx_t = rx * widen + (mean_r * widen - rx * widen) * min(1.0, round_mix - 1.0)
+        ry_t = ry * widen + (mean_r * widen - ry * widen) * min(1.0, round_mix - 1.0)
         for seg in range(segments):
             angle = 2.0 * math.pi * seg / segments
             sleeve_verts.append(
                 (
-                    cx + math.cos(angle) * rx * widen,
-                    cy + math.sin(angle) * ry * widen,
+                    cx + math.cos(angle) * rx_t,
+                    cy + math.sin(angle) * ry_t,
                     z,
                 )
             )

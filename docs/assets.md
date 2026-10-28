@@ -111,7 +111,7 @@
 - **材质约束**：`MeshPhysicalMaterial` + sheen，接受 three.js 无真实 SSS，只允许出现在暗调、侧逆光、局部入画的构图；禁止明亮中性光下正面呈现。
 - **禁止**：烘焙进模型的握姿形变、IK 控制器、相机灯光残留对象。
 - **交付物**：`.blend` 源文件 + `hand.glb`（Draco）+ `scripts/build-hand.py` + `public/hand/hand.OBJ` 源雕刻。
-- **预算影响**：实际 2,728 三角面 / 1,368 顶点 / 22 骨骼，远低于 §5.5 为手部预留的 20,000；无需再上修 [TDD.md](TDD.md) 的面数红线。
+- **预算影响**：实际 3,340 三角面 / 1,674 顶点 / 22 骨骼，远低于 §5.5 为手部预留的 20,000；无需再上修 [TDD.md](TDD.md) 的面数红线。
 - **当前状态：正式绑定手已交付。** `scripts/build-hand.py` 直接读取 `public/hand/hand.OBJ`（ZBrush 导出，1,102 顶点封闭雕刻），在脚本内重建手部局部坐标系，按测地线量出的指节位置生成 22 骨骼（forearm / wrist / palm / 4×metacarpal + 4×3 指节 / thumb 3 节），用 Blender 热权重蒙皮，并从腕口放样一段 250 mm 前臂筒避免断面入画。导出 `hand.glb` / `source/hand-rig.blend`。
   - **局部坐标**：`+Y` = 腕→指尖，`−Z` = 掌心，`+X` = 食指→小指（拇指在 −X）。导出原点落在书脊下边缘的握持中心（掌侧 15 mm），因此运行时可直接挂到书的毫米组，无需魔法偏移。
   - **握姿不再烘焙**：源雕刻是放松张开的手，握书 / 握手机由骨骼在运行时摆（`HandRig.tsx` 中 `BOOK_CURL` / `BOOK_THUMB` / `PHONE_CURL` / `PHONE_THUMB`），以 `weight` 平滑混入。每根骨骼的 roll 对齐手背方向，所以绕局部 X 负向旋转 = 向掌心屈曲。
@@ -212,7 +212,7 @@ C 系列验收补充：
   - 绘制调用 **< 40 / 帧**
 - 所有模型导出前需在 Blender 中执行：应用变换、合并同材质网格、删除隐藏对象、重算法线。
 
-> **预算修订（A8 引入后）**：手部模型预算为 ≤ 20,000 面，按此将模型面数总预算上修至 **< 70,000**，同时要求书架与桌面做 LOD、移动端骨骼蒙皮网格 ≤ 2 个（书 + 手）、纹理驻留 ≤ 96 MB。详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。[TDD.md](TDD.md) §4.1 的 50,000 需同步修订。**实际交付的手为 2,728 面**，该上修仅为上限保留。
+> **预算修订（A8 引入后）**：手部模型预算为 ≤ 20,000 面，按此将模型面数总预算上修至 **< 70,000**，同时要求书架与桌面做 LOD、移动端骨骼蒙皮网格 ≤ 2 个（书 + 手）、纹理驻留 ≤ 96 MB。详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。[TDD.md](TDD.md) §4.1 的 50,000 需同步修订。**实际交付的手为 3,340 面**，该上修仅为上限保留。
 
 ---
 
@@ -249,7 +249,7 @@ C 系列验收补充：
 | B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
-| A8 | ✅ delivered | `public/models/hand.glb`、`scripts/build-hand.py`、`src/components/book-stage/HandRig.tsx` | 由 `public/hand/hand.OBJ` 生成的 2,728 面 / 22 骨骼右手；握书与握手机由骨骼运行时摆姿，已接入 01 携归与 00 扫码 |
+| A8 | ✅ delivered | `public/models/hand.glb`、`scripts/build-hand.py`、`src/components/book-stage/HandRig.tsx` | 由 `public/hand/hand.OBJ` 生成的 3,340 面 / 22 骨骼右手；握书与握手机由骨骼运行时摆姿，已接入 01 携归与 00 扫码 |
 | A9 | ✅ delivered | `src/components/book-stage/ShelfStage.tsx`、`src/lib/stage/layers.ts` | 程序化机身 + Canvas 取景 UI + 后置镜头锚点 + 屏幕离屏画面（含 grade / 边缘虚化 / 手持抖动）。04 认领的复用仍待 P2 |
 | A10 | ✅ delivered | `public/qr/page-edge-p042.svg`、`public/qr/page-edge-p042.png` | 53×53 模块、H 级纠错、2048 px PNG；已用 OpenCV 解码验证。场景内落位（04 认领）仍待 P2 |
 

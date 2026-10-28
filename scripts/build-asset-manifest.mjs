@@ -115,7 +115,7 @@ const groups = [
       'scripts/build-hand.py',
     ],
     notes:
-      'Final rigged right hand built from the ZBrush sculpt in public/hand. 2,728 triangles, 1,368 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.',
+      'Final rigged right hand built from the ZBrush sculpt in public/hand. 3,340 triangles, 1,674 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.',
   },
   {
     id: 'A10',

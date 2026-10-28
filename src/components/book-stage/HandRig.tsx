@@ -157,10 +157,11 @@ export function HandRig({
   useEffect(() => {
     rig.mesh.material = skin;
     rig.mesh.frustumCulled = false;
+    if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__booklnBookHand = root;
     return () => {
       skin.dispose();
     };
-  }, [rig, skin]);
+  }, [rig, skin, root]);
 
   useFrame(() => {
     const phase = progressRef.current * 8;
@@ -228,10 +229,11 @@ export function PhoneHandRig({
   useEffect(() => {
     rig.mesh.material = skin;
     rig.mesh.frustumCulled = false;
+    if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__booklnPhoneHand = root;
     return () => {
       skin.dispose();
     };
-  }, [rig, skin]);
+  }, [rig, skin, root]);
 
   useFrame(() => {
     const opacity = Math.min(1, Math.max(0, opacityRef.current));

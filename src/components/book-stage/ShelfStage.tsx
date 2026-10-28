@@ -883,6 +883,20 @@ export function QrCoverMark({
   const frameRef = useRef<THREE.Group>(null);
   const spineGlowRef = useRef<THREE.MeshBasicMaterial>(null);
 
+  const frameMaterial = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        color: '#e0b372',
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        toneMapped: false,
+      }),
+    [],
+  );
+
+  useEffect(() => () => frameMaterial.dispose(), [frameMaterial]);
+
   useEffect(() => {
     qr.colorSpace = THREE.SRGBColorSpace;
     qr.anisotropy = 4;
@@ -903,13 +917,16 @@ export function QrCoverMark({
       const pulse = reducedMotion ? 0.16 : 0.14 + Math.sin(performance.now() * 0.006) * 0.06;
       haloRef.current.opacity = THREE.MathUtils.damp(
         haloRef.current.opacity,
-        strength * pulse + 0.06,
+        strength * pulse,
         6,
         delta,
       );
     }
+    // The tick frame is a scanning affordance, not a printed part of the cover;
+    // it has to disappear with the scan or it reads as stray foil lines.
+    frameMaterial.opacity = THREE.MathUtils.damp(frameMaterial.opacity, strength * 0.6, 8, delta);
     if (frameRef.current) {
-      frameRef.current.visible = true;
+      frameRef.current.visible = frameMaterial.opacity > 0.01;
     }
     if (sweepRef.current) {
       const sweep = ((phase - 1.44) / 0.26) % 1;
@@ -976,10 +993,9 @@ export function QrCoverMark({
           [17.6, -17.6, Math.PI / 2, 0],
           [17.6, 17.6, Math.PI, 0],
           [-17.6, 17.6, -Math.PI / 2, 0],
-        ].map(([x, y, rot, key], index) => (
-          <mesh key={index} position={[x, y, 0]} rotation={[0, 0, rot]}>
+        ].map(([x, y, rot], index) => (
+          <mesh key={index} position={[x, y, 0]} rotation={[0, 0, rot]} material={frameMaterial}>
             <planeGeometry args={[8, 0.7]} />
-            <meshBasicMaterial color="#e0b372" transparent opacity={0.55} depthWrite={false} toneMapped={false} />
           </mesh>
         ))}
       </group>

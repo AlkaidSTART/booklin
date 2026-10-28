@@ -106,6 +106,19 @@ const groups = [
     notes: 'Canonical copy deck is script-final.md; script.md is a legacy mirror. Desktop/mobile limits and layout variants are validated by scripts/validate-copy.mjs. Launch review still required for all claim language.',
   },
   {
+    id: 'A8',
+    label: 'Grip blockout hand',
+    status: 'blockout',
+    role: 'delivery',
+    files: [
+      'public/models/hand-blockout.glb',
+      'public/models/source/hand-blockout.blend',
+      'scripts/build-hand.py',
+    ],
+    notes:
+      'Blockout only: a 9k-triangle voxel-fused hand posed around a 34 mm grip, used to prove the socket follow, occlusion and lighting for the 01 Carry chapter. Rebuild with `blender -b --python scripts/build-hand.py`. Replace with a properly retopologised and skinned right hand (A8 final) before launch.',
+  },
+  {
     id: 'B1',
     label: 'One-code entry QR and links',
     status: 'placeholder',

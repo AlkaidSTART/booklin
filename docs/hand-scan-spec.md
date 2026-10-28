@@ -64,6 +64,7 @@
 
 - 验收：任意 scroll 位置手与书零穿插；暗调侧逆光下不读作塑料；`carry` 期间书本关键帧已重排为可握朝向
 - 回退：`carry` 回退为现有的「悬空书本 + 无手」
+- **状态：blockout 已落地。** 体素融合的 9,000 面抓握手（`scripts/build-hand.py`）已接入 01 携归，socket 刚性跟随、进入/退出、遮挡与构图均已跑通；正式绑定手仍待交付。结论见 §5.6
 
 ### P2 · `binding` 合成
 
@@ -197,6 +198,16 @@
 - 需同步更新 `docs/TDD.md` §4.1 与 [assets.md](assets.md) 的对应条目
 - 移动端目标：骨骼蒙皮网格 ≤ 2 个（书 + 手），纹理驻留 ≤ 96 MB
 
+### 5.6 blockout 结论（正式资产必须沿用）
+
+- **握持方向**：把手握成朝下的拳去抓书脊，手臂会横穿书本。可行解是握**下边缘**——手指沿书本宽度展开、掌在封底、手臂向下出画。glTF Y-up 后的手部局部轴：X = 握持轴，−Z = 掌心侧，−Y = 前臂；在书的坐标系里**不旋转**即可得到上述姿态。
+- **握持中心必须在原点**：导出前把网格整体平移，让人手围出的那个洞落在世界原点，运行时才能直接挂在 socket 上，不用记魔法偏移。
+- **掌心间隙**：握径约 25 mm 内圈对 30 mm 书厚，留 1 mm 余量刚好贴合；再大就会「握空气」。
+- **必须绕握持轴滚一点**：`GRIP_ROLL ≈ −0.42 rad` 让前臂朝镜头一侧下摆出画；不滚的话手臂会笔直穿过桌面。
+- **`carry` 关键帧必须提书**：原来书贴在桌面（0.772），手无处安放。改为抬到 0.945，相机目标同步抬到 0.99。
+- **材质必须运行时覆盖**：GLB 自带材质在这套暖棚 HDR 下会读成亮陶土。覆盖为 `MeshPhysicalMaterial`（`#120b08`、roughness 0.78、sheen 0.2、envMapIntensity 0.22）才压得住。
+- **进场窗口 2.04–2.18**：早于 2.04 时书还没落位，手会悬在半空与书脱节。
+
 ---
 
 ## 6. 代码接点
@@ -206,9 +217,10 @@
 | 位置 | 变更 |
 | --- | --- |
 | `src/components/book-stage/BookStage.tsx` | 在现有 phase 推导处新增 `grip` 与 `scan` 两条权重曲线，写法与 `--handoff` 一致（窄窗口 + clamp） |
-| `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`。HandRig 待 P1 |
+| `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`；01 携归书本关键帧抬到 0.945，相机目标抬到 0.99；`HandRig` 挂在书的毫米组内 |
+| `src/components/book-stage/HandRig.tsx`（新增） | ✅ blockout 版：加载 `hand-blockout.glb`、覆盖皮肤材质、按 phase 驱动进入/退出与 socket 位置 |
 | `src/components/book-stage/ShelfStage.tsx` | ✅ 已接：`PhoneScanner` 拆成相机画面层 + chrome 层，新增 `Phone_Lens_Rear` 锚点与离屏相机、grade、手持抖动；`QrCoverMark` 新增 `markRef` 供扫描对角。机身仍内联，待 P2 抽成可复用组件 |
-| `src/lib/stage/layers.ts`（新增） | ✅ 已交付：`SCENE_LAYER` / `PHONE_CAMERA_LAYER` 与 `enableLayer()` |
+| `src/lib/stage/layers.ts`（新增） | ✅ 已交付：`PHONE_CAMERA_LAYER` 与 `enableLayer()` |
 | `public/models/` | `hand.glb`；`phone.glb` 仅在需要握持细节时导出（否则沿用程序化机身） |
 | `public/textures/` | `hand-*.ktx2` |
 | `public/fallback/` | `scan-screen.webp`、含手的 `hand-carry` 静帧 |

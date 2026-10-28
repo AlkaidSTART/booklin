@@ -21,6 +21,7 @@ Chrome path defaults to `/Applications/Google Chrome.app/Contents/MacOS/Google C
 ```sh
 # 1. Models, textures, fonts and visual spec (existing sources)
 blender -b --python scripts/build-models.py
+blender -b --python scripts/build-hand.py
 python scripts/generate-textures.py
 uv run --with fonttools python scripts/build-fonts.py
 python scripts/render-book-preview.py

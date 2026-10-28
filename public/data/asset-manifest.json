@@ -1,16 +1,17 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-27T11:35:40.640Z",
+  "generatedAt": "2026-10-28T06:32:08.104Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 15,
+    "blockout": 1,
     "placeholder": 3,
     "pending-external": 1
   },
   "totals": {
-    "groups": 19,
-    "files": 92,
-    "bytes": 22408611,
+    "groups": 20,
+    "files": 95,
+    "bytes": 22727204,
     "missing": 0
   },
   "assets": [
@@ -341,12 +342,41 @@
         },
         {
           "path": "docs/copy-fields.json",
-          "bytes": 22583,
-          "sha256": "a1b4be4c3354666bcec667c4210af6022154aaf5ee459c205e7f0f75312740b2",
+          "bytes": 20429,
+          "sha256": "eb3fccc5ab226bcec540ec5372df91d4a162d21a92126df3f85cbda84d1da9e0",
           "missing": false
         }
       ],
-      "bytes": 45280,
+      "bytes": 43126,
+      "missing": []
+    },
+    {
+      "id": "A8",
+      "label": "Grip blockout hand",
+      "status": "blockout",
+      "role": "delivery",
+      "notes": "Blockout only: a 9k-triangle voxel-fused hand posed around a 34 mm grip, used to prove the socket follow, occlusion and lighting for the 01 Carry chapter. Rebuild with `blender -b --python scripts/build-hand.py`. Replace with a properly retopologised and skinned right hand (A8 final) before launch.",
+      "files": [
+        {
+          "path": "public/models/hand-blockout.glb",
+          "bytes": 25980,
+          "sha256": "2a04f28ae494e17e8ab8cb4cab1ba86b36abc82f8bb41b112403ce43e3a2f65c",
+          "missing": false
+        },
+        {
+          "path": "public/models/source/hand-blockout.blend",
+          "bytes": 286484,
+          "sha256": "dddb1e1e46dacb4977733a9b4e45880933e0ec698cedcaead7645b7e0492972b",
+          "missing": false
+        },
+        {
+          "path": "scripts/build-hand.py",
+          "bytes": 8283,
+          "sha256": "dec7f9dc1d0a8ac66d565dba3bd1d50885a69c9cf201c3bb8f0d2fe1dbc23aa8",
+          "missing": false
+        }
+      ],
+      "bytes": 320747,
       "missing": []
     },
     {

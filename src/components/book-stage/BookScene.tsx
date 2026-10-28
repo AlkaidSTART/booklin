@@ -16,6 +16,7 @@ import {
   useShelfPick,
 } from './ShelfStage';
 import type { ShelfPick } from './ShelfStage';
+import { HandRig } from './HandRig';
 
 export type StageInteractionState = {
   activeNode: string | null;
@@ -89,10 +90,10 @@ const BOOK_KEYS: BookKey[] = [
     rotation: [0.05, -0.34, 0.01],
     open: 0,
   },
-  // 01 Carry — closed, carried home with a slight lift.
+  // 01 Carry — held: lifted off the desk and gripped along its bottom edge.
   {
-    position: [0, 0.772, 0.01],
-    rotation: [0.03, -0.18, 0.006],
+    position: [0.02, 0.945, 0.02],
+    rotation: [0.06, -0.22, 0.02],
     open: 0,
   },
   // 02 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
@@ -152,12 +153,12 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetY: 1.08,
     fov: 44,
   },
-  // 01 Carry — wider, following the book home
+  // 01 Carry — wider, following the book home, framed on the held hand.
   {
-    position: [-0.4, 1.07, 0.78],
-    target: [-0.19, 0.87, 0],
+    position: [-0.42, 1.14, 0.8],
+    target: [-0.19, 0.99, 0],
     mobileTargetX: 0,
-    mobileTargetY: 0.77,
+    mobileTargetY: 0.88,
   },
   // 02 Interaction — higher top-down angle to showcase the 180° spread & ribbon arc
   {
@@ -1768,6 +1769,7 @@ function BookRig({
             <primitive object={book.scene} dispose={null} />
             <PageTurnRig mesh={bookMorphMesh} progressRef={progressRef} />
             <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} markRef={qrMarkRef} />
+            <HandRig progressRef={progressRef} />
           </group>
         </group>
       </group>

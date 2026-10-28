@@ -6,7 +6,7 @@
 >
 > - 清单：[asset-manifest.md](asset-manifest.md) 与机器可读的 [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)
 > - **A1–A7：** 已交付可用于开发
-> - **A8–A10：** 新增（手部与扫码）。A9 已交付（机身、取景 UI、后置镜头锚点与离屏屏幕画面）；A8 未交付；A10 未交付并阻塞 04 认领
+> - **A8–A10：** 新增（手部与扫码）。A9 已交付（机身、取景 UI、后置镜头锚点与离屏屏幕画面）；A8 已交付 blockout 并接入 01 携归，正式绑定手待替换；A10 未交付并阻塞 04 认领
 > - **B1/B3：** 已有可用占位资产，正式二维码/讲师视频待替换
 > - **B2：** 数据结构已交付，价格与购买链接待商务提供
 > - **C1–C4：** ✅ 已交付（书架模型、沉睡书脊与主书微光、脊码、夜景 HDRI 与台灯布光，均已接入场景）；脊码 URL 为 `.example` 占位
@@ -112,6 +112,7 @@
 - **禁止**：烘焙进模型的握姿形变、IK 控制器、相机灯光残留对象。
 - **交付物**：`.blend` 源文件 + `hand.glb`（Draco + KTX2）+ 两个握姿的比对截图。
 - **预算影响**：引入后面数总预算需上修至 < 70,000，详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。
+- **当前状态：blockout 已交付**（`public/models/hand-blockout.glb`，9,000 三角面，体素融合，握持半径 34 mm，抓握中心在原点）。由 `scripts/build-hand.py` 确定性生成，仅用于验证 socket 跟随、遮挡、光照与构图，**不具备骨骼与正确拓扑**，上线前必须替换为正式绑定手。运行时材质在 `HandRig.tsx` 内覆盖，不用 GLB 自带材质。
 
 ### A9 手机后置镜头锚点与屏幕离屏画面
 
@@ -242,7 +243,7 @@ C 系列验收补充：
 | B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
-| A8 | 🔴 pending | `public/models/hand.glb` | 需采购或制作绑定手；两个静态握姿在 Blender 内完成，运行时不跑 IK |
+| A8 | 🟡 blockout | `public/models/hand-blockout.glb`、`src/components/book-stage/HandRig.tsx` | 9,000 面抓握 blockout 已接入 01 携归；正式绑定手（retopo + 骨骼 + 两套握姿）仍待交付 |
 | A9 | ✅ delivered | `src/components/book-stage/ShelfStage.tsx`、`src/lib/stage/layers.ts` | 程序化机身 + Canvas 取景 UI + 后置镜头锚点 + 屏幕离屏画面（含 grade / 边缘虚化 / 手持抖动）。04 认领的复用仍待 P2 |
 | A10 | 🔴 pending | `public/qr/page-edge-p042.svg` | 页边码缺失，阻塞 04 认领；必须真实可解码 |
 

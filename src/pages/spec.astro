@@ -1232,27 +1232,37 @@ const pageDescription =
 
           <div class="benchmark-panel chain-panel reveal">
             <table class="benchmark-table chain-table">
-              <caption class="sr-only">Bookln B2B services and their in-world embodiments</caption>
+              <caption class="sr-only">Bookln B2B services, grouped as on bookln.cn, and their in-world embodiments</caption>
               <thead>
                 <tr>
                   <th scope="col">bookln.cn · B2B service</th>
                   <th scope="col" class="codex-col">In-world embodiment</th>
                 </tr>
               </thead>
-              <tbody>
-                {bookln.services.map((service: Record<string, string>) => (
-                  <tr>
-                    <th scope="row">
-                      {service.service}
-                      <small lang="zh-Hans">{service.serviceZh}</small>
+              {bookln.services.map((group: Record<string, any>) => (
+                <tbody class="chain-group">
+                  <tr class="chain-group__row">
+                    <th scope="colgroup" colspan="2">
+                      {group.label}
+                      <small lang="zh-Hans">{group.labelZh}</small>
                     </th>
-                    <td class="codex-col">
-                      {service.world}
-                      <small lang="zh-Hans">{service.worldZh}</small>
-                    </td>
                   </tr>
-                ))}
-              </tbody>
+                  {group.items.map((service: Record<string, string>) => (
+                    <tr>
+                      <th scope="row">
+                        {service.service}
+                        <small lang="zh-Hans">{service.serviceZh}</small>
+                        <span class="chain-service__detail">{service.detail}</span>
+                        <span class="chain-service__detail" lang="zh-Hans">{service.detailZh}</span>
+                      </th>
+                      <td class="codex-col">
+                        {service.world}
+                        <small lang="zh-Hans">{service.worldZh}</small>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              ))}
             </table>
           </div>
 

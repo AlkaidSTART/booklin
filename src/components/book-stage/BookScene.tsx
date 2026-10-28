@@ -596,6 +596,7 @@ const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
 const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
 const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
 const PAGE_TURN_SPLIT = 0.5; // front half of the block turns onto the left board
+const PAGE_HINGE_RADIUS = 2; // spine fold stays with the board underneath
 
 type PageTurnRig = {
   position: THREE.BufferAttribute;
@@ -613,8 +614,7 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
   const geometry = mesh.geometry;
   const position = geometry.getAttribute('position') as THREE.BufferAttribute | undefined;
   const normal = geometry.getAttribute('normal') as THREE.BufferAttribute | undefined;
-  const halfOpen = geometry.morphAttributes.position?.[1];
-  if (!position || !normal || !halfOpen) return null;
+  if (!position || !normal) return null;
 
   const positionArray = position.array;
   const normalArray = normal.array;
@@ -636,15 +636,9 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     const r = Math.hypot(x, z);
     radius[i] = r;
     if (r > maxRadius) maxRadius = r;
-
-    // Vertices untouched by the half-open key are the boards and spine —
-    // they must not join the turn.
-    const dx = halfOpen.getX(i);
-    const dz = halfOpen.getZ(i);
-    if (Math.hypot(dx, dz) < 0.5) continue;
+    if (r < PAGE_HINGE_RADIUS) continue;
 
     const sheet = Math.round(z / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
-    lag[i] = 0;
     if (sheet > frontDepth) frontDepth = sheet;
     if (sheet < backDepth) backDepth = sheet;
   }
@@ -653,16 +647,13 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
 
   const span = Math.max(1, frontDepth - backDepth);
   for (let i = 0; i < count; i += 1) {
-    if (lag[i] < 0) continue;
+    if (radius[i] < PAGE_HINGE_RADIUS) continue;
     const sheet = Math.round(positionArray[i * 3 + 2] / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
     const depth = clamp01((frontDepth - sheet) / span);
     // The spread splits at the middle of the block: the front half (front
     // cover and its leaves) turns over onto the left board while the back
     // half stays put, so both sides of the open book carry pages.
-    if (depth >= PAGE_TURN_SPLIT) {
-      lag[i] = -1;
-      continue;
-    }
+    if (depth >= PAGE_TURN_SPLIT) continue;
     // 0 = front cover (leads the turn), 1 = middle leaf (trails it).
     lag[i] = depth / PAGE_TURN_SPLIT;
     // The cloth board stays stiff; paper curls more the deeper it sits.

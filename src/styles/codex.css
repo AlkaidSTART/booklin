@@ -1580,6 +1580,40 @@ main,
   text-transform: none;
 }
 
+.chain-group__row th {
+  padding-top: 15px;
+  padding-left: 0;
+  border-bottom: 0;
+  color: var(--gold);
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.chain-group:first-of-type .chain-group__row th {
+  padding-top: 3px;
+}
+
+.chain-group__row th small {
+  margin-left: 6px;
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.chain-service__detail {
+  display: block;
+  margin-top: 3px;
+  color: var(--faint);
+  font-family: var(--font-serif);
+  font-size: 9.5px;
+  line-height: 1.5;
+}
+
 .chain-policies {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

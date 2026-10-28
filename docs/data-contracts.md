@@ -191,7 +191,7 @@ node scripts/build-asset-manifest.mjs
 | `settlement` | object | Exit receipt: paper body / cloud soul states, note and pending soul policy. |
 | `facts.asOf` | string | `2023-07` — must be displayed with the figures. |
 | `facts.items[]` | array | Publisher / title / visit / reader counts. Display the source label and disclaimer together. |
-| `services[]` | array | bookln.cn B2B service → reader-side embodiment. |
+| `services[]` | array | bookln.cn service groups (`读者服务` / `内容制作服务` / `书链出版云`); each group carries bilingual labels and `items[]` with name, description and reader-side embodiment. |
 | `policies[]` | array | `pending-business` or `locked`, with bilingual notes. |
 
 **Update rule:** supply figures are the Bookln official 2023-07 values. Confirm the latest numbers with business before launch and do not mix them with `†` concept claims. Commerce owns the policy status of “soul travels with the book”.

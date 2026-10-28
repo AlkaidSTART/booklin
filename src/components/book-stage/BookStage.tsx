@@ -177,14 +177,14 @@ export default function BookStage() {
       // stays locked to the 3D beat at any speed.
       const tint = Math.min(
         Math.min(1, Math.max(0, (phase - 0.44) / 0.1)),
-        Math.min(1, Math.max(0, (0.85 - phase) / 0.09)),
+        Math.min(1, Math.max(0, (0.88 - phase) / 0.1)),
       );
       // The line only exists on a fully black stage and leaves before the
       // plate starts to lift, so it never ghosts across the book or the
       // revealed shelf.
       const type = Math.min(
         Math.min(1, Math.max(0, (phase - 0.54) / 0.04)),
-        Math.min(1, Math.max(0, (0.76 - phase) / 0.04)),
+        Math.min(1, Math.max(0, (0.78 - phase) / 0.04)),
       );
       document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
       document.documentElement.style.setProperty('--handoff-type', type.toFixed(3));

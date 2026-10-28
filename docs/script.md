@@ -1,4 +1,4 @@
-# Bookln / THE BOOK. 双语定稿文案
+# Bookln / 书链 双语定稿文案
 
 > Status: **concept copy — launch review required**<br>
 > Version: `2026-10-27`<br>
@@ -15,7 +15,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow | EVERY BOOK, CONNECTED | 每一本纸书，皆可入云 |
-| Main title | **THE BOOK.** | **纸质书，重获新生。** |
+| Main title | **书链** | **纸质书，重获新生。** |
 | Subtitle | The Zero-Watt Cognitive Engine. | 零功耗认知引擎，由书链 Bookln 唤醒。 |
 | Annotation | Local by nature. Silent by design. Any physical book, connected to the cloud. | 纯本地运行 / 零辐射 / 赋予任意实体纸书云端伴读灵魂。 |
 

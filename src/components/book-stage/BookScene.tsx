@@ -15,7 +15,7 @@ import {
   shelfPresence,
   useShelfPick,
 } from './ShelfStage';
-import type { ShelfPick } from './ShelfStage';
+import type { ShelfFocus, ShelfPick } from './ShelfStage';
 import { HandRig } from './HandRig';
 
 export type StageInteractionState = {
@@ -1355,6 +1355,7 @@ function BookRig({
   const stowMouthRef = useRef(new THREE.Vector3());
   const stowSeatRef = useRef(new THREE.Vector3());
   const shelfGroupRef = useRef<THREE.Group>(null);
+  const shelfFocusRef = useRef<ShelfFocus | null>(null);
   const qrMarkRef = useRef<THREE.Group>(null);
   // What the phone's rear camera is allowed to see. Refs are stable, so the
   // scanner's layer setup runs once per mount.
@@ -1371,7 +1372,7 @@ function BookRig({
   const pedestal = useAssetGLTF('/models/display-pedestal.glb');
   const slipcase = useAssetGLTF('/models/slipcase.glb');
   const shelf = useAssetGLTF('/models/shelf.glb');
-  // Current "THE BOOK." atlas. The GLB's embedded basecolor still carries the
+  // Current "书链" atlas. The GLB's embedded basecolor still carries the
   // earlier "CODEX" artwork, so only the basecolor slot is overridden while the
   // embedded normal / AO / roughness / metalness maps stay in place. The WebP is
   // a 36 KB derivative of the 2048² source atlas.
@@ -1732,8 +1733,8 @@ function BookRig({
       <group ref={shelfGroupRef} position={[0.0, 0, -0.98]} visible={false}>
         <group scale={0.001}>
           <primitive object={shelf.scene} dispose={null} />
-          <ShelfBooks pick={pick} progressRef={progressRef} />
-          <ShelfSelection pick={pick} progressRef={progressRef} />
+          <ShelfBooks pick={pick} progressRef={progressRef} focusRef={shelfFocusRef} />
+          <ShelfSelection pick={pick} progressRef={progressRef} focusRef={shelfFocusRef} />
         </group>
       </group>
 

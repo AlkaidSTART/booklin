@@ -1,6 +1,6 @@
 # Bookln / CODEX 1.
 
-A concept product page for **THE BOOK.**, a paper-first reading object by Bookln. The homepage is a sparse, scroll-driven 3D narrative: a physical book, an exploded material study, a haptic interaction sequence, and a page-edge bridge into a companion knowledge layer. Every reveal is driven by scroll position — there are no tabs, buttons or click-to-expand panels. The previous long-form spec edition is preserved at `/spec`.
+A concept product page for **书链 (Bookln)**, a paper-first reading object. The homepage is a sparse, scroll-driven 3D narrative: a physical book, an exploded material study, a haptic interaction sequence, and a page-edge bridge into a companion knowledge layer. Every reveal is driven by scroll position — there are no tabs, buttons or click-to-expand panels. The previous long-form spec edition is preserved at `/spec`.
 
 > **Status:** concept build. Product claims, prices, availability, third-party comparisons and legal language are illustrative and require review before launch. See [`docs/benchmark-sources.md`](docs/benchmark-sources.md).
 

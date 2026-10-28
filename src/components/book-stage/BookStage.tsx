@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { createWheelScroll } from '../../lib/scroll/wheelScroll';
 import { BookScene } from './BookScene';
 import type { StageInteractionState } from './BookScene';
+import { SHELF_PHASE_COUNT, shelfPresence } from './ShelfStage';
 import BookLoader from './BookLoader';
 
 type SceneErrorBoundaryProps = {
@@ -172,6 +173,11 @@ export default function BookStage() {
 
       progressRef.current = Math.min(1, phase / Math.max(1, starts.length - 1));
 
+      // Direct manipulation is only offered while the shelf is on stage. The
+      // class also lets the canvas receive clicks through the story layer.
+      const shelfHot = shelfPresence(progressRef.current * SHELF_PHASE_COUNT) > 0.12;
+      document.documentElement.classList.toggle('is-shelf-hot', shelfHot);
+
       // Hand-off: a light falloff comes up as the book leaves the desk, the
       // shelf label rides with it, then both clear once the book is seated and
       // chapter 00 owns the frame. Nothing is ever fully curtained.
@@ -206,6 +212,7 @@ export default function BookStage() {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
       window.removeEventListener('load', schedule);
+      document.documentElement.classList.remove('is-shelf-hot');
     };
   }, []);
 

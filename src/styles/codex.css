@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------
-   Bookln / THE BOOK. — page composition
+   Bookln / 书链 — page composition
    The 3D stage is fixed behind this document. Content panels move over
    it; every chapter keeps a deliberate breathing zone for the object.
    ------------------------------------------------------------------ */
@@ -45,6 +45,12 @@ body {
 .book-stage.is-ready .book-stage__canvas {
   opacity: 1;
   transform: scale(1);
+}
+
+/* Chapter 00 / 05: the shelf books are directly clickable. The story layer
+   drops its own hit testing for this beat so pointer events reach the canvas. */
+html.is-shelf-hot .book-stage__canvas {
+  pointer-events: auto;
 }
 
 .book-stage.is-ready .stage-fallback {
@@ -257,18 +263,9 @@ body {
   height: 100%;
   background: #d9cbaf;
   box-shadow: inset 0 0 22px rgba(58, 42, 22, 0.34);
-  perspective: 1200px;
-  perspective-origin: 50% 40%;
+  perspective: 700px;
+  perspective-origin: 50% 42%;
   transform-style: preserve-3d;
-}
-
-.page-loader__cast-shadow {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 48% 50%, rgba(44, 30, 16, 0.35), transparent 60%);
-  animation: page-loader-shadow-pulse 2.7s ease-in-out infinite;
 }
 
 .page-loader__page {
@@ -330,23 +327,29 @@ body {
 
 .page-loader__leaf {
   position: absolute;
-  top: 1px;
-  bottom: 1px;
-  left: 50%;
+  inset: 0 0 0 50%;
   z-index: 4;
-  width: 50%;
+  --leaf-turn: 1.54s;
+  --leaf-delay: 0s;
   transform-origin: left center;
   transform-style: preserve-3d;
   will-change: transform, opacity;
-  animation: page-loader-turn 2.7s cubic-bezier(0.42, 0, 0.22, 1) infinite;
+  animation: page-loader-turn var(--leaf-turn) linear var(--leaf-delay) infinite;
+}
+
+.page-loader__leaf--a {
+  --leaf-turn: 1.54s;
+  --leaf-delay: 0s;
 }
 
 .page-loader__leaf--b {
-  animation-delay: 0.9s;
+  --leaf-turn: 1.62s;
+  --leaf-delay: 0.5s;
 }
 
 .page-loader__leaf--c {
-  animation-delay: 1.8s;
+  --leaf-turn: 1.48s;
+  --leaf-delay: 1.02s;
 }
 
 .page-loader__face {
@@ -354,21 +357,61 @@ body {
   inset: 0;
   overflow: hidden;
   backface-visibility: hidden;
-  background:
-    repeating-linear-gradient(to bottom, transparent 0 9px, rgba(74, 55, 30, 0.16) 9px 10px)
-      13% 20% / 74% 66% no-repeat,
-    linear-gradient(105deg, rgba(255, 255, 255, 0.45), transparent 38%),
-    linear-gradient(180deg, #f5ead4, #e2d4b7);
-  box-shadow: inset 0 0 18px rgba(66, 48, 25, 0.14);
+  background: linear-gradient(180deg, #f2e7d0, #e4d7bb 62%, #dccdae);
+}
+
+.page-loader__face::before {
+  content: "";
+  position: absolute;
+  inset: 17% 13% 16%;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(74, 55, 30, 0.2) 0 1px,
+    transparent 1px 9px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 82%, transparent);
+  opacity: 0.62;
+}
+
+.page-loader__face--front {
+  box-shadow: inset 18px 0 22px -16px rgba(58, 42, 22, 0.55);
+}
+
+/* 翻动时随角度变化的受光与背光：正面逐渐转暗，背面触底时重新受光 */
+.page-loader__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(44, 30, 15, 0.5),
+    rgba(44, 30, 15, 0.1) 42%,
+    rgba(255, 250, 236, 0.16) 82%,
+    transparent
+  );
+  animation: page-loader-shade-front var(--leaf-turn) linear var(--leaf-delay) infinite;
+}
+
+.page-loader__shade--back {
+  background: linear-gradient(
+    270deg,
+    rgba(44, 30, 15, 0.46),
+    rgba(44, 30, 15, 0.12) 40%,
+    rgba(255, 250, 236, 0.1) 80%,
+    transparent
+  );
+  animation-name: page-loader-shade-back;
 }
 
 .page-loader__sheen {
   position: absolute;
   inset: 0;
-  background: linear-gradient(105deg, transparent 20%, rgba(255, 250, 240, 0.45) 45%, transparent 65%);
-  opacity: 0.6;
+  background: linear-gradient(105deg, transparent 18%, rgba(255, 252, 244, 0.5) 44%, transparent 66%);
+  opacity: 0;
   pointer-events: none;
-  animation: page-loader-sheen 2.7s ease-in-out infinite;
+  animation: page-loader-sheen var(--leaf-turn) linear var(--leaf-delay) infinite;
 }
 
 .page-loader__sheen--back {
@@ -377,10 +420,19 @@ body {
 
 .page-loader__face--back {
   transform: rotateY(180deg);
-  background:
-    repeating-linear-gradient(to bottom, transparent 0 9px, rgba(74, 55, 30, 0.13) 9px 10px)
-      13% 20% / 74% 66% no-repeat,
-    linear-gradient(180deg, #ebd0c4, #d6c6a6);
+  background: linear-gradient(180deg, #f2e7d0, #e4d7bb 62%, #dccdae);
+  box-shadow: inset -18px 0 22px -16px rgba(58, 42, 22, 0.55);
+}
+
+/* 落页后与左页的书口标记完全重合 */
+.page-loader__face--back::after {
+  content: "";
+  position: absolute;
+  top: 11%;
+  left: 13%;
+  width: 22%;
+  height: 1px;
+  background: rgba(200, 169, 109, 0.6);
 }
 
 .page-loader__edge {
@@ -488,78 +540,83 @@ body {
   box-shadow: 0 0 12px rgba(232, 205, 150, 0.7);
 }
 
-/* 纸页翻动的真实空气力学与柔韧微拱仿真 */
+/* 翻页：绕书脊起挑 → 越过中线 → 受重力下落 → 压平并轻微回弹 */
 @keyframes page-loader-turn {
   0% {
-    transform: rotateY(0deg) rotateZ(0deg) rotateX(0deg) skewY(0deg);
+    transform: rotateY(0deg) translateZ(0);
+    animation-timing-function: cubic-bezier(0.34, 0, 0.5, 1);
+  }
+  14% {
+    /* 纸角离开底面，整页被带起 */
+    transform: rotateY(-22deg) translateZ(6px);
+    animation-timing-function: cubic-bezier(0.36, 0, 0.54, 1);
+  }
+  46% {
+    /* 立至书脊上方，纸面受光最弱 */
+    transform: rotateY(-89deg) translateZ(13px);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.48, 1);
+  }
+  70% {
+    /* 越过分界线后加速下落 */
+    transform: rotateY(-136deg) translateZ(9px);
+    animation-timing-function: cubic-bezier(0.44, 0, 0.4, 1);
+  }
+  88% {
+    /* 触到左页，气流缓冲 */
+    transform: rotateY(-176deg) translateZ(2px);
+    animation-timing-function: cubic-bezier(0.2, 0.55, 0.3, 1);
+  }
+  93% {
+    /* 轻微过冲 */
+    transform: rotateY(-181deg) translateZ(0);
+    animation-timing-function: cubic-bezier(0.3, 0, 0.5, 1);
+  }
+  97% {
+    transform: rotateY(-180deg) translateZ(0);
     opacity: 1;
   }
-  12% {
-    /* 叶角起挑，受到微风掀起微弯 */
-    transform: rotateY(-20deg) rotateZ(-2.2deg) rotateX(2.6deg) skewY(-1.4deg);
-    opacity: 1;
-  }
-  32% {
-    /* 拱起升空，纸身张开，在透视中展现出优美的弧形 */
-    transform: rotateY(-66deg) rotateZ(-3.6deg) rotateX(3.8deg) skewY(-2deg);
-    opacity: 1;
-  }
-  52% {
-    /* 越过书脊垂线，纸张受气流托举与自然重力下沉 */
-    transform: rotateY(-114deg) rotateZ(-2.8deg) rotateX(2.4deg) skewY(-1.2deg);
-    opacity: 1;
-  }
-  72% {
-    /* 下落逼近左对开页 */
-    transform: rotateY(-160deg) rotateZ(-1.2deg) rotateX(1deg) skewY(-0.4deg);
-    opacity: 1;
-  }
-  84% {
-    /* 柔和触碰左页并轻微缓冲 */
-    transform: rotateY(-179deg) rotateZ(0deg) rotateX(0deg) skewY(0deg);
-    opacity: 1;
-  }
-  90% {
-    /* 贴平定格 */
-    transform: rotateY(-180deg) rotateZ(0deg) rotateX(0deg) skewY(0deg);
-    opacity: 0.95;
-  }
-  97%,
   100% {
-    /* 柔和融于底页，无痕让位于下一页 */
-    transform: rotateY(-180deg) rotateZ(0deg) rotateX(0deg) skewY(0deg);
+    /* 落定后融进左侧纸叠，下一张从右侧重新开始 */
+    transform: rotateY(-180deg) translateZ(0);
+    opacity: 0;
+  }
+}
+
+/* 正面随翻起角度渐暗 */
+@keyframes page-loader-shade-front {
+  0%, 8% {
+    opacity: 0;
+  }
+  46%, 100% {
+    opacity: 1;
+  }
+}
+
+/* 背面在立起时最暗，压到左页后重新受光 */
+@keyframes page-loader-shade-back {
+  0%, 46% {
+    opacity: 1;
+  }
+  92%, 100% {
     opacity: 0;
   }
 }
 
 /* 翻页时的动态高光掠过 */
 @keyframes page-loader-sheen {
-  0%, 15% {
-    opacity: 0.2;
-    transform: translateX(-30%);
+  0%, 10% {
+    opacity: 0;
+    transform: translateX(-42%);
   }
-  40% {
-    opacity: 0.8;
+  38% {
+    opacity: 0.5;
   }
-  65%, 100% {
-    opacity: 0.1;
-    transform: translateX(110%);
+  64% {
+    opacity: 0.12;
   }
-}
-
-/* 底页在翻页时的呼吸阴影 */
-@keyframes page-loader-shadow-pulse {
-  0%, 100% {
-    opacity: 0.25;
-    transform: scaleX(0.96);
-  }
-  35% {
-    opacity: 0.55;
-    transform: scaleX(1.04);
-  }
-  70% {
-    opacity: 0.35;
-    transform: scaleX(0.98);
+  84%, 100% {
+    opacity: 0;
+    transform: translateX(64%);
   }
 }
 
@@ -910,6 +967,12 @@ main,
   color: var(--gold);
   font-style: normal;
   font-weight: 500;
+}
+
+.display--cjk {
+  font-family: var(--font-serif);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
 }
 
 .section-title {

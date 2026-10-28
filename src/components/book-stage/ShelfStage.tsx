@@ -55,7 +55,7 @@ export type ShelfFocus = {
 };
 
 const PICK_TITLES = [
-  { title: 'THE BOOK.', subtitle: 'CODEX 1 · PAPER + CLOUD' },
+  { title: '书链', subtitle: 'CODEX 1 · PAPER + CLOUD' },
   { title: 'PAGE 042.', subtitle: 'HAPTIC ADDRESS · PAPER + CLOUD' },
   { title: 'NIGHT COPY.', subtitle: 'LOOP EDITION · PAPER + CLOUD' },
   { title: 'THE FIRST READER.', subtitle: 'SHELF COPY 0001 · PAPER + CLOUD' },
@@ -606,16 +606,25 @@ export function ShelfBooks({
 export function ShelfSelection({
   pick,
   progressRef,
+  focusRef,
 }: {
   pick: ShelfPick;
   progressRef: MutableRefObject<number>;
+  focusRef: MutableRefObject<ShelfFocus | null>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
+  const haloGroupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.MeshBasicMaterial>(null);
   const flashRef = useRef<THREE.MeshBasicMaterial>(null);
   const ringRef = useRef<THREE.Mesh>(null);
+  const pulseRingRef = useRef<THREE.Mesh>(null);
+  const pulseMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const flashBarRef = useRef<THREE.Mesh>(null);
+  const flashBarMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const lightRef = useRef<THREE.PointLight>(null);
   const basesRef = useRef<Array<{ material: THREE.MeshBasicMaterial; base: number }>>([]);
+  const pulseTickRef = useRef(0);
+  const pulseStartRef = useRef(-1e9);
 
   const glowTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -640,7 +649,15 @@ export function ShelfSelection({
       const mesh = object as THREE.Mesh;
       if (!mesh.isMesh) return;
       const material = mesh.material as THREE.MeshBasicMaterial;
-      if (!material || material === glowRef.current || material === flashRef.current) return;
+      if (
+        !material ||
+        material === glowRef.current ||
+        material === flashRef.current ||
+        material === pulseMatRef.current ||
+        material === flashBarMatRef.current
+      ) {
+        return;
+      }
       list.push({ material, base: material.opacity });
     });
     basesRef.current = list;
@@ -654,6 +671,31 @@ export function ShelfSelection({
     const now = performance.now();
 
     if (groupRef.current) groupRef.current.visible = level > 0.01;
+
+    // The narrative pick stays the resting anchor; hover and click simply move
+    // the same halo onto the book under the pointer.
+    const focus = focusRef.current;
+    const targetX = focus?.x ?? pick.x * 1000;
+    const targetY = focus?.rowY ?? pick.rowY;
+    if (haloGroupRef.current) {
+      haloGroupRef.current.position.x = THREE.MathUtils.damp(
+        haloGroupRef.current.position.x,
+        targetX,
+        10,
+        delta,
+      );
+      haloGroupRef.current.position.y = THREE.MathUtils.damp(
+        haloGroupRef.current.position.y,
+        targetY,
+        10,
+        delta,
+      );
+    }
+
+    if (focus && focus.tick !== pulseTickRef.current) {
+      pulseTickRef.current = focus.tick;
+      pulseStartRef.current = now;
+    }
 
     for (const item of basesRef.current) {
       item.material.opacity = THREE.MathUtils.damp(
@@ -688,75 +730,125 @@ export function ShelfSelection({
     if (lightRef.current) {
       lightRef.current.intensity = level * 0.5 + approach * 0.35 + seat * 1.1;
     }
+
+    // Two-beat click feedback: a ring races outward, and a soft streak lights
+    // the selected spine so the press reads even when the halo is in transit.
+    const ringPulse = (now - pulseStartRef.current) / 820;
+    if (pulseRingRef.current && pulseMatRef.current) {
+      const on = ringPulse >= 0 && ringPulse < 1;
+      pulseRingRef.current.visible = on;
+      if (on) {
+        pulseRingRef.current.scale.setScalar(0.35 + ringPulse * 1.9);
+        pulseMatRef.current.opacity = (1 - ringPulse) * (1 - ringPulse) * level * 0.9;
+      } else {
+        pulseMatRef.current.opacity = 0;
+      }
+    }
+    const streak = (now - pulseStartRef.current) / 640;
+    if (flashBarRef.current && flashBarMatRef.current) {
+      const on = streak >= 0 && streak < 1;
+      flashBarRef.current.visible = on;
+      flashBarMatRef.current.opacity = on ? Math.sin(streak * Math.PI) * level * 0.32 : 0;
+    }
   });
 
-  const centerX = pick.x * 1000;
+  const initialX = pick.x * 1000;
 
   return (
     <group ref={groupRef}>
-      <mesh position={[centerX, pick.rowY + 130, -42]}>
-        <planeGeometry args={[110, 290]} />
-        <meshBasicMaterial
-          ref={glowRef}
-          map={glowTexture ?? undefined}
-          transparent
-          opacity={0.5}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh position={[centerX, pick.rowY + 108, 12]}>
-        <planeGeometry args={[150, 260]} />
-        <meshBasicMaterial
-          ref={flashRef}
-          map={glowTexture ?? undefined}
-          transparent
-          opacity={0}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
-      <mesh ref={ringRef} position={[centerX, pick.rowY + 4, 2]}>
-        <ringGeometry args={[22, 24, 48]} />
-        <meshBasicMaterial
-          color="#c8a96d"
-          transparent
-          opacity={0.4}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
-      </mesh>
-
-      <pointLight
-        ref={lightRef}
-        position={[centerX, pick.rowY + 145, -70]}
-        intensity={0.5}
-        color="#ffcf8f"
-        distance={0.6}
-        decay={2}
-      />
-
-      {[
-        { position: [centerX, pick.rowY + 232, 6] as Vec3, size: [68, 1.8] as [number, number] },
-        { position: [centerX, pick.rowY - 2, 6] as Vec3, size: [68, 1.8] as [number, number] },
-        { position: [centerX - 33.5, pick.rowY + 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
-        { position: [centerX + 33.5, pick.rowY + 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
-      ].map((bar, index) => (
-        <mesh key={index} position={bar.position}>
-          <planeGeometry args={bar.size} />
+      <group ref={haloGroupRef} position={[initialX, pick.rowY, 0]}>
+        <mesh position={[0, 130, -42]}>
+          <planeGeometry args={[110, 290]} />
           <meshBasicMaterial
-            color="#e0b372"
+            ref={glowRef}
+            map={glowTexture ?? undefined}
             transparent
-            opacity={index < 2 ? 0.5 : 0.38}
+            opacity={0.5}
             depthWrite={false}
             blending={THREE.AdditiveBlending}
             toneMapped={false}
           />
         </mesh>
-      ))}
+        <mesh position={[0, 108, 12]}>
+          <planeGeometry args={[150, 260]} />
+          <meshBasicMaterial
+            ref={flashRef}
+            map={glowTexture ?? undefined}
+            transparent
+            opacity={0}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+        <mesh ref={ringRef} position={[0, 4, 2]}>
+          <ringGeometry args={[22, 24, 48]} />
+          <meshBasicMaterial
+            color="#c8a96d"
+            transparent
+            opacity={0.4}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+
+        <mesh ref={pulseRingRef} position={[0, 4, 4]} visible={false}>
+          <ringGeometry args={[22, 25, 48]} />
+          <meshBasicMaterial
+            ref={pulseMatRef}
+            color="#f0cf95"
+            transparent
+            opacity={0}
+            depthWrite={false}
+            depthTest={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+
+        <mesh ref={flashBarRef} position={[0, 112, 30]} visible={false}>
+          <planeGeometry args={[84, 238]} />
+          <meshBasicMaterial
+            ref={flashBarMatRef}
+            color="#ffdfa8"
+            transparent
+            opacity={0}
+            depthWrite={false}
+            depthTest={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </mesh>
+
+        <pointLight
+          ref={lightRef}
+          position={[0, 145, -70]}
+          intensity={0.5}
+          color="#ffcf8f"
+          distance={0.6}
+          decay={2}
+        />
+
+        {[
+          { position: [0, 232, 6] as Vec3, size: [68, 1.8] as [number, number] },
+          { position: [0, -2, 6] as Vec3, size: [68, 1.8] as [number, number] },
+          { position: [-33.5, 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
+          { position: [33.5, 115, 6] as Vec3, size: [1.8, 236] as [number, number] },
+        ].map((bar, index) => (
+          <mesh key={index} position={bar.position}>
+            <planeGeometry args={bar.size} />
+            <meshBasicMaterial
+              color="#e0b372"
+              transparent
+              opacity={index < 2 ? 0.5 : 0.38}
+              depthWrite={false}
+              blending={THREE.AdditiveBlending}
+              toneMapped={false}
+            />
+          </mesh>
+        ))}
+      </group>
 
       {[354, 824, 1294, 1776].map((y, index) => (
         <mesh key={y} position={[0, y - 2, 2.2]}>
@@ -1051,7 +1143,7 @@ function drawPhoneScreen(ctx: CanvasRenderingContext2D, found: boolean, pick: Sh
 
   ctx.fillStyle = found ? '#e8dcc4' : 'rgba(232, 220, 196, 0.36)';
   ctx.font = '500 44px "Cormorant Garamond", Georgia, serif';
-  ctx.fillText(found ? pick.title : 'THE BOOK.', 36, 754);
+  ctx.fillText(found ? pick.title : '书链', 36, 754);
 
   ctx.fillStyle = 'rgba(232, 220, 196, 0.46)';
   ctx.font = '500 16px ui-monospace, SFMono-Regular, Menlo, monospace';

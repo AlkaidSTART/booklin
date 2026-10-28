@@ -19,7 +19,7 @@
   --line: rgba(232, 220, 196, 0.17);
   --line-strong: rgba(232, 220, 196, 0.34);
 
-  --font-display: "Cormorant Garamond", "Bodoni 72", serif;
+  --font-display: "Cormorant Garamond", "Noto Serif SC", "Bodoni 72", serif;
   --font-serif: "Noto Serif SC", "Songti SC", serif;
   --font-sans: "Noto Sans SC", "PingFang SC", sans-serif;
 

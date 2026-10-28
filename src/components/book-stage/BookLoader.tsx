@@ -9,9 +9,11 @@ function Leaf({ variant }: { variant: 'a' | 'b' | 'c' }) {
   return (
     <span className={`page-loader__leaf page-loader__leaf--${variant}`} aria-hidden="true">
       <i className="page-loader__face page-loader__face--front">
+        <i className="page-loader__shade" />
         <i className="page-loader__sheen" />
       </i>
       <i className="page-loader__face page-loader__face--back">
+        <i className="page-loader__shade page-loader__shade--back" />
         <i className="page-loader__sheen page-loader__sheen--back" />
       </i>
     </span>
@@ -110,7 +112,6 @@ export default function BookLoader({ progress, done }: BookLoaderProps) {
       <div className="page-loader__inner">
         <div className="page-loader__book" aria-hidden="true">
           <span className="page-loader__spread">
-            <span className="page-loader__cast-shadow" />
             <span className="page-loader__page page-loader__page--left" />
             <span className="page-loader__page page-loader__page--right" />
             <span className="page-loader__gutter" />

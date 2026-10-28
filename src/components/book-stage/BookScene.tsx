@@ -16,7 +16,7 @@ import {
   useShelfPick,
 } from './ShelfStage';
 import type { ShelfFocus, ShelfPick } from './ShelfStage';
-import { HandRig } from './HandRig';
+import { HandRig, LeftHandRig } from './HandRig';
 
 export type StageInteractionState = {
   activeNode: string | null;
@@ -1823,7 +1823,8 @@ function BookRig({
               markRef={qrMarkRef}
               opennessRef={opennessRef}
             />
-            <HandRig progressRef={progressRef} reducedMotion={reducedMotion} />
+            <HandRig progressRef={progressRef} opennessRef={opennessRef} reducedMotion={reducedMotion} />
+            <LeftHandRig progressRef={progressRef} opennessRef={opennessRef} reducedMotion={reducedMotion} />
           </group>
         </group>
       </group>

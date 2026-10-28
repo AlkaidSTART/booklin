@@ -41,7 +41,7 @@ from pathlib import Path
 
 import bmesh
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_OBJ = ROOT / "public" / "hand" / "hand.OBJ"
@@ -405,16 +405,21 @@ def bind(hand: bpy.types.Object, armature: bpy.types.Object) -> None:
 # ---------------------------------------------------------------------------
 
 
-def export(hand: bpy.types.Object, armature: bpy.types.Object) -> None:
+def export(
+    hand: bpy.types.Object,
+    armature: bpy.types.Object,
+    glb_name: str,
+    blend_name: str,
+) -> None:
     bpy.ops.object.select_all(action="DESELECT")
     armature.select_set(True)
     hand.select_set(True)
     bpy.context.view_layer.objects.active = armature
 
-    bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE / "hand-rig.blend"))
+    bpy.ops.wm.save_as_mainfile(filepath=str(SOURCE / blend_name))
 
     bpy.ops.export_scene.gltf(
-        filepath=str(MODELS / "hand.glb"),
+        filepath=str(MODELS / glb_name),
         export_format="GLB",
         use_selection=True,
         export_apply=False,
@@ -431,7 +436,65 @@ def export(hand: bpy.types.Object, armature: bpy.types.Object) -> None:
     )
 
     tris = sum(len(p.vertices) - 2 for p in hand.data.polygons)
-    print(f"HAND_TRIS={tris} BONES={len(armature.data.bones)} VERTS={len(hand.data.vertices)}")
+    print(
+        f"{glb_name.upper()}_TRIS={tris} BONES={len(armature.data.bones)} "
+        f"VERTS={len(hand.data.vertices)}"
+    )
+
+
+def mirror_left(
+    hand: bpy.types.Object,
+    specs: list[BoneSpec],
+) -> tuple[bpy.types.Object, bpy.types.Object]:
+    """Build a left hand from the finished right one.
+
+    The mesh, its vertex groups and the new armature all mirror across X, so
+    the right hand's heat weights transfer unchanged. Building the armature
+    from mirrored specs (instead of duplicating and editing Blender objects)
+    keeps every bone's head/tail/roll consistent.
+    """
+    left_mesh = hand.copy()
+    left_mesh.data = hand.data.copy()
+    left_mesh.name = "HandLeft"
+    left_mesh.data.name = "HandLeft"
+    bpy.context.collection.objects.link(left_mesh)
+    left_mesh.parent = None
+
+    for vertex in left_mesh.data.vertices:
+        vertex.co.x *= -1.0
+
+    bm = bmesh.new()
+    bm.from_mesh(left_mesh.data)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    bm.to_mesh(left_mesh.data)
+    bm.free()
+    left_mesh.data.validate()
+    left_mesh.data.update()
+    for poly in left_mesh.data.polygons:
+        poly.use_smooth = True
+
+    mirrored = [
+        BoneSpec(
+            spec.name,
+            spec.parent,
+            Vector((-spec.head.x, spec.head.y, spec.head.z)),
+            Vector((-spec.tail.x, spec.tail.y, spec.tail.z)),
+            Vector((-spec.dorsal.x, spec.dorsal.y, spec.dorsal.z)),
+        )
+        for spec in specs
+    ]
+    armature = build_armature(mirrored)
+    armature.name = "HandLeftArmature"
+    armature.data.name = "HandLeftArmature"
+
+    for modifier in list(left_mesh.modifiers):
+        left_mesh.modifiers.remove(modifier)
+    left_mesh.parent = armature
+    left_mesh.matrix_parent_inverse = Matrix.Identity(4)
+    modifier = left_mesh.modifiers.new("Armature", "ARMATURE")
+    modifier.object = armature
+
+    return left_mesh, armature
 
 
 def pose_probe(hand: bpy.types.Object, armature: bpy.types.Object) -> None:
@@ -491,7 +554,11 @@ def main() -> None:
         )
 
     pose_probe(hand, armature)
-    export(hand, armature)
+    export(hand, armature, "hand.glb", "hand-rig.blend")
+
+    left_mesh, left_armature = mirror_left(hand, specs)
+    pose_probe(left_mesh, left_armature)
+    export(left_mesh, left_armature, "hand-left.glb", "hand-left-rig.blend")
 
 
 def _blender_to_canonical(point: Vector) -> Vector:

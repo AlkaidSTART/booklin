@@ -5,36 +5,45 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { createSkinMaterial } from './skinMaterial';
 
-/** Rigged right hand built from public/hand/hand.OBJ by scripts/build-hand.py.
+/** Rigged hands built from public/hand/hand.OBJ by scripts/build-hand.py.
  *
  * Local frame: +Y runs wrist -> fingertips, -Z is the palm, +X lies across the
  * knuckles. The mesh is in millimetres, matching the 0.001 groups it is
  * mounted inside. Every bone rolls so its local X is the flexion axis, which
  * means `quaternion * Rx(angle)` curls a digit toward the palm (negative) or
- * lifts it off the held object (positive).
+ * lifts it off the held object (positive). The left GLB is the right one
+ * mirrored across X, so it shares the same curl direction; only the thumb's
+ * small adduction flips sign.
  *
  * The source sculpt is an open, relaxed hand, so the holds are not baked: the
- * two mounts below place the palm against the object and the bones supply the
+ * mounts below place the palm against the object and the bones supply the
  * thumb wrap plus a breathing flex.
  */
-const HAND_URL = '/models/hand.glb';
+const HAND_RIGHT_URL = '/models/hand.glb';
+const HAND_LEFT_URL = '/models/hand-left.glb';
 
 const CURL_AXIS = new THREE.Vector3(1, 0, 0);
 const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 
-/** 01 Carry: palm on the camera-facing cover, fingers up it, arm out below.
+/** 01 Carry: two hands on the camera-facing cover, palms at the sides, thumbs
+ * meeting over the bottom edge as if about to open the board.
  *
- * The +10 mm Z offset is the geometric clearance the sculpt needs: its palm
- * and finger axes share one plane, so letting the palm touch the board buries
- * the backs of the fingers (and a roll about X buries the palm heel). With the
- * hand 12 mm below the bottom edge and 10 mm proud of the cover, no vertex
- * lands inside the book. */
-const BOOK_ANCHOR: [number, number, number] = [20, -12, 10];
+ * The 0.75 scale is what lets both hands share a 148 mm cover: at full size
+ * their palms alone exceed the book's width. The +11 mm Z offset is the
+ * clearance the sculpt needs — its palm and finger axes share one plane, so
+ * touching the board buries the backs of the fingers. Measured with this mount:
+ * zero vertices inside the book. */
+const BOOK_HAND_SCALE = 0.75;
+const BOOK_HAND_Y = -12;
+const BOOK_HAND_Z = 11;
+const BOOK_HAND_OFFSET = 72;
 const BOOK_ROLL = 0;
+/** Book-local spine line. Kept for the mount maths; the hands no longer ride
+ * the board — they sit on the two edges and part outward as it opens. */
+const BOOK_SPINE_X = -74;
 const BOOK_CURL: [number, number, number] = [0.03, 0.04, 0.02];
-/** thumb_01 local XYZ euler; lifts the relaxed thumb onto the cover. */
-const BOOK_THUMB: [number, number, number] = [0.24, 0, -0.08];
-const BOOK_THUMB_TIP = 0;
+const BOOK_THUMB_RIGHT: [number, number, number] = [0.24, 0, -0.08];
+const BOOK_THUMB_LEFT: [number, number, number] = [0.24, 0, 0.08];
 
 /** 00 Scan: the hand sits behind the phone, palm on the back cover, four
  * fingers up the back and the thumb around the front-left bezel. The 8 mm
@@ -47,7 +56,7 @@ const PHONE_CURL: [number, number, number] = [0.02, 0.03, 0.02];
 const PHONE_THUMB: [number, number, number] = [-0.14, -0.48, -0.27];
 const PHONE_THUMB_TIP = 0.15;
 
-/** How far the arm waits below the frame before it rises in. */
+/** How far the arms wait below the frame before they rise in. */
 const ENTER_DISTANCE = 120;
 
 const tmpCurl = new THREE.Quaternion();
@@ -98,11 +107,11 @@ function buildRig(root: THREE.Object3D): RiggedHand {
     if ((object as THREE.Bone).isBone) bones.set(object.name, object as THREE.Bone);
   });
   const mesh = meshes[0];
-  if (!mesh) throw new Error('hand.glb is missing its skinned mesh');
+  if (!mesh) throw new Error('hand GLB is missing its skinned mesh');
 
   const bone = (name: string) => {
     const found = bones.get(name);
-    if (!found) throw new Error(`hand.glb is missing bone ${name}`);
+    if (!found) throw new Error(`hand GLB is missing bone ${name}`);
     return found;
   };
   const phalanx = (name: string, stage: number): Phalanx => ({
@@ -126,8 +135,8 @@ function buildRig(root: THREE.Object3D): RiggedHand {
   };
 }
 
-function useRiggedHand() {
-  const { scene } = useGLTF(HAND_URL);
+function useRiggedHand(url: string) {
+  const { scene } = useGLTF(url);
   const root = useMemo(() => cloneSkinned(scene), [scene]);
   const rig = useMemo(() => buildRig(root), [root]);
   return { root, rig };
@@ -155,22 +164,34 @@ function applyPose(
   rig.thumbTip.bone.quaternion.copy(rig.thumbTip.rest).multiply(tmpCurl);
 }
 
-/** 01 carry. The hand rises from below the frame, holds the book's bottom
- * edge, and leaves before the phone hand takes over. */
-export function HandRig({
+function BookHand({
   progressRef,
+  opennessRef,
   reducedMotion,
+  url,
+  side,
+  thumb,
 }: {
   progressRef: MutableRefObject<number>;
+  opennessRef: MutableRefObject<number>;
   reducedMotion: boolean;
+  url: string;
+  side: -1 | 1;
+  thumb: [number, number, number];
 }) {
-  const { root, rig } = useRiggedHand();
+  const { root, rig } = useRiggedHand(url);
   const anchorRef = useRef<THREE.Group>(null);
   const gripRef = useRef<THREE.Group>(null);
+  const hingeRef = useRef<THREE.Group>(null);
 
   // Dark, low-key skin with pore-scale detail and a warm scattering bleed; the
-  // GLB's own material reads as pale plastic against this scene.
-  const skin = useMemo(() => createSkinMaterial(), []);
+  // GLB's own material reads as pale plastic against this scene. Transparent so
+  // the hands can release with a fade instead of popping out.
+  const skin = useMemo(() => {
+    const material = createSkinMaterial();
+    material.transparent = true;
+    return material;
+  }, []);
 
   useEffect(() => {
     rig.mesh.material = skin;
@@ -182,44 +203,108 @@ export function HandRig({
 
   useFrame(() => {
     const phase = progressRef.current * 8;
-    // Starts after the phone has left the frame, so the right hand is never
-    // holding two objects at once.
+    const openness = Math.min(1, Math.max(0, opennessRef.current));
+    // One hand on each edge, parting outward as the book opens. They do not
+    // stay glued to the board: the left (spine side) lets go before the cover
+    // sweeps past it, the right a little later, and the book finishes opening
+    // between them.
+    const spread = smoothstep((openness - 0.02) / (side > 0 ? 0.52 : 0.26));
+    const release =
+      side > 0
+        ? 1 - smoothstep((openness - 0.35) / 0.2)
+        : 1 - smoothstep((openness - 0.1) / 0.2);
+
     const enter = smoothstep((phase - 2.14) / 0.16);
-    const leave = 1 - smoothstep((phase - 2.86) / 0.12);
-    const weight = enter * leave;
+    const leave = 1 - smoothstep((phase - 3.05) / 0.15);
+    const weight = enter * leave * release;
+    rig.mesh.visible = weight > 0.002;
+    skin.opacity = weight;
 
     const anchor = anchorRef.current;
     if (!anchor) return;
 
-    anchor.visible = weight > 0.004;
-    anchor.position.y = BOOK_ANCHOR[1] - ENTER_DISTANCE * (1 - weight);
+    anchor.position.y = BOOK_HAND_Y - ENTER_DISTANCE * (1 - enter);
+    anchor.position.x = BOOK_HAND_OFFSET * side + side * 30 * spread - BOOK_SPINE_X;
+    anchor.position.z = BOOK_HAND_Z + 6 * spread;
 
-    // The thumb wraps as the hand settles; the finger flex is a breath rather
-    // than an animation.
     const t = performance.now() * 0.001;
     const amount = reducedMotion ? 0 : 1;
-    const flutter = Math.sin(t * 0.62) * 0.012 * amount * weight;
-    applyPose(rig, BOOK_CURL, BOOK_THUMB, BOOK_THUMB_TIP, weight, flutter);
+    const flutter = Math.sin(t * 0.62 + (side > 0 ? 0 : 1.7)) * 0.012 * amount * weight;
+    applyPose(rig, BOOK_CURL, thumb, 0, weight, flutter);
 
-    // A hand that holds perfectly still reads as a prop.
+    // A hand that holds perfectly still reads as a prop; offset the two hands
+    // so they never breathe in lockstep.
+    const drift = side > 0 ? 0 : 1.9;
     const grip = gripRef.current;
     if (grip) {
-      grip.rotation.x = BOOK_ROLL + Math.sin(t * 0.19 + 1.3) * 0.01 * amount;
-      grip.rotation.z = Math.sin(t * 0.28) * 0.008 * amount;
-      grip.position.y = Math.sin(t * 0.33) * 0.5 * amount;
+      grip.rotation.x = BOOK_ROLL + Math.sin(t * 0.19 + drift) * 0.01 * amount;
+      grip.rotation.z = -side * 0.32 * spread + Math.sin(t * 0.28 + drift) * 0.008 * amount;
+      grip.position.y = Math.sin(t * 0.33 + drift) * 0.5 * amount;
     }
   });
 
   return (
-    <group
-      ref={anchorRef}
-      position={[BOOK_ANCHOR[0], BOOK_ANCHOR[1] - ENTER_DISTANCE, BOOK_ANCHOR[2]]}
-      visible={false}
-    >
-      <group ref={gripRef} rotation={[BOOK_ROLL, 0, 0]}>
-        <primitive object={root} dispose={null} />
+    <group ref={hingeRef} position={[BOOK_SPINE_X, 0, 0]}>
+      <group
+        ref={anchorRef}
+        position={[
+          BOOK_HAND_OFFSET * side - BOOK_SPINE_X,
+          BOOK_HAND_Y - ENTER_DISTANCE,
+          BOOK_HAND_Z,
+        ]}
+      >
+        <group ref={gripRef} rotation={[BOOK_ROLL, 0, 0]}>
+          <group scale={BOOK_HAND_SCALE}>
+            <primitive object={root} dispose={null} />
+          </group>
+        </group>
       </group>
     </group>
+  );
+}
+
+/** 01 carry, right hand. */
+export function HandRig({
+  progressRef,
+  opennessRef,
+  reducedMotion,
+}: {
+  progressRef: MutableRefObject<number>;
+  opennessRef: MutableRefObject<number>;
+  reducedMotion: boolean;
+}) {
+  return (
+    <BookHand
+      progressRef={progressRef}
+      opennessRef={opennessRef}
+      reducedMotion={reducedMotion}
+      url={HAND_RIGHT_URL}
+      side={1}
+      thumb={BOOK_THUMB_RIGHT}
+    />
+  );
+}
+
+/** 01 carry, left hand — the mirrored rig, so the pair reads as two hands
+ * taking the covers to open the book. */
+export function LeftHandRig({
+  progressRef,
+  opennessRef,
+  reducedMotion,
+}: {
+  progressRef: MutableRefObject<number>;
+  opennessRef: MutableRefObject<number>;
+  reducedMotion: boolean;
+}) {
+  return (
+    <BookHand
+      progressRef={progressRef}
+      opennessRef={opennessRef}
+      reducedMotion={reducedMotion}
+      url={HAND_LEFT_URL}
+      side={-1}
+      thumb={BOOK_THUMB_LEFT}
+    />
   );
 }
 
@@ -233,7 +318,7 @@ export function PhoneHandRig({
   opacityRef: MutableRefObject<number>;
   reducedMotion: boolean;
 }) {
-  const { root, rig } = useRiggedHand();
+  const { root, rig } = useRiggedHand(HAND_RIGHT_URL);
   const handRef = useRef<THREE.Group>(null);
 
   const skin = useMemo(() => {
@@ -273,14 +358,11 @@ export function PhoneHandRig({
   });
 
   return (
-    <group
-      ref={handRef}
-      position={PHONE_ANCHOR}
-      rotation={[0, Math.PI, 0]}
-    >
+    <group ref={handRef} position={PHONE_ANCHOR} rotation={[0, Math.PI, 0]}>
       <primitive object={root} dispose={null} />
     </group>
   );
 }
 
-useGLTF.preload(HAND_URL);
+useGLTF.preload(HAND_RIGHT_URL);
+useGLTF.preload(HAND_LEFT_URL);

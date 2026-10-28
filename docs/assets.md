@@ -62,7 +62,7 @@
 - **分辨率**：桌面端 2048×2048，移动端回退 1024×1024。
 - **格式**：KTX2 / Basis Universal，保持压缩态直接入显存。
 - **命名**：`book-basecolor.ktx2`、`book-normal.ktx2`、`book-roughness.ktx2`、`book-metalness.ktx2`、`book-ao.ktx2`。
-- **运行时消费**：`book-transformed.glb` 内嵌的 KTX2 PBR 图集由 `KTX2Loader` 直接解码，`BookScene` 保留 Normal / AO / Roughness / Metalness 通道。由于当前 GLB 内嵌的 BaseColor 仍为旧版 `CODEX` 图集，运行时用 `book-basecolor.webp`（当前 `THE BOOK.` 图集，2048²，36 KB，由源 PNG 转出）仅覆盖 BaseColor；待 GLB 按最新源图重建后，可移除该覆盖。
+- **运行时消费**：`book-transformed.glb` 内嵌的 KTX2 PBR 图集由 `KTX2Loader` 直接解码，`BookScene` 保留 Normal / AO / Roughness / Metalness 通道。由于当前 GLB 内嵌的 BaseColor 仍为旧版 `CODEX` 图集，运行时用 `book-basecolor.webp`（当前 `书链` 图集，2048²，36 KB，由源 PNG 转出）仅覆盖 BaseColor；待 GLB 按最新源图重建后，可移除该覆盖。
 - **WebP 覆盖层重建**：`cwebp -q 90 public/textures/source/book-basecolor.png -o public/textures/book-basecolor.webp`
 
 ### A3 函套模型

@@ -98,11 +98,11 @@ def make_basecolor(size: int) -> Image.Image:
     draw.rectangle((x0 + inset, y0 + inset, x1 - inset, y1 - inset), outline=gold_dim, width=max(1, size // 1024))
     # Thin asymmetrical registration frame.
     draw.line((x0 + inset * 1.8, y0 + inset * 2.1, x0 + inset * 1.8, y1 - inset * 2.1), fill=gold, width=max(2, size // 512))
-    title_font = font("CormorantGaramond-Variable.ttf", int((x1 - x0) * 0.22))
+    title_font = font("NotoSerifSC-Variable.ttf", int((x1 - x0) * 0.20))
     micro_font = font("CormorantGaramond-Variable.ttf", int((x1 - x0) * 0.045))
     cn_font = font("NotoSerifSC-Variable.ttf", int((x1 - x0) * 0.038))
-    draw.text((x0 + (x1 - x0) * 0.15, y0 + (y1 - y0) * 0.30), "THE", font=title_font, fill=gold)
-    draw.text((x0 + (x1 - x0) * 0.15, y0 + (y1 - y0) * 0.47), "BOOK.", font=title_font, fill=gold)
+    draw.text((x0 + (x1 - x0) * 0.15, y0 + (y1 - y0) * 0.29), "书", font=title_font, fill=gold)
+    draw.text((x0 + (x1 - x0) * 0.15, y0 + (y1 - y0) * 0.47), "链", font=title_font, fill=gold)
     draw.text((x0 + (x1 - x0) * 0.17, y0 + (y1 - y0) * 0.68), "ANALOG AT HEART", font=micro_font, fill=gold_dim)
     draw.text((x0 + (x1 - x0) * 0.17, y0 + (y1 - y0) * 0.73), "DIGITAL IN SOUL", font=micro_font, fill=gold_dim)
     draw.text((x0 + (x1 - x0) * 0.17, y0 + (y1 - y0) * 0.81), "纸端 · 云端 · 书链赋能", font=cn_font, fill=gold_dim)
@@ -118,8 +118,8 @@ def make_basecolor(size: int) -> Image.Image:
     # Spine foil.
     sx0, sy0, sx1, sy1 = face_px(size, REGIONS["spine"], "front")
     draw.rectangle((sx0, sy0, sx1, sy1), fill=(27, 25, 21))
-    spine_font = font("CormorantGaramond-Variable.ttf", max(10, int((sx1 - sx0) * 0.30)))
-    draw.text((sx0 + (sx1 - sx0) * 0.24, sy0 + (sy1 - sy0) * 0.73), "THE BOOK.", font=spine_font, fill=gold)
+    spine_font = font("NotoSerifSC-Variable.ttf", max(10, int((sx1 - sx0) * 0.30)))
+    draw.text((sx0 + (sx1 - sx0) * 0.24, sy0 + (sy1 - sy0) * 0.73), "书链", font=spine_font, fill=gold)
     draw.line((sx0 + (sx1 - sx0) * 0.45, sy0 + (sy1 - sy0) * 0.12, sx0 + (sx1 - sx0) * 0.45, sy0 + (sy1 - sy0) * 0.65), fill=gold_dim, width=max(1, size // 1024))
 
     # Page faces: warm paper, registration rules and sparse text lines.

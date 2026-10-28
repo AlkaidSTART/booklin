@@ -591,11 +591,11 @@ function useMorphMesh(scene: THREE.Object3D) {
    ------------------------------------------------------------------ */
 
 const PAGE_SPINE_X = -74; // hinge line in the book's local space
-const PAGE_SHEET_STEP = 2; // depth quantisation for leaf ordering
 const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
 const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
 const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
 const PAGE_TURN_SPLIT = 0.5; // front half of the block turns onto the left board
+const PAGE_LEAF_HALF = 2; // half the thickness of one page leaf (mm)
 const PAGE_HINGE_RADIUS = 2; // spine fold stays with the board underneath
 
 type PageTurnRig = {
@@ -638,9 +638,8 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     if (r > maxRadius) maxRadius = r;
     if (r < PAGE_HINGE_RADIUS) continue;
 
-    const sheet = Math.round(z / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
-    if (sheet > frontDepth) frontDepth = sheet;
-    if (sheet < backDepth) backDepth = sheet;
+    if (z > frontDepth) frontDepth = z;
+    if (z < backDepth) backDepth = z;
   }
 
   if (!Number.isFinite(frontDepth) || !Number.isFinite(backDepth)) return null;
@@ -648,8 +647,14 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
   const span = Math.max(1, frontDepth - backDepth);
   for (let i = 0; i < count; i += 1) {
     if (radius[i] < PAGE_HINGE_RADIUS) continue;
-    const sheet = Math.round(positionArray[i * 3 + 2] / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
-    const depth = clamp01((frontDepth - sheet) / span);
+    const z = positionArray[i * 3 + 2];
+    const nz = normalArray[i * 3 + 2];
+    // Both faces of a leaf must land on the same side of the split, so rank
+    // each face by its leaf centre instead of its own plane: a +Z face sits
+    // on top of its leaf, a -Z face underneath it. Edge faces (normals in
+    // the page plane) join the leaf above.
+    const nudge = Math.abs(nz) > 0.5 ? -Math.sign(nz) * PAGE_LEAF_HALF : PAGE_LEAF_HALF;
+    const depth = clamp01((frontDepth - z - nudge) / span);
     // The spread splits at the middle of the block: the front half (front
     // cover and its leaves) turns over onto the left board while the back
     // half stays put, so both sides of the open book carry pages.

@@ -1099,9 +1099,11 @@ html.is-paper .sx-rail__meta a {
 }
 
 /* ------------------------------------------------------------------
-   Prologue → chapter 00 interlude
-   A title plate that the camera re-frames and the book re-shelves behind.
-   `--handoff` is written by the stage, so the plate is locked to the 3D beat.
+   Prologue → chapter 00 hand-off
+   The book re-shelves behind this plate, so the one line simply says what
+   the camera is doing. `--handoff` (backdrop) and `--handoff-type` (copy)
+   are written by the stage, so the words only arrive on a black stage and
+   leave as the settled shelf is revealed.
    ------------------------------------------------------------------ */
 
 .sx-handoff {
@@ -1140,32 +1142,12 @@ html.is-paper .sx-rail__meta a {
   justify-items: center;
   max-width: 820px;
   text-align: center;
-  /* Type only arrives once the backdrop has mostly taken the stage, so the
-     headline never ghosts across the book while the camera re-frames. */
-  opacity: clamp(0, calc((var(--handoff, 0) - 0.5) / 0.5), 1);
-}
-
-.sx-handoff__kicker {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  color: var(--gold);
-  font-family: var(--font-sans);
-  font-size: 9px;
-  letter-spacing: 0.26em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.sx-handoff__kicker::after {
-  content: "";
-  width: 38px;
-  height: 1px;
-  background: linear-gradient(90deg, var(--gold), transparent);
+  /* Copy waits until the backdrop is opaque, so no headline ever ghosts
+     across the book while the camera re-frames. */
+  opacity: var(--handoff-type, 0);
 }
 
 .sx-handoff__line {
-  margin-top: 30px;
   font-family: var(--font-serif);
   font-size: clamp(44px, 7.2vw, 112px);
   font-weight: 500;
@@ -1174,22 +1156,12 @@ html.is-paper .sx-rail__meta a {
   text-wrap: balance;
 }
 
-.sx-handoff__en {
-  margin-top: 20px;
-  color: var(--muted);
-  font-family: var(--font-display);
-  font-size: clamp(14px, 1.25vw, 18px);
-  font-style: italic;
-  line-height: 1.5;
-  letter-spacing: 0.01em;
-}
-
 .sx-handoff__meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin-top: 38px;
+  margin-top: 34px;
   padding-top: 13px;
   border-top: 1px solid var(--line);
   color: var(--faint);
@@ -1696,8 +1668,11 @@ html:not(.js) .sx-ribbon__step {
   display: flex;
   flex-direction: column;
   height: 100%;
-  transform: translateY(calc(var(--read, 0) * var(--page-span, 0%)));
-  transition: transform 900ms var(--ease-out);
+  /* Scroll-linked: the script writes --read every frame, so the paper is
+     already eased by the wheel. A transition here would only lag it behind. */
+  transform: translate3d(0, calc(var(--read, 0) * var(--page-span, 0%)), 0);
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .sx-reader__page {
@@ -1825,7 +1800,8 @@ html:not(.js) .sx-ribbon__step {
   background: var(--gold);
   transform: scaleX(var(--read, 0));
   transform-origin: left;
-  transition: transform 900ms var(--ease-out);
+  /* Just enough smoothing to hide per-frame jitter without trailing the turn. */
+  transition: transform 120ms linear;
 }
 
 .sx-read__aside {

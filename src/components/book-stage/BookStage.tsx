@@ -171,14 +171,23 @@ export default function BookStage() {
 
       progressRef.current = Math.min(1, phase / Math.max(1, starts.length - 1));
 
-      // Interlude plate: fade up over the hero's exit, hold while the book
-      // docks into the shelf, then lift to reveal the established chapter 00.
-      // Kept in phase units so it stays locked to the 3D beat at any speed.
+      // Hand-off plate: black out once the hero has left, hold while the book
+      // docks and the shelf grows, then lift on the settled shelf so chapter
+      // 00 opens with the book already in place. Kept in phase units so it
+      // stays locked to the 3D beat at any speed.
       const tint = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.4) / 0.16)),
-        Math.min(1, Math.max(0, (0.96 - phase) / 0.1)),
+        Math.min(1, Math.max(0, (phase - 0.44) / 0.1)),
+        Math.min(1, Math.max(0, (0.85 - phase) / 0.09)),
+      );
+      // The line only exists on a fully black stage and leaves before the
+      // plate starts to lift, so it never ghosts across the book or the
+      // revealed shelf.
+      const type = Math.min(
+        Math.min(1, Math.max(0, (phase - 0.54) / 0.04)),
+        Math.min(1, Math.max(0, (0.76 - phase) / 0.04)),
       );
       document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
+      document.documentElement.style.setProperty('--handoff-type', type.toFixed(3));
     };
 
     const schedule = () => {

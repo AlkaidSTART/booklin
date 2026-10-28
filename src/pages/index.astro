@@ -133,9 +133,7 @@ const pageDescription =
     <section class="sx-handoff" aria-hidden="true">
       <span class="sx-handoff__numeral">00</span>
       <div class="sx-handoff__plate">
-        <p class="sx-handoff__kicker">INTERLUDE · 停泊</p>
-        <p class="sx-handoff__line">你从哪找到它？</p>
-        <p class="sx-handoff__en">Back to the shelf. It will remember the page.</p>
+        <p class="sx-handoff__line">书回到架上。</p>
         <p class="sx-handoff__meta">0.00 W · NO ACCOUNT · ∞ BOOKS</p>
       </div>
     </section>
@@ -745,9 +743,21 @@ const pageDescription =
       group: HTMLElement;
       items: HTMLElement[];
       last: number;
+      readValue: string;
+      readRoot: HTMLElement | null;
       readoutLabel: HTMLElement | null;
       readoutDetail: HTMLElement | null;
     };
+
+    const smoothstep = (value: number) => {
+      const x = clamp01(value);
+      return x * x * (3 - 2 * x);
+    };
+
+    // Fraction of a reader segment the page turn occupies. The sheet glides for
+    // this share of the segment, then holds for the rest, so the turn is a
+    // scroll-driven sweep instead of a 900 ms tween racing the wheel.
+    const READ_TURN = 0.5;
 
     const stepGroups: StepGroup[] = [];
     for (const section of sections) {
@@ -757,6 +767,10 @@ const pageDescription =
           group,
           items: Array.from(group.querySelectorAll<HTMLElement>('[data-step]')),
           last: -2,
+          readValue: '',
+          // The page turn writes its custom property here rather than on the
+          // whole section, so per-frame updates only invalidate the phone.
+          readRoot: section.querySelector<HTMLElement>('.sx-phone__screen'),
           readoutLabel: parent?.querySelector<HTMLElement>('[data-readout-label]') ?? null,
           readoutDetail: parent?.querySelector<HTMLElement>('[data-readout-detail]') ?? null,
         });
@@ -804,6 +818,26 @@ const pageDescription =
 
         const eased = clamp01((progress - 0.1) / 0.72);
         const active = Math.min(total - 1, Math.floor(eased * total));
+        const kind = entry.group.dataset.dispatch;
+
+        // The reader turns with the scroll rather than on a fixed tween: inside
+        // each segment the page starts on `active`, then the first half of the
+        // segment sweeps it up from the previous leaf and holds. Writing a
+        // continuous value keeps the paper locked to the wheel, so a fast scroll
+        // can never leave it trailing behind the folio.
+        if (kind === 'read' && total > 1) {
+          const local = clamp01(eased * total - active);
+          // Page position in leaf units (0 … total - 1), not a 0 … 1 ratio.
+          const shown = Math.min(
+            total - 1,
+            Math.max(0, active + smoothstep(local / READ_TURN) - 1),
+          );
+          const next = (shown / (total - 1)).toFixed(4);
+          if (next !== entry.readValue && entry.readRoot) {
+            entry.readValue = next;
+            entry.readRoot.style.setProperty('--read', next);
+          }
+        }
 
         if (active === entry.last) continue;
         entry.last = active;
@@ -814,14 +848,6 @@ const pageDescription =
         });
 
         const item = entry.items[active];
-        const kind = entry.group.dataset.dispatch;
-
-        if (kind === 'read') {
-          section.style.setProperty(
-            '--read',
-            total > 1 ? (active / (total - 1)).toFixed(4) : '0',
-          );
-        }
 
         if (kind === 'node') {
           window.dispatchEvent(

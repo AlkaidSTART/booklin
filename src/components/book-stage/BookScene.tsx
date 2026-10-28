@@ -126,14 +126,14 @@ const CAMERA_KEYS: CameraKey[] = [
     mobileTargetX: 0,
     mobileTargetY: 0.76,
   },
-  // 00 Shelf — pulled back so the full walnut case, both tiers and the
-  //   breathing hero spine fill the background behind the copy.
+  // 00 Shelf — level with the case, close enough that both tiers fill the
+  //   frame; the oak desk stays a foreground strip instead of the subject.
   {
-    position: [-0.26, 1.2, 1.15],
-    target: [-0.1, 1.0, -0.35],
+    position: [-0.24, 1.32, 0.95],
+    target: [-0.08, 1.22, -0.5],
     mobileTargetX: 0,
-    mobileTargetY: 0.92,
-    fov: 46,
+    mobileTargetY: 1.08,
+    fov: 44,
   },
   // 01 Carry — wider, following the book home
   {
@@ -322,7 +322,9 @@ function keyBookPose(index: number, t: number): BookPose {
 }
 
 function genericBookPose(phase: number): BookPose {
-  const { index, t } = timeline(phase);
+  // `phase` is already in timeline units (0…PHASE_COUNT); timeline expects
+  // normalised progress and does its own scaling.
+  const { index, t } = timeline(phase / PHASE_COUNT);
   return keyBookPose(index, t);
 }
 
@@ -340,7 +342,7 @@ function cameraKeyPose(index: number, t: number, mobile: boolean): ShelfCameraPo
 }
 
 function genericCameraPose(phase: number, mobile: boolean): ShelfCameraPose {
-  const { index, t } = timeline(phase);
+  const { index, t } = timeline(phase / PHASE_COUNT);
   return cameraKeyPose(index, t, mobile);
 }
 
@@ -589,6 +591,9 @@ const PAGE_SHEET_STEP = 2; // depth quantisation for leaf ordering
 const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
 const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
 const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
+// Half-open limit: the leaves stop standing on the desk (~95°) instead of
+// sweeping the full 180° and landing flat beside the back cover.
+const PAGE_OPEN_SWEEP = Math.PI * 0.53;
 
 type PageTurnRig = {
   position: THREE.BufferAttribute;
@@ -678,7 +683,7 @@ function applyPageTurn(rig: PageTurnRig, openness: number) {
   // The turn always lifts the free edge toward +Z: with the book standing
   // that reads as opening toward the reader, and with the book laid flat
   // (+Z up) the leaves sweep over the desk instead of through it.
-  const base = Math.PI * smoothstep(openness);
+  const base = PAGE_OPEN_SWEEP * smoothstep(openness);
   const envelope = Math.sin(base);
   const settle = clamp01((openness - 0.82) / 0.18);
 

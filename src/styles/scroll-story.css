@@ -1535,3 +1535,518 @@ html:not(.js) .sx-ribbon__step {
     transform: scaleX(1);
   }
 }
+
+/* ------------------------------------------------------------------
+   R — READ
+   A pinned editorial plate: the e-book in a modeled phone, the page
+   turning as the reader scrolls. No clicks, no controls.
+   ------------------------------------------------------------------ */
+
+.sx-sec--read {
+  display: block;
+  min-height: 320svh;
+  padding: 0;
+  background:
+    radial-gradient(circle at 26% 32%, rgba(200, 169, 109, 0.075), transparent 44%),
+    radial-gradient(circle at 84% 74%, rgba(156, 63, 47, 0.05), transparent 40%),
+    var(--ink-0);
+}
+
+.sx-read {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(12px, 2.2vh, 24px);
+  height: 100svh;
+  padding:
+    clamp(46px, 7vh, 78px) clamp(24px, 5vw, 76px) clamp(16px, 3vh, 28px)
+    calc(var(--sx-rail) + clamp(18px, 3vw, 44px));
+  overflow: hidden;
+}
+
+.sx-read__head {
+  max-width: 640px;
+}
+
+.sx-read__head .sx-title {
+  margin-top: 12px;
+  font-size: clamp(36px, 4.2vw, 62px);
+}
+
+.sx-read__head .sx-line {
+  max-width: 24em;
+  margin-top: 10px;
+  font-size: clamp(13px, 1.1vw, 16px);
+}
+
+.sx-read__head .sx-line-en {
+  margin-top: 6px;
+}
+
+.sx-read__head .sx-meta {
+  margin-top: 14px;
+}
+
+.sx-read__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(196px, 300px);
+  gap: clamp(20px, 4vw, 64px);
+  align-items: center;
+  min-height: 0;
+}
+
+.sx-read__device {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+}
+
+.sx-read__frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: min(100%, 640px);
+  padding: clamp(12px, 1.6vw, 20px);
+  border: 1px dashed rgba(232, 220, 196, 0.32);
+}
+
+.sx-phone {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 9 / 19.4;
+  padding: 6px;
+  border-radius: 32px;
+  background: linear-gradient(150deg, #3d362c 0%, #0c0b09 26%, #050504 70%, #2b251d 100%);
+  box-shadow:
+    0 44px 80px rgba(0, 0, 0, 0.62),
+    inset 0 0 0 1px rgba(232, 220, 196, 0.16);
+}
+
+.sx-phone::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  left: 50%;
+  width: 34%;
+  height: 9px;
+  border-radius: 99px;
+  background: #050403;
+  transform: translateX(-50%);
+}
+
+.sx-phone__screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 27px;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(200, 169, 109, 0.14), transparent 45%),
+    #0a0907;
+  color: var(--text);
+}
+
+.sx-reader__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 20px 16px 10px;
+  color: rgba(232, 220, 196, 0.44);
+  font-size: 7px;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sx-reader__brand {
+  color: var(--gold);
+}
+
+.sx-reader__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.sx-reader__viewport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 9, 7, 0.88) 0%,
+    transparent 7%,
+    transparent 93%,
+    rgba(10, 9, 7, 0.88) 100%
+  );
+  pointer-events: none;
+}
+
+.sx-reader__track {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transform: translateY(calc(var(--read, 0) * var(--page-span, 0%)));
+  transition: transform 900ms var(--ease-out);
+}
+
+.sx-reader__page {
+  display: flex;
+  flex: 0 0 100%;
+  flex-direction: column;
+  min-height: 0;
+  padding: 10px 18px 14px;
+}
+
+.sx-reader__chapter {
+  color: var(--gold);
+  font-family: var(--font-serif);
+  font-size: clamp(7px, 0.6vw, 8.5px);
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+
+.sx-reader__title {
+  margin-top: 7px;
+  color: var(--paper);
+  font-family: var(--font-serif);
+  font-size: clamp(13px, 1.1vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.38;
+}
+
+.sx-reader__body {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: clamp(10.5px, 0.82vw, 12.5px);
+  letter-spacing: 0.012em;
+  line-height: 1.9;
+}
+
+.sx-reader__pull {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid rgba(200, 169, 109, 0.24);
+  color: var(--gold);
+  font-family: var(--font-serif);
+  font-size: clamp(11px, 0.9vw, 13px);
+  line-height: 1.6;
+}
+
+.sx-reader__note {
+  margin-top: 7px;
+  color: rgba(232, 220, 196, 0.34);
+  font-size: 7px;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+}
+
+.sx-reader__folio {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 6px;
+  color: rgba(232, 220, 196, 0.34);
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sx-reader__foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px 13px;
+  border-top: 1px solid rgba(232, 220, 196, 0.1);
+  color: rgba(232, 220, 196, 0.42);
+  font-size: 6.5px;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sx-reader__bar {
+  flex: 1;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(232, 220, 196, 0.14);
+}
+
+.sx-reader__bar i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transform: scaleX(var(--read, 0));
+  transform-origin: left;
+  transition: transform 900ms var(--ease-out);
+}
+
+.sx-read__aside {
+  display: grid;
+  align-content: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.sx-read__aside-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--faint);
+  font-size: 7.5px;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sx-read__pages {
+  display: grid;
+  gap: 8px;
+}
+
+.sx-read__page {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  background: rgba(24, 22, 19, 0.5);
+  opacity: 0.42;
+  transition:
+    opacity 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out),
+    background 0.5s var(--ease-out),
+    transform 0.5s var(--ease-out);
+}
+
+.sx-read__page.is-on {
+  border-color: rgba(200, 169, 109, 0.55);
+  background: rgba(200, 169, 109, 0.08);
+  opacity: 1;
+  transform: translateX(-6px);
+}
+
+.sx-read__page.is-done {
+  opacity: 0.72;
+}
+
+.sx-read__thumb {
+  position: relative;
+  display: block;
+  width: 46px;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: linear-gradient(150deg, #f0e7d4, #dccfb4);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.36);
+}
+
+.sx-read__thumb::before {
+  content: "";
+  position: absolute;
+  inset: 13px 9px 17px;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(27, 23, 18, 0.24) 0 1px,
+    transparent 1px 5px
+  );
+  opacity: 0.7;
+}
+
+.sx-read__thumb::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 9px;
+  width: 18px;
+  height: 2px;
+  background: rgba(27, 23, 18, 0.34);
+}
+
+.sx-read__thumb i {
+  position: absolute;
+  right: 5px;
+  bottom: 4px;
+  color: rgba(27, 23, 18, 0.55);
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-style: normal;
+  letter-spacing: 0.04em;
+}
+
+.sx-read__page.is-on .sx-read__thumb {
+  box-shadow:
+    0 12px 26px rgba(0, 0, 0, 0.44),
+    0 0 0 1px rgba(200, 169, 109, 0.6);
+}
+
+.sx-read__page-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sx-read__page-copy b {
+  overflow: hidden;
+  color: var(--paper);
+  font-family: var(--font-serif);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sx-read__page-copy small {
+  overflow: hidden;
+  color: var(--faint);
+  font-family: var(--font-serif);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sx-read__cue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 8px;
+  letter-spacing: 0.24em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.sx-read__cue i {
+  position: relative;
+  display: block;
+  width: 24px;
+  height: 24px;
+  border: 1px solid rgba(232, 220, 196, 0.34);
+  border-radius: 50%;
+}
+
+.sx-read__cue i::before {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-right: 1px solid var(--gold);
+  border-bottom: 1px solid var(--gold);
+  transform: translate(-50%, 0) rotate(45deg);
+  animation: sx-read-bob 2.2s var(--ease-out) infinite;
+}
+
+@keyframes sx-read-bob {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(45deg);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-50%, 3px) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 1120px) {
+  .sx-read__stage {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 260px);
+    gap: 24px;
+  }
+}
+
+@media (max-width: 980px) {
+  .sx-read {
+    gap: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+
+  .sx-read__stage {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+
+  .sx-read__aside {
+    display: none;
+  }
+
+  .sx-read__frame {
+    height: min(100%, 560px);
+  }
+}
+
+@media (max-width: 760px) {
+  .sx-read {
+    padding-top: calc(var(--header-height) + 30px);
+    padding-bottom: 18px;
+  }
+
+  .sx-read__head .sx-title {
+    font-size: clamp(34px, 10vw, 48px);
+  }
+
+  .sx-read__head .sx-line {
+    font-size: 13px;
+  }
+
+  .sx-read__frame {
+    height: min(100%, 500px);
+  }
+
+  .sx-read__cue {
+    font-size: 7px;
+    letter-spacing: 0.18em;
+  }
+}
+
+@media (max-width: 420px) {
+  .sx-read__frame {
+    height: min(100%, 460px);
+    padding: 10px;
+  }
+
+  .sx-phone {
+    border-radius: 28px;
+  }
+
+  .sx-phone__screen {
+    border-radius: 23px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-read__cue i::before {
+    animation: none;
+  }
+
+  .sx-reader__track,
+  .sx-reader__bar i,
+  .sx-read__page {
+    transition: none;
+  }
+}

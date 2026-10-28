@@ -14,6 +14,7 @@ const editionsData = readJson('public/data/editions.json');
 const benchmark = readJson('public/data/benchmark.json');
 const graph = readJson('public/data/knowledge-graph.json');
 const bookln = readJson('public/data/bookln.json');
+const reader = readJson('public/data/reader.json');
 
 const chapterById = Object.fromEntries(
   (story.chapters as Array<Record<string, any>>).map((chapter) => [chapter.id, chapter]),
@@ -26,6 +27,7 @@ const chapters = [
   { id: 'interaction', href: 'interaction', number: '02' },
   { id: 'binding', href: 'binding', number: '03' },
   { id: 'loop', href: 'loop', number: '04' },
+  { id: 'read', href: 'read', number: 'R' },
   { id: 'return', href: 'return', number: '05' },
   { id: 'benchmark', href: 'benchmark', number: 'A' },
   { id: 'deployment', href: 'deployment', number: 'B' },
@@ -383,6 +385,102 @@ const pageDescription =
     </section>
 
     <section
+      id="read"
+      class="sx-sec sx-sec--read"
+      data-chapter="read"
+      data-no-phase
+      data-number="R"
+      data-label="READ"
+      data-telemetry="R · E-BOOK EDITION · P.042 → P.045"
+      aria-labelledby="read-title"
+    >
+      <div class="sx-read">
+        <header class="sx-read__head">
+          <p class="sx-kicker">
+            <b>{chapterById.read.number}</b>
+            <span>{chapterById.read.label} · {chapterById.read.labelZh}</span>
+          </p>
+          <h2 id="read-title" class="sx-title">
+            <span>{chapterById.read.titleA}</span>
+            <em>{chapterById.read.titleB}</em>
+          </h2>
+          <p class="sx-line">{chapterById.read.line}</p>
+          <p class="sx-line-en">{chapterById.read.lineEn}</p>
+          <p class="sx-meta">{chapterById.read.meta}</p>
+        </header>
+
+        <div class="sx-read__stage">
+          <div class="sx-read__device">
+            <div class="sx-read__frame">
+              <div class="sx-phone">
+                <div class="sx-phone__screen">
+                  <div class="sx-reader__top">
+                    <span>9:41</span>
+                    <span class="sx-reader__brand">{reader.book.edition}</span>
+                    <span aria-hidden="true">●</span>
+                  </div>
+
+                  <div class="sx-reader__viewport">
+                    <div
+                      class="sx-reader__track"
+                      style={`--page-span: ${(reader.pages.length - 1) * -100}%`}
+                    >
+                      {reader.pages.map((page: Record<string, any>) => (
+                        <article class="sx-reader__page">
+                          <p class="sx-reader__chapter">{page.chapter}</p>
+                          <h3 class="sx-reader__title">{page.title}</h3>
+                          <div class="sx-reader__body">
+                            {page.body.map((paragraph: string) => (
+                              <p>{paragraph}</p>
+                            ))}
+                          </div>
+                          <p class="sx-reader__pull">{page.pull}</p>
+                          <p class="sx-reader__note">{page.note}</p>
+                          <div class="sx-reader__folio">
+                            <span>{reader.book.title}</span>
+                            <span>{page.no}</span>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="sx-reader__foot">
+                    <span>SCROLL TO TURN</span>
+                    <span class="sx-reader__bar"><i></i></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="sx-read__aside" aria-label="Pages">
+            <div class="sx-read__aside-head">
+              <span>PAGES · 页序</span>
+              <span>042 — 045</span>
+            </div>
+            <ol class="sx-read__pages" data-steps data-dispatch="read">
+              {reader.pages.map((page: Record<string, any>, index: number) => (
+                <li class="sx-read__page" data-step={index}>
+                  <span class="sx-read__thumb" aria-hidden="true"><i>{page.no}</i></span>
+                  <span class="sx-read__page-copy">
+                    <b>{page.title}</b>
+                    <small>{page.chapter}</small>
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        </div>
+
+        <p class="sx-read__cue" aria-hidden="true">
+          <i></i>
+          <span>Scroll to continue · 继续下滑</span>
+        </p>
+      </div>
+    </section>
+
+    <section
       id="return"
       class="sx-sec"
       data-chapter="return"
@@ -707,6 +805,13 @@ const pageDescription =
 
         const item = entry.items[active];
         const kind = entry.group.dataset.dispatch;
+
+        if (kind === 'read') {
+          section.style.setProperty(
+            '--read',
+            total > 1 ? (active / (total - 1)).toFixed(4) : '0',
+          );
+        }
 
         if (kind === 'node') {
           window.dispatchEvent(

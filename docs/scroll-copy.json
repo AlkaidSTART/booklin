@@ -71,6 +71,17 @@
       "meta": "AUTOPLAYS · MUTED"
     },
     {
+      "id": "read",
+      "number": "R",
+      "label": "READ",
+      "labelZh": "阅读",
+      "titleA": "书里的，",
+      "titleB": "每一页。",
+      "line": "电子档在手里。往下滑，页跟着走。",
+      "lineEn": "The e-book in hand. Scroll, and the pages follow.",
+      "meta": "P.042 — P.045 · 电子档"
+    },
+    {
       "id": "return",
       "number": "05",
       "label": "RETURN",

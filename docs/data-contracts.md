@@ -195,3 +195,22 @@ node scripts/build-asset-manifest.mjs
 | `policies[]` | array | `pending-business` or `locked`, with bilingual notes. |
 
 **Update rule:** supply figures are the Bookln official 2023-07 values. Confirm the latest numbers with business before launch and do not mix them with `†` concept claims. Commerce owns the policy status of “soul travels with the book”.
+
+---
+
+## 13. `public/data/reader.json`
+
+**Purpose:** the page copy shown inside the phone in Chapter R (Read) — the e-book edition of the book itself.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `book.title` / `.edition` | string | Device header: the book title and the e-book edition label. |
+| `pages[].no` | string | Folio, tied to the ribbon anchor (`042` onward). |
+| `pages[].chapter` | string | Chapter line above the page title. |
+| `pages[].title` | string | Page headline. |
+| `pages[].body` | string[] | Short page paragraphs; the phone is a reading surface, not a feed. |
+| `pages[].pull` | string | One pull line that closes the page. |
+| `pages[].note` | string | Margin note; may reference the page-edge mark. |
+| `dataNotes` | string[] | Concept copy only; no reader data is written into the book. |
+
+**Update rule:** keep the folio anchored at Page 042 so the ribbon and graph chapters stay aligned. This is concept page copy, not a licensed excerpt; replace it with publisher-supplied text before launch. The scroll position maps page turns — never add page controls or pagination buttons.

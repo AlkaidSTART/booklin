@@ -1,0 +1,60 @@
+{
+  "version": "2026-10-27",
+  "status": "concept-data",
+  "book": {
+    "title": "THE BOOK.",
+    "edition": "Bookln 电子档",
+    "chapterLabel": "READER · 阅读"
+  },
+  "pages": [
+    {
+      "no": "042",
+      "chapter": "第三章 · 两个身体",
+      "title": "一本书，两个身体",
+      "body": [
+        "纸身留在你手里。它会旧，会黄，会被翻出毛边。",
+        "云魂在云上。它不会旧，只会跟着这本书，一次次醒来。"
+      ],
+      "pull": "你读的是纸，懂的是云。",
+      "note": "扫页边码，这一页的上下文会在云端展开。"
+    },
+    {
+      "no": "043",
+      "chapter": "第三章 · 两个身体",
+      "title": "读在纸上",
+      "body": [
+        "纸没有刷新率。它只有翻页的声音。",
+        "注意力不必被通知切成碎片——一本书，一次只讲一件事。"
+      ],
+      "pull": "纸的诚实，在于它不偷听。",
+      "note": "书里不存任何读者数据。读完，它就忘了你。"
+    },
+    {
+      "no": "044",
+      "chapter": "第四章 · 一码入网",
+      "title": "懂在云端",
+      "body": [
+        "卡住的那一行，抬头扫一下页边码。",
+        "讲解、图谱、问答，只在你需要时出现；出现完，就退回页边。"
+      ],
+      "pull": "每次伴读的终点，都是回到这一页。",
+      "note": "云端只应答，不打扰。"
+    },
+    {
+      "no": "045",
+      "chapter": "第四章 · 一码入网",
+      "title": "一次链结",
+      "body": [
+        "第一次扫页边码，是认领。",
+        "从此这本书的云魂只应答你——直到你把它放回架上。"
+      ],
+      "pull": "书不记名，读者自记。",
+      "note": "读完归架，云魂解绑，等下一位读者。"
+    }
+  ],
+  "dataNotes": [
+    "Concept page copy only; not an excerpt from a published title.",
+    "The reader view is the e-book edition; the page anchor stays Page 042.",
+    "No reader data is written into the book (worldview D4)."
+  ]
+}

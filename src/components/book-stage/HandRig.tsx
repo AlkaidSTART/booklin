@@ -171,8 +171,14 @@ function assignMaterials(
   nail: THREE.Material,
 ) {
   for (const mesh of rig.meshes) {
-    const original = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-    mesh.material = original.map((material) => (/nail/i.test(material.name) ? nail : skin));
+    // A split glTF primitive mesh has exactly one material. Wrapping it in an
+    // array makes three.js look for geometry groups (there are none) and draw
+    // nothing, so keep the single-material form for single-material meshes.
+    if (Array.isArray(mesh.material)) {
+      mesh.material = mesh.material.map((material) => (/nail/i.test(material.name) ? nail : skin));
+    } else {
+      mesh.material = /nail/i.test(mesh.material.name) ? nail : skin;
+    }
     mesh.frustumCulled = false;
   }
 }
@@ -266,7 +272,7 @@ function BookHand({
     const drift = side > 0 ? 0 : 1.9;
 
     // --- Cover beat: rise, hold the closed board, then part outward as it opens.
-    const enter = smoothstep((phase - 2.14) / 0.16);
+    const enter = smoothstep((phase - 1.72) / 0.22);
     const spread = smoothstep((openness - 0.02) / (side > 0 ? 0.52 : 0.26));
     const release =
       side > 0

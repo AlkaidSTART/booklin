@@ -238,8 +238,9 @@ def build_hand_mesh(verts: list[Vector], faces: list[list[int]]) -> bpy.types.Ob
     material = bpy.data.materials.new("Hand_Skin")
     material.use_nodes = True
     principled = material.node_tree.nodes["Principled BSDF"]
-    principled.inputs["Base Color"].default_value = (0.026, 0.014, 0.010, 1.0)
-    principled.inputs["Roughness"].default_value = 0.78
+    # sRGB #8a5146, the mean of the sculpt's own hand_map.jpg, in linear space.
+    principled.inputs["Base Color"].default_value = (0.253, 0.082, 0.062, 1.0)
+    principled.inputs["Roughness"].default_value = 0.66
     if "Subsurface Weight" in principled.inputs:
         principled.inputs["Subsurface Weight"].default_value = 0.08
     hand.data.materials.append(material)
@@ -248,34 +249,43 @@ def build_hand_mesh(verts: list[Vector], faces: list[list[int]]) -> bpy.types.Ob
 
 
 def add_forearm(hand: bpy.types.Object) -> None:
-    """Loft a tapered forearm from the wrist ring so the cut never reaches frame."""
+    """Loft a forearm out of the wrist stump without a cuff.
+
+    The sculpt's wrist is a closed, rounded cap, so starting a sleeve at the
+    cap always shows a lip. Instead the sleeve begins *inside* the stump a
+    couple of centimetres up, matches the wrist's ellipse there, and grows
+    outward; the hand's own cap ends up hidden inside the tube and the visible
+    transition is a wrist crease rather than a step.
+    """
     verts = [v.co for v in hand.data.vertices]
     wrist_z = canonical_to_blender(WRIST_JOINT).z
-    wrist_ring = [v for v in verts if v.z < wrist_z + 14.0]
-    if not wrist_ring:
-        wrist_ring = [v for v in verts if v.z < wrist_z]
-    cx = sum(v.x for v in wrist_ring) / len(wrist_ring)
-    cy = sum(v.y for v in wrist_ring) / len(wrist_ring)
-    cz = sum(v.z for v in wrist_ring) / len(wrist_ring)
-    radius = sum(math.hypot(v.x - cx, v.y - cy) for v in wrist_ring) / len(wrist_ring)
+    seam_z = wrist_z + 24.0
+    ring = [v for v in verts if abs(v.z - seam_z) < 2.5]
+    if len(ring) < 12:
+        ring = [v for v in verts if wrist_z + 16.0 < v.z < wrist_z + 34.0]
+    cx = sum(v.x for v in ring) / len(ring)
+    cy = sum(v.y for v in ring) / len(ring)
+    rx = max(abs(v.x - cx) for v in ring)
+    ry = max(abs(v.y - cy) for v in ring)
 
-    rings = 10
-    segments = 24
-    length = FOREARM_LENGTH - 5.0
-    start_z = cz + 6.0
+    rings = 18
+    segments = 30
+    length = FOREARM_LENGTH + 24.0
     sleeve_verts: list[tuple[float, float, float]] = []
     sleeve_faces: list[list[int]] = []
 
-    for ring in range(rings + 1):
-        t = ring / rings
-        z = start_z - length * t
-        r = radius * (1.02 + 0.62 * t)
+    for ring_index in range(rings + 1):
+        t = ring_index / rings
+        z = seam_z - length * t
+        # 0.995 at the seam keeps the tube just inside the skin, then a gentle
+        # 1.38x flare at the elbow. Steeper than 1.5 reads as a tree trunk.
+        widen = 0.995 + 0.385 * (t**0.8)
         for seg in range(segments):
             angle = 2.0 * math.pi * seg / segments
             sleeve_verts.append(
                 (
-                    cx + math.cos(angle) * r,
-                    cy + math.sin(angle) * r * 0.86,
+                    cx + math.cos(angle) * rx * widen,
+                    cy + math.sin(angle) * ry * widen,
                     z,
                 )
             )
@@ -290,14 +300,14 @@ def add_forearm(hand: bpy.types.Object) -> None:
             sleeve_faces.append([a, b, c, d])
 
     cap = len(sleeve_verts)
-    sleeve_verts.append((cx, cy, start_z - length))
+    sleeve_verts.append((cx, cy, seam_z - length))
     last = rings * segments
     for seg in range(segments):
         nxt = (seg + 1) % segments
         sleeve_faces.append([last + seg, last + nxt, cap])
 
     top_cap = len(sleeve_verts)
-    sleeve_verts.append((cx, cy, start_z))
+    sleeve_verts.append((cx, cy, seam_z))
     for seg in range(segments):
         nxt = (seg + 1) % segments
         sleeve_faces.append([nxt, seg, top_cap])

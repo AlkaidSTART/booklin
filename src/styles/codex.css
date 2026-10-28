@@ -541,49 +541,26 @@ html.is-shelf-hot .book-stage__canvas {
 /* 翻页：绕书脊起挑 → 越过中线 → 受重力下落 → 压平并轻微回弹 */
 @keyframes page-loader-turn {
   0% {
-    transform: rotateY(0deg) translateZ(0);
-    box-shadow: 0 0 0 rgba(34, 22, 10, 0);
-    animation-timing-function: cubic-bezier(0.34, 0, 0.5, 1);
+    /* 一条连续的甩动曲线：起手带速、中段最快、触页前减速 */
+    transform: rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.42, 0.05, 0.34, 1);
   }
-  14% {
-    /* 纸角离开底面，整页被带起 */
-    transform: rotateY(-22deg) translateZ(4px);
-    box-shadow: 0 8px 16px rgba(34, 22, 10, 0.22);
-    animation-timing-function: cubic-bezier(0.36, 0, 0.54, 1);
+  86% {
+    transform: rotateY(-176deg);
+    animation-timing-function: cubic-bezier(0.3, 0, 0.4, 1);
   }
-  46% {
-    /* 立至书脊上方，纸面受光最弱 */
-    transform: rotateY(-89deg) translateZ(8px);
-    box-shadow: 0 10px 22px rgba(34, 22, 10, 0.3);
-    animation-timing-function: cubic-bezier(0.5, 0, 0.48, 1);
-  }
-  70% {
-    /* 越过分界线后加速下落 */
-    transform: rotateY(-136deg) translateZ(5px);
-    box-shadow: 0 8px 18px rgba(34, 22, 10, 0.26);
-    animation-timing-function: cubic-bezier(0.44, 0, 0.4, 1);
-  }
-  88% {
-    /* 触到左页，气流缓冲 */
-    transform: rotateY(-176deg) translateZ(1px);
-    box-shadow: 0 4px 10px rgba(34, 22, 10, 0.16);
-    animation-timing-function: cubic-bezier(0.2, 0.55, 0.3, 1);
-  }
-  93% {
+  92% {
     /* 轻微过冲 */
-    transform: rotateY(-181deg) translateZ(0);
-    box-shadow: 0 2px 6px rgba(34, 22, 10, 0.1);
-    animation-timing-function: cubic-bezier(0.3, 0, 0.5, 1);
+    transform: rotateY(-181.2deg);
+    animation-timing-function: cubic-bezier(0.25, 0.6, 0.4, 1);
   }
-  97% {
-    transform: rotateY(-180deg) translateZ(0);
-    box-shadow: 0 0 0 rgba(34, 22, 10, 0);
+  96% {
+    transform: rotateY(-180deg);
     opacity: 1;
   }
   100% {
     /* 落定后融进左侧纸叠，下一张从右侧重新开始 */
-    transform: rotateY(-180deg) translateZ(0);
-    box-shadow: 0 0 0 rgba(34, 22, 10, 0);
+    transform: rotateY(-180deg);
     opacity: 0;
   }
 }

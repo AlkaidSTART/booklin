@@ -25,18 +25,23 @@ float skinNoise(vec3 x) {
 
 /** Skin without subsurface scattering is the hardest material to fake in a
  * forward renderer. This leans on three cheap tricks that together survive the
- * site's low-key grade: a pore-scale normal perturbation, roughness breakup so
+ * site's low-key grade: pore-scale normal perturbation, roughness breakup so
  * the highlights are not mirror-smooth, and a warm fresnel bleed that stands in
- * for light scattering under the skin. */
+ * for light scattering under the skin.
+ *
+ * Base colour is sampled from the sculpt's own hand_map.jpg rather than
+ * invented: the painted skin ranges #73392e (shadow) to #9c5a58 (light) with a
+ * mean of #8a4f45. Keeping that hue is what stops the hand reading as stone
+ * under the warm studio key. */
 export function createSkinMaterial(): THREE.MeshPhysicalMaterial {
   const material = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#0d0806'),
-    roughness: 0.78,
+    color: new THREE.Color('#8a5146'),
+    roughness: 0.66,
     metalness: 0,
-    sheen: 0.07,
-    sheenColor: new THREE.Color('#5a3320'),
-    sheenRoughness: 0.75,
-    envMapIntensity: 0.12,
+    sheen: 0.12,
+    sheenColor: new THREE.Color('#c98a6a'),
+    sheenRoughness: 0.72,
+    envMapIntensity: 0.24,
   });
 
   material.customProgramCacheKey = () => 'bookln-skin';
@@ -47,6 +52,18 @@ export function createSkinMaterial(): THREE.MeshPhysicalMaterial {
 
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <common>', `#include <common>\nvarying vec3 vSkinPosition;\n${SKIN_NOISE}`)
+      .replace(
+        '#include <color_fragment>',
+        `#include <color_fragment>
+        {
+          // Mottling at three scales keeps the albedo from reading as a flat
+          // plastic tint; the amplitudes stay under 10% so the texture tone
+          // survives the grade.
+          float skinTone = skinNoise(vSkinPosition * 0.22) * 0.6
+                         + skinNoise(vSkinPosition * 0.9) * 0.4;
+          diffuseColor.rgb *= 0.9 + skinTone * 0.2;
+        }`,
+      )
       .replace(
         '#include <normal_fragment_begin>',
         `#include <normal_fragment_begin>
@@ -74,7 +91,7 @@ export function createSkinMaterial(): THREE.MeshPhysicalMaterial {
       .replace(
         '#include <opaque_fragment>',
         `float skinRim = pow(1.0 - clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0), 2.6);
-        outgoingLight += vec3(1.0, 0.55, 0.32) * skinRim * 0.16;
+        outgoingLight += vec3(1.0, 0.5, 0.3) * skinRim * 0.2;
         #include <opaque_fragment>`,
       );
   };

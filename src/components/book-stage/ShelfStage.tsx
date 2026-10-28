@@ -1983,8 +1983,11 @@ export function CloudSoulPanel({
 
   useFrame((_, delta) => {
     const phase = progressRef.current * SHELF_PHASE_COUNT;
-    const inAmount = Math.min(1, Math.max(0, (phase - 1.82) / 0.12));
-    const outAmount = 1 - Math.min(1, Math.max(0, (phase - 2.2) / 0.14));
+    // The card has to clear the frame before the book is carried in: at the
+    // carry framing its left edge would otherwise print over the front board
+    // as a dark rectangle while the panel fades.
+    const inAmount = Math.min(1, Math.max(0, (phase - 1.78) / 0.1));
+    const outAmount = 1 - Math.min(1, Math.max(0, (phase - 2.04) / 0.12));
     const vis = inAmount * outAmount;
     const mobile = size.width < 760;
 

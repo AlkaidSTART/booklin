@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Layout from '../layouts/Layout.astro';
 import BookStage from '../components/book-stage/BookStage';
+import ReaderFigure from '../components/reader/ReaderFigure.astro';
 import '../styles/codex.css';
 import '../styles/scroll-story.css';
 
@@ -402,7 +403,6 @@ const pageDescription =
                 <div class="sx-phone__screen">
                   <div class="sx-reader__top">
                     <span>9:41</span>
-                    <span class="sx-reader__brand">{reader.book.edition}</span>
                     <span aria-hidden="true">●</span>
                   </div>
 
@@ -413,18 +413,26 @@ const pageDescription =
                     >
                       {reader.pages.map((page: Record<string, any>) => (
                         <article class="sx-reader__page">
-                          <p class="sx-reader__chapter">{page.chapter}</p>
-                          <h3 class="sx-reader__title">{page.title}</h3>
-                          <div class="sx-reader__body">
-                            {page.body.map((paragraph: string) => (
-                              <p>{paragraph}</p>
-                            ))}
+                          <div class="sx-reader__page-top">
+                            <p class="sx-reader__chapter">{page.chapter}</p>
+                            <h3 class="sx-reader__title">{page.title}</h3>
+                            <div class="sx-reader__body">
+                              {page.body.map((paragraph: string) => (
+                                <p>{paragraph}</p>
+                              ))}
+                            </div>
+                            <figure class="sx-reader__figure">
+                              <ReaderFigure type={page.figure} />
+                              <figcaption>{page.figureCaption}</figcaption>
+                            </figure>
                           </div>
                           <p class="sx-reader__pull">{page.pull}</p>
-                          <p class="sx-reader__note">{page.note}</p>
-                          <div class="sx-reader__folio">
-                            <span>{reader.book.title}</span>
-                            <span>{page.no}</span>
+                          <div class="sx-reader__page-foot">
+                            <p class="sx-reader__note">{page.note}</p>
+                            <div class="sx-reader__folio">
+                              <span>{reader.book.title}</span>
+                              <span>{page.no}</span>
+                            </div>
                           </div>
                         </article>
                       ))}

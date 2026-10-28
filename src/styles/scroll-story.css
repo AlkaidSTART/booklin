@@ -1662,16 +1662,12 @@ html:not(.js) .sx-ribbon__step {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 20px 16px 10px;
+  padding: 24px 16px 8px;
   color: rgba(232, 220, 196, 0.44);
   font-size: 7px;
   letter-spacing: 0.14em;
   line-height: 1;
   text-transform: uppercase;
-}
-
-.sx-reader__brand {
-  color: var(--gold);
 }
 
 .sx-reader__viewport {
@@ -1688,10 +1684,10 @@ html:not(.js) .sx-ribbon__step {
   z-index: 2;
   background: linear-gradient(
     to bottom,
-    rgba(10, 9, 7, 0.88) 0%,
-    transparent 7%,
-    transparent 93%,
-    rgba(10, 9, 7, 0.88) 100%
+    rgba(10, 9, 7, 0.4) 0%,
+    transparent 2.5%,
+    transparent 97.5%,
+    rgba(10, 9, 7, 0.4) 100%
   );
   pointer-events: none;
 }
@@ -1708,8 +1704,20 @@ html:not(.js) .sx-ribbon__step {
   display: flex;
   flex: 0 0 100%;
   flex-direction: column;
+  justify-content: space-between;
   min-height: 0;
-  padding: 10px 18px 14px;
+  padding: 24px 18px 16px;
+}
+
+.sx-reader__page-top {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sx-reader__page-foot {
+  display: flex;
+  flex-direction: column;
 }
 
 .sx-reader__chapter {
@@ -1741,8 +1749,26 @@ html:not(.js) .sx-ribbon__step {
   line-height: 1.9;
 }
 
+.sx-reader__figure {
+  margin: 16px 0 0;
+}
+
+.sx-reader__figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sx-reader__figure figcaption {
+  margin-top: 6px;
+  color: rgba(232, 220, 196, 0.34);
+  font-size: 6.5px;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
 .sx-reader__pull {
-  margin-top: auto;
   padding-top: 10px;
   border-top: 1px solid rgba(200, 169, 109, 0.24);
   color: var(--gold);
@@ -1752,7 +1778,6 @@ html:not(.js) .sx-ribbon__step {
 }
 
 .sx-reader__note {
-  margin-top: 7px;
   color: rgba(232, 220, 196, 0.34);
   font-size: 7px;
   letter-spacing: 0.06em;

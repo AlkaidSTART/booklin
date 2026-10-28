@@ -1,0 +1,98 @@
+---
+interface Props {
+  type: string;
+}
+
+const { type } = Astro.props;
+---
+
+{
+  type === 'bodies' && (
+    <svg viewBox="0 0 240 132" fill="none" aria-hidden="true">
+      <rect x="30" y="14" width="66" height="86" rx="1.5" stroke="rgba(232,220,196,0.55)" />
+      <g stroke="rgba(232,220,196,0.24)">
+        <path d="M44 32h38M44 44h38M44 56h30M44 68h34M44 80h24" />
+      </g>
+      <rect
+        x="144"
+        y="14"
+        width="66"
+        height="86"
+        rx="1.5"
+        stroke="rgba(200,169,109,0.7)"
+        stroke-dasharray="3 4"
+      />
+      <circle cx="177" cy="57" r="16" stroke="rgba(200,169,109,0.75)" />
+      <circle cx="177" cy="57" r="4" fill="rgba(200,169,109,0.95)" />
+      <path d="M96 57h26" stroke="rgba(232,220,196,0.35)" stroke-dasharray="2 4" />
+      <path d="M122 53l6 4-6 4" stroke="rgba(232,220,196,0.55)" />
+      <text x="63" y="124" text-anchor="middle" fill="rgba(232,220,196,0.4)" font-size="6" letter-spacing="1.2" font-family="Noto Sans SC, sans-serif">PAPER BODY</text>
+      <text x="177" y="124" text-anchor="middle" fill="rgba(200,169,109,0.82)" font-size="6" letter-spacing="1.2" font-family="Noto Sans SC, sans-serif">CLOUD SOUL</text>
+    </svg>
+  )
+}
+
+{
+  type === 'lines' && (
+    <svg viewBox="0 0 240 132" fill="none" aria-hidden="true">
+      <g stroke="rgba(232,220,196,0.22)">
+        <path d="M30 22h180M30 36h180M30 50h156M30 78h180M30 92h168M30 106h180" />
+      </g>
+      <path d="M30 64h126" stroke="rgba(200,169,109,0.9)" stroke-width="1.3" />
+      <circle cx="164" cy="64" r="3" fill="rgba(200,169,109,0.95)" />
+      <path d="M164 64h26" stroke="rgba(200,169,109,0.35)" stroke-dasharray="2 3" />
+      <text x="30" y="124" fill="rgba(232,220,196,0.4)" font-size="6" letter-spacing="1.2" font-family="Noto Sans SC, sans-serif">ONE LINE AT A TIME</text>
+    </svg>
+  )
+}
+
+{
+  type === 'graph' && (
+    <svg viewBox="0 0 240 132" fill="none" aria-hidden="true">
+      <g stroke="rgba(200,169,109,0.3)" stroke-width="0.8">
+        <path d="M120 66L66 36M120 66L174 36M120 66L180 88M120 66L120 112M120 66L60 88M66 36L120 14M174 36L120 14M60 88L180 88" />
+      </g>
+      <g fill="rgba(200,169,109,0.9)">
+        <circle cx="120" cy="14" r="3.5" />
+        <circle cx="66" cy="36" r="3" />
+        <circle cx="174" cy="36" r="3" />
+        <circle cx="60" cy="88" r="3" />
+        <circle cx="180" cy="88" r="3" />
+        <circle cx="120" cy="112" r="3" />
+      </g>
+      <circle cx="120" cy="66" r="5" fill="rgba(232,220,196,0.95)" />
+      <circle cx="120" cy="66" r="15" stroke="rgba(232,220,196,0.3)" />
+      <text x="120" y="128" text-anchor="middle" fill="rgba(232,220,196,0.4)" font-size="6" letter-spacing="1.2" font-family="Noto Sans SC, sans-serif">9 NODES · ONE PAGE</text>
+    </svg>
+  )
+}
+
+{
+  type === 'link' && (
+    <svg viewBox="0 0 240 132" fill="none" aria-hidden="true">
+      <g fill="rgba(232,220,196,0.5)">
+        <rect x="30" y="34" width="6" height="6" />
+        <rect x="42" y="34" width="6" height="6" />
+        <rect x="54" y="34" width="6" height="6" />
+        <rect x="30" y="46" width="6" height="6" />
+        <rect x="54" y="46" width="6" height="6" />
+        <rect x="36" y="58" width="6" height="6" />
+        <rect x="48" y="58" width="6" height="6" />
+        <rect x="60" y="58" width="6" height="6" />
+      </g>
+      <g fill="rgba(200,169,109,0.8)">
+        <rect x="164" y="34" width="6" height="6" />
+        <rect x="176" y="34" width="6" height="6" />
+        <rect x="188" y="34" width="6" height="6" />
+        <rect x="164" y="46" width="6" height="6" />
+        <rect x="188" y="46" width="6" height="6" />
+        <rect x="170" y="58" width="6" height="6" />
+        <rect x="182" y="58" width="6" height="6" />
+        <rect x="194" y="58" width="6" height="6" />
+      </g>
+      <path d="M84 52 C110 22 128 86 156 52" stroke="rgba(200,169,109,0.7)" />
+      <circle cx="120" cy="52" r="3" fill="rgba(232,220,196,0.9)" />
+      <text x="120" y="102" text-anchor="middle" fill="rgba(232,220,196,0.4)" font-size="6" letter-spacing="1.2" font-family="Noto Sans SC, sans-serif">ONE SCAN · ONE CLAIM</text>
+    </svg>
+  )
+}

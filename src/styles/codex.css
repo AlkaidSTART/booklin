@@ -1580,7 +1580,7 @@ main,
   text-transform: none;
 }
 
-.chain-group__row th {
+.chain-table .chain-group__row th {
   padding-top: 15px;
   padding-left: 0;
   border-bottom: 0;
@@ -1592,11 +1592,11 @@ main,
   text-transform: uppercase;
 }
 
-.chain-group:first-of-type .chain-group__row th {
+.chain-table .chain-group:first-of-type .chain-group__row th {
   padding-top: 3px;
 }
 
-.chain-group__row th small {
+.chain-table .chain-group__row th small {
   margin-left: 6px;
   color: var(--muted);
   font-family: var(--font-serif);

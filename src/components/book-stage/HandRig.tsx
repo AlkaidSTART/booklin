@@ -3,7 +3,7 @@ import type { MutableRefObject } from 'react';
 import { useGLTF } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { createSkinMaterial } from './skinMaterial';
+import { createNailMaterial, createSkinMaterial } from './skinMaterial';
 
 /** Rigged hands built from public/hand/hand.OBJ by scripts/build-hand.py.
  *
@@ -15,18 +15,20 @@ import { createSkinMaterial } from './skinMaterial';
  * mirrored across X, so it shares the same curl direction; only the thumb's
  * small adduction flips sign.
  *
- * The source sculpt is an open, relaxed hand, so the holds are not baked: the
- * mounts below place the palm against the object and the bones supply the
- * thumb wrap plus a breathing flex.
+ * The GLB carries two primitives (skin + nail plates). GLTFLoader expands them
+ * into two skinned meshes sharing one skeleton, so every material/visibility
+ * write below loops the whole rig, not just the skin mesh.
  */
 const HAND_RIGHT_URL = '/models/hand.glb';
 const HAND_LEFT_URL = '/models/hand-left.glb';
 
 const CURL_AXIS = new THREE.Vector3(1, 0, 0);
+const BEND_AXIS = new THREE.Vector3(0, 0, 1);
+const UP_AXIS = new THREE.Vector3(0, 1, 0);
+const VIEW_AXIS = new THREE.Vector3(0, 0, 1);
 const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 
-/** 01 Carry: two hands on the camera-facing cover, palms at the sides, thumbs
- * meeting over the bottom edge as if about to open the board.
+/** 01 Carry: two hands on the camera-facing cover, palms at the sides.
  *
  * The 0.75 scale is what lets both hands share a 148 mm cover: at full size
  * their palms alone exceed the book's width. The +11 mm Z offset is the
@@ -38,22 +40,37 @@ const BOOK_HAND_Y = -12;
 const BOOK_HAND_Z = 11;
 const BOOK_HAND_OFFSET = 72;
 const BOOK_ROLL = 0;
-/** Book-local spine line. Kept for the mount maths; the hands no longer ride
- * the board — they sit on the two edges and part outward as it opens. */
+/** Book-local spine line, used by the flat-page mount maths. */
 const BOOK_SPINE_X = -74;
 const BOOK_CURL: [number, number, number] = [0.03, 0.04, 0.02];
 const BOOK_THUMB_RIGHT: [number, number, number] = [0.24, 0, -0.08];
 const BOOK_THUMB_LEFT: [number, number, number] = [0.24, 0, 0.08];
+/** Flat spread, measured off the open mesh: page tops at local z ≈ 0, left half
+ * x −222…−77, right half x −74…74. The palms land ~5 mm above the pages. */
+const PAGE_HAND_LEFT_X = -148;
+const PAGE_HAND_RIGHT_X = 0;
+const PAGE_HAND_Y = 100;
+const PAGE_HAND_Z = -6;
 
-/** 00 Scan: the hand sits behind the phone, palm on the back cover, four
- * fingers up the back and the thumb around the front-left bezel. The 8 mm
- * shift keeps the thumb's whole wrap outboard of the 46 mm half-width, so it
- * never pierces the body. */
-const PHONE_ANCHOR: [number, number, number] = [8, 20, 9.5];
-const PHONE_CURL: [number, number, number] = [0.02, 0.03, 0.02];
-/** Tip lands at (x 50, z 10) mm; the wrap crosses the phone's mid-plane at
- * x 48, clear of the body. */
-const PHONE_THUMB: [number, number, number] = [-0.14, -0.48, -0.27];
+/** 00 Scan: a one-handed grip. The palm sits on the back cover, the four
+ * fingers wrap the left edge onto the glass and the thumb presses the right
+ * bezel. The knuckle row is rolled upright about the view axis so the fingers
+ * stack along the edge instead of splaying across the back.
+ *
+ * The arm must not follow that roll (it would come out sideways), so the
+ * forearm is pitched forward at the elbow and the wrist counter-rotated by the
+ * same amount: the grip orientation is preserved while the forearm hangs below
+ * the phone. Both bends sit behind the body, out of the shot.
+ *
+ * The X anchor looks wild because the elbow joint is 250 mm below the wrist and
+ * the mount compensates for the swing it introduces. Retune PHONE_ELBOW only
+ * after re-measuring PHONE_ANCHOR against the phone, or the hand leaves frame. */
+const PHONE_ANCHOR: [number, number, number] = [-243.7, -25.3, 14.3];
+const PHONE_ROLL = 0.61;
+const PHONE_ELBOW = 0.96;
+const PHONE_WRIST = -0.96;
+const PHONE_CURL: [number, number, number] = [-0.22, -0.27, -0.18];
+const PHONE_THUMB: [number, number, number] = [0, 0, 0.2];
 const PHONE_THUMB_TIP = 0.15;
 
 /** How far the arms wait below the frame before they rise in. */
@@ -66,15 +83,23 @@ const tmpEuler = new THREE.Euler();
 type Phalanx = { bone: THREE.Bone; rest: THREE.Quaternion; stage: number };
 
 type RiggedHand = {
+  meshes: THREE.SkinnedMesh[];
   mesh: THREE.SkinnedMesh;
   phalanges: Phalanx[];
   thumb: Phalanx;
   thumbTip: Phalanx;
+  elbow: Phalanx;
+  wrist: Phalanx;
 };
 
 function smoothstep(value: number) {
   const x = Math.min(1, Math.max(0, value));
   return x * x * (3 - 2 * x);
+}
+
+function materialName(mesh: THREE.SkinnedMesh): string {
+  const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+  return materials.map((material) => material.name).join(' ');
 }
 
 /** Clone a skinned node and rebind the copy to its own bones; a plain
@@ -106,8 +131,8 @@ function buildRig(root: THREE.Object3D): RiggedHand {
     if ((object as THREE.SkinnedMesh).isSkinnedMesh) meshes.push(object as THREE.SkinnedMesh);
     if ((object as THREE.Bone).isBone) bones.set(object.name, object as THREE.Bone);
   });
-  const mesh = meshes[0];
-  if (!mesh) throw new Error('hand GLB is missing its skinned mesh');
+  if (meshes.length === 0) throw new Error('hand GLB is missing its skinned mesh');
+  const mesh = meshes.find((candidate) => !/nail/i.test(materialName(candidate))) ?? meshes[0];
 
   const bone = (name: string) => {
     const found = bones.get(name);
@@ -128,11 +153,28 @@ function buildRig(root: THREE.Object3D): RiggedHand {
   }
 
   return {
+    meshes,
     mesh,
     phalanges,
     thumb: phalanx('thumb_01', 0),
     thumbTip: phalanx('thumb_02', 0),
+    elbow: phalanx('forearm', 0),
+    wrist: phalanx('wrist', 0),
   };
+}
+
+/** Swap the GLB's own materials for the runtime skin/nail pair, matching by
+ * material name so the two primitives of the split mesh each get theirs. */
+function assignMaterials(
+  rig: RiggedHand,
+  skin: THREE.Material,
+  nail: THREE.Material,
+) {
+  for (const mesh of rig.meshes) {
+    const original = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    mesh.material = original.map((material) => (/nail/i.test(material.name) ? nail : skin));
+    mesh.frustumCulled = false;
+  }
 }
 
 function useRiggedHand(url: string) {
@@ -164,6 +206,16 @@ function applyPose(
   rig.thumbTip.bone.quaternion.copy(rig.thumbTip.rest).multiply(tmpCurl);
 }
 
+/** Phone grip only: swing the forearm below the phone and cancel the swing at
+ * the wrist, so the hand keeps the mount's roll. Set once — the pose is static
+ * and both joints are hidden behind the phone. */
+function applyArm(rig: RiggedHand) {
+  tmpCurl.setFromAxisAngle(BEND_AXIS, PHONE_ELBOW);
+  rig.elbow.bone.quaternion.copy(rig.elbow.rest).multiply(tmpCurl);
+  tmpCurl.setFromAxisAngle(BEND_AXIS, PHONE_WRIST);
+  rig.wrist.bone.quaternion.copy(rig.wrist.rest).multiply(tmpCurl);
+}
+
 function BookHand({
   progressRef,
   opennessRef,
@@ -192,53 +244,71 @@ function BookHand({
     material.transparent = true;
     return material;
   }, []);
+  const nail = useMemo(() => {
+    const material = createNailMaterial();
+    material.transparent = true;
+    return material;
+  }, []);
 
   useEffect(() => {
-    rig.mesh.material = skin;
-    rig.mesh.frustumCulled = false;
+    assignMaterials(rig, skin, nail);
     return () => {
       skin.dispose();
+      nail.dispose();
     };
-  }, [rig, skin]);
+  }, [rig, skin, nail]);
 
   useFrame(() => {
     const phase = progressRef.current * 8;
     const openness = Math.min(1, Math.max(0, opennessRef.current));
-    // One hand on each edge, parting outward as the book opens. They do not
-    // stay glued to the board: the left (spine side) lets go before the cover
-    // sweeps past it, the right a little later, and the book finishes opening
-    // between them.
+    const amount = reducedMotion ? 0 : 1;
+    const t = performance.now() * 0.001;
+    const drift = side > 0 ? 0 : 1.9;
+
+    // --- Cover beat: rise, hold the closed board, then part outward as it opens.
+    const enter = smoothstep((phase - 2.14) / 0.16);
     const spread = smoothstep((openness - 0.02) / (side > 0 ? 0.52 : 0.26));
     const release =
       side > 0
         ? 1 - smoothstep((openness - 0.35) / 0.2)
         : 1 - smoothstep((openness - 0.3) / 0.15);
+    const coverPresence =
+      enter * release * (1 - smoothstep((phase - 2.82) / 0.12));
 
-    const enter = smoothstep((phase - 2.14) / 0.16);
-    const leave = 1 - smoothstep((phase - 3.05) / 0.15);
-    const weight = enter * leave * release;
-    rig.mesh.visible = weight > 0.002;
+    // --- Flat beat: once the book is spread, the hands settle onto the two
+    // pages with the fingers pointing at the spine and the forearms leaving
+    // the book's sides. They move while invisible, then fade in on the pages.
+    const settle = smoothstep((phase - 2.86) / 0.18);
+    const pagePresence =
+      smoothstep((phase - 3.0) / 0.14) * (1 - smoothstep((phase - 3.72) / 0.2));
+
+    const weight = Math.max(coverPresence, pagePresence);
+    for (const mesh of rig.meshes) mesh.visible = weight > 0.002;
     skin.opacity = weight;
+    nail.opacity = weight;
 
     const anchor = anchorRef.current;
     if (!anchor) return;
 
-    anchor.position.y = BOOK_HAND_Y - ENTER_DISTANCE * (1 - enter);
-    anchor.position.x = BOOK_HAND_OFFSET * side + side * 30 * spread - BOOK_SPINE_X;
-    anchor.position.z = BOOK_HAND_Z + 6 * spread;
+    const coverX = BOOK_HAND_OFFSET * side + side * 30 * spread - BOOK_SPINE_X;
+    const flatX = (side > 0 ? PAGE_HAND_RIGHT_X : PAGE_HAND_LEFT_X) - BOOK_SPINE_X;
+    const coverY = BOOK_HAND_Y - ENTER_DISTANCE * (1 - enter);
+    const coverZ = BOOK_HAND_Z + 6 * spread;
 
-    const t = performance.now() * 0.001;
-    const amount = reducedMotion ? 0 : 1;
+    anchor.position.x = coverX + (flatX - coverX) * settle;
+    anchor.position.y = coverY + (PAGE_HAND_Y - coverY) * settle;
+    anchor.position.z = coverZ + (PAGE_HAND_Z - coverZ) * settle;
+
     const flutter = Math.sin(t * 0.62 + (side > 0 ? 0 : 1.7)) * 0.012 * amount * weight;
     applyPose(rig, BOOK_CURL, thumb, 0, weight, flutter);
 
-    // A hand that holds perfectly still reads as a prop; offset the two hands
-    // so they never breathe in lockstep.
-    const drift = side > 0 ? 0 : 1.9;
     const grip = gripRef.current;
     if (grip) {
       grip.rotation.x = BOOK_ROLL + Math.sin(t * 0.19 + drift) * 0.01 * amount;
-      grip.rotation.z = -side * 0.32 * spread + Math.sin(t * 0.28 + drift) * 0.008 * amount;
+      grip.rotation.z =
+        (1 - settle) * -side * 0.32 * spread +
+        (settle * side * Math.PI) / 2 +
+        Math.sin(t * 0.28 + drift) * 0.008 * amount;
       grip.position.y = Math.sin(t * 0.33 + drift) * 0.5 * amount;
     }
   });
@@ -320,6 +390,14 @@ export function PhoneHandRig({
 }) {
   const { root, rig } = useRiggedHand(HAND_RIGHT_URL);
   const handRef = useRef<THREE.Group>(null);
+  const wobbleRef = useRef<THREE.Group>(null);
+
+  // Face the palm at the back cover, then roll the knuckle row upright about
+  // the view axis. Premultiplying puts the roll outside the half-turn.
+  const mount = useMemo(() => {
+    const quaternion = new THREE.Quaternion().setFromAxisAngle(UP_AXIS, Math.PI);
+    return quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(VIEW_AXIS, PHONE_ROLL));
+  }, []);
 
   const skin = useMemo(() => {
     const material = createSkinMaterial();
@@ -327,39 +405,52 @@ export function PhoneHandRig({
     material.opacity = 0;
     return material;
   }, []);
+  const nail = useMemo(() => {
+    const material = createNailMaterial();
+    material.transparent = true;
+    material.opacity = 0;
+    return material;
+  }, []);
 
   useEffect(() => {
-    rig.mesh.material = skin;
-    rig.mesh.frustumCulled = false;
+    assignMaterials(rig, skin, nail);
+    applyArm(rig);
     return () => {
       skin.dispose();
+      nail.dispose();
     };
-  }, [rig, skin]);
+  }, [rig, skin, nail]);
 
   useFrame(() => {
     const opacity = Math.min(1, Math.max(0, opacityRef.current));
     skin.opacity = opacity;
+    nail.opacity = opacity;
     // Invisible but still depth-writing would punch a hole through the phone.
-    rig.mesh.visible = opacity > 0.002;
+    for (const mesh of rig.meshes) mesh.visible = opacity > 0.002;
 
     const hand = handRef.current;
     if (!hand) return;
 
-    // The arm settles against the grip rather than riding the phone rigidly;
-    // amplitudes stay under a degree so the thumb never leaves the bezel.
+    // The grip settles against the phone rather than riding it rigidly;
+    // amplitudes stay under a degree so the fingers never leave the edge.
     const t = performance.now() * 0.001;
     const amount = reducedMotion ? 0 : opacity;
     const flutter = Math.sin(t * 0.5 + 1.1) * 0.01 * amount;
     applyPose(rig, PHONE_CURL, PHONE_THUMB, PHONE_THUMB_TIP, opacity, flutter);
 
-    hand.rotation.x = Math.sin(t * 0.23 + 0.7) * 0.006 * amount;
-    hand.rotation.z = Math.sin(t * 0.17 + 2.1) * 0.008 * amount;
-    hand.position.z = Math.sin(t * 0.29) * 1.2 * amount;
+    const wobble = wobbleRef.current;
+    if (wobble) {
+      wobble.rotation.x = Math.sin(t * 0.23 + 0.7) * 0.006 * amount;
+      wobble.rotation.z = Math.sin(t * 0.17 + 2.1) * 0.008 * amount;
+    }
+    hand.position.z = PHONE_ANCHOR[2] + Math.sin(t * 0.29) * 1.2 * amount;
   });
 
   return (
-    <group ref={handRef} position={PHONE_ANCHOR} rotation={[0, Math.PI, 0]}>
-      <primitive object={root} dispose={null} />
+    <group ref={handRef} position={PHONE_ANCHOR} quaternion={mount}>
+      <group ref={wobbleRef}>
+        <primitive object={root} dispose={null} />
+      </group>
     </group>
   );
 }

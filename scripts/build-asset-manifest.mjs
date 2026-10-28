@@ -117,7 +117,7 @@ const groups = [
       'scripts/build-hand.py',
     ],
     notes:
-      'Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 2,832 triangles, 1,418 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh). Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the holds are posed at runtime by bone rotations instead of baked into the mesh; the 01 Carry beat shows both hands on the cover at 0.75 scale. Rebuild with `blender -b --python scripts/build-hand.py`.',
+      'Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 4,632 triangles, 2,463 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh) and five curved nail plates on the distal phalanges in their own Hand_Nail material slot. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the holds are posed at runtime by bone rotations instead of baked into the mesh; the 01 Carry beat shows both hands on the cover at 0.75 scale. Rebuild with `blender -b --python scripts/build-hand.py`.',
   },
   {
     id: 'A10',

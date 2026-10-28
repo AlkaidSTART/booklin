@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { createWheelScroll } from '../../lib/scroll/wheelScroll';
 import { BookScene } from './BookScene';
 import type { StageInteractionState } from './BookScene';
+import BookLoader from './BookLoader';
 
 type SceneErrorBoundaryProps = {
   children: ReactNode;
@@ -171,20 +172,16 @@ export default function BookStage() {
 
       progressRef.current = Math.min(1, phase / Math.max(1, starts.length - 1));
 
-      // Hand-off plate: black out once the hero has left, hold while the book
-      // docks and the shelf grows, then lift on the settled shelf so chapter
-      // 00 opens with the book already in place. Kept in phase units so it
-      // stays locked to the 3D beat at any speed.
+      // Hand-off: a light falloff comes up as the book leaves the desk, the
+      // shelf label rides with it, then both clear once the book is seated and
+      // chapter 00 owns the frame. Nothing is ever fully curtained.
       const tint = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.44) / 0.1)),
-        Math.min(1, Math.max(0, (0.88 - phase) / 0.1)),
+        Math.min(1, Math.max(0, (phase - 0.34) / 0.12)),
+        Math.min(1, Math.max(0, (0.94 - phase) / 0.1)),
       );
-      // The line only exists on a fully black stage and leaves before the
-      // plate starts to lift, so it never ghosts across the book or the
-      // revealed shelf.
       const type = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.54) / 0.04)),
-        Math.min(1, Math.max(0, (0.78 - phase) / 0.04)),
+        Math.min(1, Math.max(0, (phase - 0.44) / 0.06)),
+        Math.min(1, Math.max(0, (0.86 - phase) / 0.06)),
       );
       document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
       document.documentElement.style.setProperty('--handoff-type', type.toFixed(3));
@@ -262,65 +259,58 @@ export default function BookStage() {
     setReady(false);
   }, []);
 
+  const loaderDone = mounted && (ready || !webgl || failed || reduced);
+
   return (
-    <div className={`book-stage${ready ? ' is-ready' : ''}`}>
-      <StageFallback
-        canEnable={reduced && webgl}
-        onEnable={() => setForce3D(true)}
-        reduced={reduced}
-        noWebgl={mounted && !webgl}
-      />
+    <>
+      <BookLoader progress={progress} done={loaderDone} />
 
-      {showCanvas && (
-        <div className="book-stage__canvas" aria-hidden="true">
-          <SceneErrorBoundary onError={handleError}>
-            <Canvas
-              dpr={[1, 1.75]}
-              camera={{ fov: 32, near: 0.05, far: 20, position: [-0.18, 1.04, 0.69] }}
-              gl={{
-                antialias: true,
-                alpha: false,
-                powerPreference: 'high-performance',
-                stencil: false,
-              }}
-              shadows={false}
-              frameloop="always"
-              onCreated={({ gl }) => {
-                gl.toneMapping = THREE.ACESFilmicToneMapping;
-                // Bump exposure a touch — richer blacks without blowing highlights
-                gl.toneMappingExposure = 1.1;
-              }}
-            >
-              <AdaptiveDpr pixelated={false} />
-              <Suspense fallback={null}>
-                <BookScene
-                  progressRef={progressRef}
-                  pointerRef={pointerRef}
-                  interactionRef={interactionRef}
-                  reducedMotion={reduced}
-                  onReady={handleReady}
-                />
-              </Suspense>
-            </Canvas>
-          </SceneErrorBoundary>
-        </div>
-      )}
+      <div className={`book-stage${ready ? ' is-ready' : ''}`}>
+        <StageFallback
+          canEnable={reduced && webgl}
+          onEnable={() => setForce3D(true)}
+          reduced={reduced}
+          noWebgl={mounted && !webgl}
+        />
 
-      {showCanvas && (
-        <div className={`stage-loader${ready ? ' is-hidden' : ''}`} role="status" aria-live="polite">
-          <img src="/brand/bookln-mark-transparent.svg" alt="" width="28" height="28" />
-          <div className="stage-loader__copy">
-            <span>Unfolding the book</span>
-            <span className="stage-loader__bar">
-              <i style={{ transform: `scaleX(${Math.max(0.04, progress / 100)})` }} />
-            </span>
+        {showCanvas && (
+          <div className="book-stage__canvas" aria-hidden="true">
+            <SceneErrorBoundary onError={handleError}>
+              <Canvas
+                dpr={[1, 1.75]}
+                camera={{ fov: 32, near: 0.05, far: 20, position: [-0.18, 1.04, 0.69] }}
+                gl={{
+                  antialias: true,
+                  alpha: false,
+                  powerPreference: 'high-performance',
+                  stencil: false,
+                }}
+                shadows={false}
+                frameloop="always"
+                onCreated={({ gl }) => {
+                  gl.toneMapping = THREE.ACESFilmicToneMapping;
+                  // Bump exposure a touch — richer blacks without blowing highlights
+                  gl.toneMappingExposure = 1.1;
+                }}
+              >
+                <AdaptiveDpr pixelated={false} />
+                <Suspense fallback={null}>
+                  <BookScene
+                    progressRef={progressRef}
+                    pointerRef={pointerRef}
+                    interactionRef={interactionRef}
+                    reducedMotion={reduced}
+                    onReady={handleReady}
+                  />
+                </Suspense>
+              </Canvas>
+            </SceneErrorBoundary>
           </div>
-          <span className="stage-loader__value">{Math.round(progress)}%</span>
-        </div>
-      )}
+        )}
 
-      <div className="stage-scrim" aria-hidden="true" />
-      <div className="stage-grain" aria-hidden="true" />
-    </div>
+        <div className="stage-scrim" aria-hidden="true" />
+        <div className="stage-grain" aria-hidden="true" />
+      </div>
+    </>
   );
 }

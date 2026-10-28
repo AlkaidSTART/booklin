@@ -6,6 +6,26 @@ import * as THREE from 'three';
 
 export const SHELF_PHASE_COUNT = 8;
 
+function clamp01(value: number) {
+  return Math.min(1, Math.max(0, value));
+}
+
+function smoothstep(value: number) {
+  const x = clamp01(value);
+  return x * x * (3 - 2 * x);
+}
+
+export function shelfPresence(phase: number) {
+  const shelfIn = smoothstep((phase - 0.44) / 0.24);
+  const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
+  const shelfReturn = smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
+  return Math.max(shelfIn * shelfOut, shelfReturn);
+}
+
+export function shelfSeatPulse(phase: number) {
+  return smoothstep(1 - Math.abs(phase - 0.82) / 0.11);
+}
+
 type Vec3 = [number, number, number];
 
 export type ShelfPick = {
@@ -180,7 +200,13 @@ function buildShelfBooks(gapX: number): BookSpec[] {
   return specs;
 }
 
-export function ShelfBooks({ pick }: { pick: ShelfPick }) {
+export function ShelfBooks({
+  pick,
+  progressRef,
+}: {
+  pick: ShelfPick;
+  progressRef: MutableRefObject<number>;
+}) {
   const specs = useMemo(() => buildShelfBooks(pick.x), [pick.x]);
   const pageTexture = useMemo(makePageTexture, []);
 
@@ -239,6 +265,16 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
       }),
     [],
   );
+
+  const goldBase = useMemo(() => new THREE.Color(GOLD), []);
+
+  useFrame(() => {
+    const level = shelfPresence(progressRef.current * SHELF_PHASE_COUNT);
+    pageMaterial.color.setScalar(level);
+    clothMaterial.color.setScalar(level);
+    goldMaterial.color.copy(goldBase).multiplyScalar(level);
+    labelMaterial.color.setScalar(level);
+  });
 
   useEffect(() => {
     return () => {
@@ -382,9 +418,18 @@ export function ShelfBooks({ pick }: { pick: ShelfPick }) {
    Shelf selection halo + integrated light strips
    ------------------------------------------------------------------ */
 
-export function ShelfSelection({ pick }: { pick: ShelfPick }) {
+export function ShelfSelection({
+  pick,
+  progressRef,
+}: {
+  pick: ShelfPick;
+  progressRef: MutableRefObject<number>;
+}) {
+  const groupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.MeshBasicMaterial>(null);
   const ringRef = useRef<THREE.Mesh>(null);
+  const lightRef = useRef<THREE.PointLight>(null);
+  const basesRef = useRef<Array<{ material: THREE.MeshBasicMaterial; base: number }>>([]);
 
   const glowTexture = useMemo(() => {
     const canvas = document.createElement('canvas');
@@ -403,21 +448,57 @@ export function ShelfSelection({ pick }: { pick: ShelfPick }) {
     return texture;
   }, []);
 
+  useEffect(() => {
+    const list: Array<{ material: THREE.MeshBasicMaterial; base: number }> = [];
+    groupRef.current?.traverse((object) => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const material = mesh.material as THREE.MeshBasicMaterial;
+      if (!material || material === glowRef.current) return;
+      list.push({ material, base: material.opacity });
+    });
+    basesRef.current = list;
+  }, []);
+
   useFrame((_, delta) => {
+    const phase = progressRef.current * SHELF_PHASE_COUNT;
+    const level = shelfPresence(phase);
+    const seat = shelfSeatPulse(phase);
+    const now = performance.now();
+
+    if (groupRef.current) groupRef.current.visible = level > 0.01;
+
+    for (const item of basesRef.current) {
+      item.material.opacity = THREE.MathUtils.damp(
+        item.material.opacity,
+        item.base * level * (1 + seat * 0.7),
+        6,
+        delta,
+      );
+    }
+
     if (glowRef.current) {
-      const breath = 0.62 + Math.sin(performance.now() * 0.0014) * 0.16;
-      glowRef.current.opacity = THREE.MathUtils.damp(glowRef.current.opacity, breath, 4, delta);
+      const breath = 0.58 + Math.sin(now * 0.0014) * 0.14;
+      glowRef.current.opacity = THREE.MathUtils.damp(
+        glowRef.current.opacity,
+        level * (breath + seat * 1.15),
+        4,
+        delta,
+      );
     }
     if (ringRef.current) {
-      const pulse = 1 + Math.sin(performance.now() * 0.0018) * 0.08;
+      const pulse = 1 + Math.sin(now * 0.0018) * 0.08 + seat * 0.9;
       ringRef.current.scale.setScalar(pulse);
+    }
+    if (lightRef.current) {
+      lightRef.current.intensity = level * 0.5 + seat * 1.1;
     }
   });
 
   const centerX = pick.x * 1000;
 
   return (
-    <group>
+    <group ref={groupRef}>
       <mesh position={[centerX, pick.rowY + 130, -42]}>
         <planeGeometry args={[110, 290]} />
         <meshBasicMaterial
@@ -443,6 +524,7 @@ export function ShelfSelection({ pick }: { pick: ShelfPick }) {
       </mesh>
 
       <pointLight
+        ref={lightRef}
         position={[centerX, pick.rowY + 145, -70]}
         intensity={0.5}
         color="#ffcf8f"

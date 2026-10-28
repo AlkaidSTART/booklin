@@ -12,6 +12,7 @@ import {
   QrCoverMark,
   ShelfBooks,
   ShelfSelection,
+  shelfPresence,
   useShelfPick,
 } from './ShelfStage';
 import type { ShelfPick } from './ShelfStage';
@@ -276,11 +277,16 @@ function lightEnvelope(
    Chapter 00 — shelf take-down / scan / uplink beat
    ------------------------------------------------------------------ */
 
-const SHELF_RETURN_START = 0.55;
-const SHELF_RETURN_END = 0.8;
+const SHELF_RETURN_START = 0.5;
+const SHELF_RETURN_END = 0.82;
 const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;
+
+const DOCK_CAM_START = 0.4;
+const DOCK_CAM_LOCK = 0.52;
+const DOCK_CAM_SEAT = 0.82;
+const DOCK_CAM_END = 1.04;
 
 type ShelfCameraPose = {
   position: Vec3;
@@ -371,7 +377,7 @@ const SCAN_CAMERA: ShelfCameraPose = {
 };
 
 function shelfCameraPose(phase: number): ShelfCameraPose | null {
-  if (phase < 1 || phase >= SHELF_BEAT_END) return null;
+  if (phase < DOCK_CAM_END || phase >= SHELF_BEAT_END) return null;
 
   if (phase < 1.12) return SHELF_WIDE_CAMERA;
 
@@ -408,10 +414,14 @@ function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
   if (phase < SHELF_RETURN_END) {
     const k = smoothstep((phase - SHELF_RETURN_START) / (SHELF_RETURN_END - SHELF_RETURN_START));
     const from = genericBookPose(SHELF_RETURN_START);
-    const pose = mixBookPose(from, shelfPose, k);
+    const turn = smoothstep(k / 0.7);
     return {
-      position: [pose.position[0], pose.position[1] + Math.sin(Math.PI * k) * 0.14, pose.position[2]],
-      rotation: pose.rotation,
+      position: [
+        lerp(from.position[0], shelfPose.position[0], k),
+        lerp(from.position[1], shelfPose.position[1], k) + Math.sin(Math.PI * k) * 0.12,
+        lerp(from.position[2], shelfPose.position[2], k),
+      ],
+      rotation: mixVec3(from.rotation, shelfPose.rotation, turn),
     };
   }
 
@@ -444,17 +454,39 @@ function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
   return finalPose;
 }
 
-/**
- * Shared visibility of the shelf case across its two beats (00 Shelf and
- * 05 Return). The wash lights reuse this so they can never pool on an empty
- * desk before the case has grown in.
- */
-function shelfPresence(phase: number) {
-  const shelfIn = smoothstep((phase - 0.56) / 0.18);
-  const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
-  const shelfReturn =
-    smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
-  return Math.max(shelfIn * shelfOut, shelfReturn);
+function dockTrackingPose(track: number, pick: ShelfPick, mobile: boolean): ShelfCameraPose {
+  const bookPhase = lerp(DOCK_CAM_LOCK, DOCK_CAM_SEAT, track);
+  const book = shelfBookPose(bookPhase, pick) ?? genericBookPose(bookPhase);
+  return {
+    position: [
+      book.position[0] + lerp(-0.3, -0.42, track),
+      book.position[1] + lerp(0.26, 0.32, track) + (mobile ? 0.04 : 0),
+      book.position[2] + lerp(0.72, 0.66, track),
+    ],
+    target: [
+      book.position[0] + lerp(0, 0.01, track),
+      book.position[1] + lerp(0.04, 0.06, track),
+      book.position[2] - lerp(0.02, 0.1, track),
+    ],
+    fov: lerp(33, 38, track),
+  };
+}
+
+function dockCameraPose(phase: number, pick: ShelfPick, mobile: boolean): ShelfCameraPose | null {
+  if (phase < DOCK_CAM_START || phase > DOCK_CAM_END) return null;
+
+  if (phase < DOCK_CAM_LOCK) {
+    const inbound = smoothstep((phase - DOCK_CAM_START) / (DOCK_CAM_LOCK - DOCK_CAM_START));
+    return mixCameraPose(genericCameraPose(DOCK_CAM_START, mobile), dockTrackingPose(0, pick, mobile), inbound);
+  }
+
+  if (phase < DOCK_CAM_SEAT) {
+    const track = smoothstep((phase - DOCK_CAM_LOCK) / (DOCK_CAM_SEAT - DOCK_CAM_LOCK));
+    return dockTrackingPose(track, pick, mobile);
+  }
+
+  const out = smoothstep((phase - DOCK_CAM_SEAT) / (DOCK_CAM_END - DOCK_CAM_SEAT));
+  return mixCameraPose(dockTrackingPose(1, pick, mobile), SHELF_WIDE_CAMERA, out);
 }
 
 const loaderCache = new WeakMap<THREE.WebGLRenderer, GLTFLoader>();
@@ -771,10 +803,12 @@ function CameraRig({
   progressRef,
   pointerRef,
   reducedMotion,
+  pick,
 }: {
   progressRef: MutableRefObject<number>;
   pointerRef: PointerRef;
   reducedMotion: boolean;
+  pick: ShelfPick;
 }) {
   const { camera, size } = useThree();
   const currentTarget = useRef(new THREE.Vector3(-0.18, 0.86, 0));
@@ -783,8 +817,11 @@ function CameraRig({
   useFrame((_, delta) => {
     const phase = clamp01(progressRef.current) * PHASE_COUNT;
     const mobile = size.width < 760;
-    const custom = shelfCameraPose(phase);
+    const dock = dockCameraPose(phase, pick, mobile);
+    const useDock = !window.location.search.includes('nodock');
+    const custom = useDock ? dock ?? shelfCameraPose(phase) : shelfCameraPose(phase);
     const pose = custom ?? genericCameraPose(phase, mobile);
+    const fixed = useDock && Boolean(dock);
 
     const pointerX = reducedMotion || mobile ? 0 : pointerRef.current.x;
     const pointerY = reducedMotion || mobile ? 0 : pointerRef.current.y;
@@ -795,25 +832,27 @@ function CameraRig({
 
     // On phones the copy sits over the upper half; lift the shelf framing so
     // the case and the selected spine breathe in the lower band.
-    if (mobile && custom && phase < 1.12) targetY += 0.26;
+    if (mobile && custom && !fixed && phase < 1.12) targetY += 0.26;
 
     // Narrow desktop windows lose horizontal field of view. Pull the camera
     // back along the view ray so the staged object stays framed instead of
     // being cropped by the right edge. Wide screens keep the authored dolly.
     const aspect = size.width / Math.max(1, size.height);
-    const aspectPush = mobile ? 1 : Math.min(1.35, Math.max(1, 1.6 / Math.max(0.9, aspect)));
+    const aspectPush =
+      mobile || fixed ? 1 : Math.min(1.35, Math.max(1, 1.6 / Math.max(0.9, aspect)));
 
-    const desiredPosition = mobile
-      ? new THREE.Vector3(
-          targetX + pointerX * 0.018,
-          pose.position[1] * 1.08 + pointerY * 0.012,
-          pose.position[2] * 1.34,
-        )
-      : new THREE.Vector3(
-          targetX + (pose.position[0] - targetX) * aspectPush + pointerX * 0.018,
-          targetY + (pose.position[1] - targetY) * aspectPush + pointerY * 0.012,
-          targetZ + (pose.position[2] - targetZ) * aspectPush,
-        );
+    const desiredPosition =
+      mobile && !fixed
+        ? new THREE.Vector3(
+            targetX + pointerX * 0.018,
+            pose.position[1] * 1.08 + pointerY * 0.012,
+            pose.position[2] * 1.34,
+          )
+        : new THREE.Vector3(
+            targetX + (pose.position[0] - targetX) * aspectPush + pointerX * 0.018,
+            targetY + (pose.position[1] - targetY) * aspectPush + pointerY * 0.012,
+            targetZ + (pose.position[2] - targetZ) * aspectPush,
+          );
 
     const desiredTarget = new THREE.Vector3(
       targetX + pointerX * 0.006,
@@ -1292,6 +1331,7 @@ function BookRig({
   const slipcaseGroupRef = useRef<THREE.Group>(null);
   const shelfGroupRef = useRef<THREE.Group>(null);
   const shelfGlowRef = useRef<THREE.MeshStandardMaterial | null>(null);
+  const shelfBaseRef = useRef<Array<{ material: THREE.MeshStandardMaterial; color: THREE.Color }>>([]);
   const introRef = useRef(0);
 
   const book = useAssetGLTF('/models/book-transformed.glb');
@@ -1418,6 +1458,11 @@ function BookRig({
       glow.toneMapped = false;
       shelfGlowRef.current = glow;
     }
+
+    shelfBaseRef.current = shelfMaterials.map((material) => {
+      const mesh = material as THREE.MeshStandardMaterial;
+      return { material: mesh, color: mesh.color.clone() };
+    });
   }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
 
   useEffect(() => {
@@ -1534,13 +1579,14 @@ function BookRig({
     }
 
     // Shelf (00 Shelf and 05 Return share one composition: ring closure).
-    // Scale is tied to scroll phase rather than time so the establish cannot
-    // race ahead of the book when the wheel moves fast; the whole grow happens
-    // behind the interlude plate (phase 0.56 → 0.74).
-    const shelfScale = shelfPresence(phase);
+    // The case holds its place in the room and is revealed by the shelf wash
+    // instead of scaling up from nothing, so the shelving move stays visible.
+    const shelfLevel = shelfPresence(phase);
     if (shelfGroupRef.current) {
-      shelfGroupRef.current.scale.setScalar(Math.max(0.001, shelfScale));
-      shelfGroupRef.current.visible = shelfScale > 0.005;
+      shelfGroupRef.current.visible = shelfLevel > 0.005;
+    }
+    for (const item of shelfBaseRef.current) {
+      item.material.color.copy(item.color).multiplyScalar(shelfLevel);
     }
     const glowMaterial = shelfGlowRef.current;
     if (glowMaterial) {
@@ -1579,8 +1625,8 @@ function BookRig({
       <group ref={shelfGroupRef} position={[0.0, 0, -0.98]} visible={false}>
         <group scale={0.001}>
           <primitive object={shelf.scene} dispose={null} />
-          <ShelfBooks pick={pick} />
-          <ShelfSelection pick={pick} />
+          <ShelfBooks pick={pick} progressRef={progressRef} />
+          <ShelfSelection pick={pick} progressRef={progressRef} />
         </group>
       </group>
 
@@ -1810,7 +1856,7 @@ function SceneContents({
         <ReadySignal onReady={onReady} />
       </Suspense>
 
-      <CameraRig progressRef={progressRef} pointerRef={pointerRef} reducedMotion={reducedMotion} />
+      <CameraRig progressRef={progressRef} pointerRef={pointerRef} reducedMotion={reducedMotion} pick={pick} />
     </>
   );
 }

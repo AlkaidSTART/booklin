@@ -31,6 +31,11 @@ public/models/source/*-raw.glb
 .tmp-*
 *.tmp
 
+# local screenshot captures for visual review
+shots/
+shots-*/
+tmp-capture-*.mjs
+
 # macOS-specific files
 .DS_Store
 

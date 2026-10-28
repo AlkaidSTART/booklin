@@ -16,7 +16,7 @@ function smoothstep(value: number) {
 }
 
 export function shelfPresence(phase: number) {
-  const shelfIn = smoothstep((phase - 0.44) / 0.24);
+  const shelfIn = smoothstep((phase - 0.3) / 0.22);
   const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
   const shelfReturn = smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
   return Math.max(shelfIn * shelfOut, shelfReturn);
@@ -427,6 +427,7 @@ export function ShelfSelection({
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const glowRef = useRef<THREE.MeshBasicMaterial>(null);
+  const flashRef = useRef<THREE.MeshBasicMaterial>(null);
   const ringRef = useRef<THREE.Mesh>(null);
   const lightRef = useRef<THREE.PointLight>(null);
   const basesRef = useRef<Array<{ material: THREE.MeshBasicMaterial; base: number }>>([]);
@@ -454,7 +455,7 @@ export function ShelfSelection({
       const mesh = object as THREE.Mesh;
       if (!mesh.isMesh) return;
       const material = mesh.material as THREE.MeshBasicMaterial;
-      if (!material || material === glowRef.current) return;
+      if (!material || material === glowRef.current || material === flashRef.current) return;
       list.push({ material, base: material.opacity });
     });
     basesRef.current = list;
@@ -463,6 +464,7 @@ export function ShelfSelection({
   useFrame((_, delta) => {
     const phase = progressRef.current * SHELF_PHASE_COUNT;
     const level = shelfPresence(phase);
+    const approach = smoothstep((phase - 0.58) / 0.2);
     const seat = shelfSeatPulse(phase);
     const now = performance.now();
 
@@ -481,8 +483,16 @@ export function ShelfSelection({
       const breath = 0.58 + Math.sin(now * 0.0014) * 0.14;
       glowRef.current.opacity = THREE.MathUtils.damp(
         glowRef.current.opacity,
-        level * (breath + seat * 1.15),
+        level * (breath + approach * 0.55 + seat * 1.15),
         4,
+        delta,
+      );
+    }
+    if (flashRef.current) {
+      flashRef.current.opacity = THREE.MathUtils.damp(
+        flashRef.current.opacity,
+        level * seat * 1.15,
+        10,
         delta,
       );
     }
@@ -491,7 +501,7 @@ export function ShelfSelection({
       ringRef.current.scale.setScalar(pulse);
     }
     if (lightRef.current) {
-      lightRef.current.intensity = level * 0.5 + seat * 1.1;
+      lightRef.current.intensity = level * 0.5 + approach * 0.35 + seat * 1.1;
     }
   });
 
@@ -506,6 +516,18 @@ export function ShelfSelection({
           map={glowTexture ?? undefined}
           transparent
           opacity={0.5}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh position={[centerX, pick.rowY + 108, 12]}>
+        <planeGeometry args={[150, 260]} />
+        <meshBasicMaterial
+          ref={flashRef}
+          map={glowTexture ?? undefined}
+          transparent
+          opacity={0}
           depthWrite={false}
           blending={THREE.AdditiveBlending}
           toneMapped={false}

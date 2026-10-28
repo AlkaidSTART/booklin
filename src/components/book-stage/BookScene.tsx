@@ -283,11 +283,6 @@ const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;
 
-const DOCK_CAM_START = 0.4;
-const DOCK_CAM_LOCK = 0.52;
-const DOCK_CAM_SEAT = 0.82;
-const DOCK_CAM_END = 1.04;
-
 type ShelfCameraPose = {
   position: Vec3;
   target: Vec3;
@@ -376,8 +371,13 @@ const SCAN_CAMERA: ShelfCameraPose = {
   fov: 40,
 };
 
-function shelfCameraPose(phase: number): ShelfCameraPose | null {
-  if (phase < DOCK_CAM_END || phase >= SHELF_BEAT_END) return null;
+function shelfCameraPose(phase: number, mobile: boolean): ShelfCameraPose | null {
+  if (phase < 0.34 || phase >= SHELF_BEAT_END) return null;
+
+  if (phase < 0.88) {
+    const k = smoothstep((phase - 0.34) / (0.88 - 0.34));
+    return mixCameraPose(cameraKeyPose(0, 0, mobile), SHELF_WIDE_CAMERA, k);
+  }
 
   if (phase < 1.12) return SHELF_WIDE_CAMERA;
 
@@ -414,7 +414,7 @@ function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
   if (phase < SHELF_RETURN_END) {
     const k = smoothstep((phase - SHELF_RETURN_START) / (SHELF_RETURN_END - SHELF_RETURN_START));
     const from = genericBookPose(SHELF_RETURN_START);
-    const turn = smoothstep(k / 0.7);
+    const turn = smoothstep((k - 0.62) / 0.26);
     return {
       position: [
         lerp(from.position[0], shelfPose.position[0], k),
@@ -452,41 +452,6 @@ function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
   }
 
   return finalPose;
-}
-
-function dockTrackingPose(track: number, pick: ShelfPick, mobile: boolean): ShelfCameraPose {
-  const bookPhase = lerp(DOCK_CAM_LOCK, DOCK_CAM_SEAT, track);
-  const book = shelfBookPose(bookPhase, pick) ?? genericBookPose(bookPhase);
-  return {
-    position: [
-      book.position[0] + lerp(-0.3, -0.42, track),
-      book.position[1] + lerp(0.26, 0.32, track) + (mobile ? 0.04 : 0),
-      book.position[2] + lerp(0.72, 0.66, track),
-    ],
-    target: [
-      book.position[0] + lerp(0, 0.01, track),
-      book.position[1] + lerp(0.04, 0.06, track),
-      book.position[2] - lerp(0.02, 0.1, track),
-    ],
-    fov: lerp(33, 38, track),
-  };
-}
-
-function dockCameraPose(phase: number, pick: ShelfPick, mobile: boolean): ShelfCameraPose | null {
-  if (phase < DOCK_CAM_START || phase > DOCK_CAM_END) return null;
-
-  if (phase < DOCK_CAM_LOCK) {
-    const inbound = smoothstep((phase - DOCK_CAM_START) / (DOCK_CAM_LOCK - DOCK_CAM_START));
-    return mixCameraPose(genericCameraPose(DOCK_CAM_START, mobile), dockTrackingPose(0, pick, mobile), inbound);
-  }
-
-  if (phase < DOCK_CAM_SEAT) {
-    const track = smoothstep((phase - DOCK_CAM_LOCK) / (DOCK_CAM_SEAT - DOCK_CAM_LOCK));
-    return dockTrackingPose(track, pick, mobile);
-  }
-
-  const out = smoothstep((phase - DOCK_CAM_SEAT) / (DOCK_CAM_END - DOCK_CAM_SEAT));
-  return mixCameraPose(dockTrackingPose(1, pick, mobile), SHELF_WIDE_CAMERA, out);
 }
 
 const loaderCache = new WeakMap<THREE.WebGLRenderer, GLTFLoader>();
@@ -803,12 +768,10 @@ function CameraRig({
   progressRef,
   pointerRef,
   reducedMotion,
-  pick,
 }: {
   progressRef: MutableRefObject<number>;
   pointerRef: PointerRef;
   reducedMotion: boolean;
-  pick: ShelfPick;
 }) {
   const { camera, size } = useThree();
   const currentTarget = useRef(new THREE.Vector3(-0.18, 0.86, 0));
@@ -817,11 +780,8 @@ function CameraRig({
   useFrame((_, delta) => {
     const phase = clamp01(progressRef.current) * PHASE_COUNT;
     const mobile = size.width < 760;
-    const dock = dockCameraPose(phase, pick, mobile);
-    const useDock = !window.location.search.includes('nodock');
-    const custom = useDock ? dock ?? shelfCameraPose(phase) : shelfCameraPose(phase);
+    const custom = shelfCameraPose(phase, mobile);
     const pose = custom ?? genericCameraPose(phase, mobile);
-    const fixed = useDock && Boolean(dock);
 
     const pointerX = reducedMotion || mobile ? 0 : pointerRef.current.x;
     const pointerY = reducedMotion || mobile ? 0 : pointerRef.current.y;
@@ -832,27 +792,27 @@ function CameraRig({
 
     // On phones the copy sits over the upper half; lift the shelf framing so
     // the case and the selected spine breathe in the lower band.
-    if (mobile && custom && !fixed && phase < 1.12) targetY += 0.26;
+    if (mobile && custom && phase < 1.12) {
+      targetY += 0.26 * smoothstep((phase - 0.8) / 0.2);
+    }
 
     // Narrow desktop windows lose horizontal field of view. Pull the camera
     // back along the view ray so the staged object stays framed instead of
     // being cropped by the right edge. Wide screens keep the authored dolly.
     const aspect = size.width / Math.max(1, size.height);
-    const aspectPush =
-      mobile || fixed ? 1 : Math.min(1.35, Math.max(1, 1.6 / Math.max(0.9, aspect)));
+    const aspectPush = mobile ? 1 : Math.min(1.35, Math.max(1, 1.6 / Math.max(0.9, aspect)));
 
-    const desiredPosition =
-      mobile && !fixed
-        ? new THREE.Vector3(
-            targetX + pointerX * 0.018,
-            pose.position[1] * 1.08 + pointerY * 0.012,
-            pose.position[2] * 1.34,
-          )
-        : new THREE.Vector3(
-            targetX + (pose.position[0] - targetX) * aspectPush + pointerX * 0.018,
-            targetY + (pose.position[1] - targetY) * aspectPush + pointerY * 0.012,
-            targetZ + (pose.position[2] - targetZ) * aspectPush,
-          );
+    const desiredPosition = mobile
+      ? new THREE.Vector3(
+          targetX + pointerX * 0.018,
+          pose.position[1] * 1.08 + pointerY * 0.012,
+          pose.position[2] * 1.34,
+        )
+      : new THREE.Vector3(
+          targetX + (pose.position[0] - targetX) * aspectPush + pointerX * 0.018,
+          targetY + (pose.position[1] - targetY) * aspectPush + pointerY * 0.012,
+          targetZ + (pose.position[2] - targetZ) * aspectPush,
+        );
 
     const desiredTarget = new THREE.Vector3(
       targetX + pointerX * 0.006,
@@ -1313,6 +1273,44 @@ function QrCompanionCard({ progressRef }: { progressRef: MutableRefObject<number
   );
 }
 
+function CarryLight({
+  progressRef,
+  pick,
+}: {
+  progressRef: MutableRefObject<number>;
+  pick: ShelfPick;
+}) {
+  const lightRef = useRef<THREE.PointLight>(null);
+
+  useFrame((_, delta) => {
+    const phase = clamp01(progressRef.current) * PHASE_COUNT;
+    const book = shelfBookPose(phase, pick) ?? genericBookPose(phase);
+    const amount =
+      smoothstep((phase - 0.46) / 0.14) * (1 - smoothstep((phase - 0.86) / 0.12));
+    const light = lightRef.current;
+    if (!light) return;
+    light.position.set(
+      book.position[0] + 0.26,
+      book.position[1] + 0.34,
+      book.position[2] + 0.44,
+    );
+    light.intensity = THREE.MathUtils.damp(light.intensity, amount * 0.55, 8, delta);
+    light.visible = light.intensity > 0.01;
+  });
+
+  return (
+    <pointLight
+      ref={lightRef}
+      position={[0.3, 1.1, 0.45]}
+      intensity={0}
+      color="#ffd9a6"
+      distance={1.3}
+      decay={2}
+      visible={false}
+    />
+  );
+}
+
 function BookRig({
   progressRef,
   interactionRef,
@@ -1667,6 +1665,7 @@ function BookRig({
 
       <PhoneScanner progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
       <CloudSoulPanel progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
+      <CarryLight progressRef={progressRef} pick={pick} />
 
       <InteractionArcs progressRef={progressRef} />
       <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
@@ -1856,7 +1855,7 @@ function SceneContents({
         <ReadySignal onReady={onReady} />
       </Suspense>
 
-      <CameraRig progressRef={progressRef} pointerRef={pointerRef} reducedMotion={reducedMotion} pick={pick} />
+      <CameraRig progressRef={progressRef} pointerRef={pointerRef} reducedMotion={reducedMotion} />
     </>
   );
 }

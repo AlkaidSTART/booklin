@@ -249,107 +249,105 @@ def build_hand_mesh(verts: list[Vector], faces: list[list[int]]) -> bpy.types.Ob
 
 
 def add_forearm(hand: bpy.types.Object) -> None:
-    """Loft a forearm out of the wrist stump without a cuff.
+    """Extend the sculpt into a forearm as one continuous surface.
 
-    The sculpt's wrist is a closed, rounded cap, so starting a sleeve at the
-    cap always shows a lip. Instead the sleeve begins *inside* the stump a
-    couple of centimetres up, matches the wrist's ellipse there, and grows
-    outward; the hand's own cap ends up hidden inside the tube and the visible
-    transition is a wrist crease rather than a step.
+    The scan stops at a closed, rounded wrist cap. Lofting a separate tube and
+    overlapping it always leaves a shading/width step at the wrist, so instead
+    this cuts the stump on a plane and reuses the resulting boundary loop as
+    the first arm ring. Hand and arm then share vertices: the surface is C0
+    continuous and the smooth normals blend straight across.
     """
-    verts = [v.co for v in hand.data.vertices]
     wrist_z = canonical_to_blender(WRIST_JOINT).z
-    # The sculpt keeps a 25 mm forearm stub past the wrist joint; start inside
-    # it. Starting higher (in the palm or at the thumb base) makes the tube
-    # wider than the wrist and shows a cuff.
-    seam_z = wrist_z - 14.0
-    ring = [v for v in verts if abs(v.z - seam_z) < 2.5]
-    if len(ring) < 12:
-        ring = [v for v in verts if seam_z - 8.0 < v.z < seam_z + 8.0]
-    # Centre from the ring's bounding box, not its mean: the sculpt's vertex
-    # density is uneven and a mean centre offsets the tube by several
-    # millimetres, which shows up as a lopsided cuff.
-    min_x = min(v.x for v in ring)
-    max_x = max(v.x for v in ring)
-    min_y = min(v.y for v in ring)
-    max_y = max(v.y for v in ring)
+    cut_z = wrist_z - 12.0
+
+    bm = bmesh.new()
+    bm.from_mesh(hand.data)
+    bmesh.ops.bisect_plane(
+        bm,
+        geom=list(bm.verts) + list(bm.edges) + list(bm.faces),
+        dist=1e-4,
+        plane_co=(0.0, 0.0, cut_z),
+        plane_no=(0.0, 0.0, 1.0),
+        clear_inner=True,
+    )
+    bm.verts.ensure_lookup_table()
+    bm.edges.ensure_lookup_table()
+
+    # The cut leaves one open boundary loop. Walk it so the loft can be
+    # stitched in the correct order.
+    boundary = [e for e in bm.edges if len(e.link_faces) == 1]
+    if not boundary:
+        raise RuntimeError("wrist cut produced no boundary loop")
+
+    loop: list[bmesh.types.BMVert] = []
+    edge = boundary[0]
+    vert = edge.verts[0]
+    prev_edge = None
+    while True:
+        loop.append(vert)
+        nxt_edge = next((e for e in vert.link_edges if e is not prev_edge and len(e.link_faces) == 1), None)
+        if nxt_edge is None:
+            break
+        prev_edge = nxt_edge
+        vert = nxt_edge.other_vert(vert)
+        if vert is loop[0]:
+            break
+
+    if len(loop) < 8:
+        raise RuntimeError(f"wrist boundary loop too short: {len(loop)}")
+
+    min_x = min(v.co.x for v in loop)
+    max_x = max(v.co.x for v in loop)
+    min_y = min(v.co.y for v in loop)
+    max_y = max(v.co.y for v in loop)
     cx = (min_x + max_x) * 0.5
     cy = (min_y + max_y) * 0.5
     rx = (max_x - min_x) * 0.5
     ry = (max_y - min_y) * 0.5
+    mean_r = (rx + ry) * 0.5
 
-    rings = 18
-    segments = 30
-    length = FOREARM_LENGTH + 14.0
-    sleeve_verts: list[tuple[float, float, float]] = []
-    sleeve_faces: list[list[int]] = []
+    rings = 20
+    length = FOREARM_LENGTH + 12.0
+    segments = len(loop)
 
-    for ring_index in range(rings + 1):
+    previous = loop
+    for ring_index in range(1, rings + 1):
         t = ring_index / rings
-        z = seam_z - length * t
-        # 0.97 at the seam keeps the tube inside the skin all the way round,
-        # then a gentle 1.38x flare at the elbow. Steeper than 1.5 reads as a
-        # tree trunk; starting flush leaves a cuff ring.
-        widen = 0.96 + 0.42 * (t**0.8)
-        # A wrist is a flat ellipse; a forearm is rounder. Ease the section
-        # toward circular so the arm does not read as a plank.
-        round_mix = 1.0 + (0.6 * t)
-        mean_r = (rx + ry) * 0.5
-        rx_t = rx * widen + (mean_r * widen - rx * widen) * min(1.0, round_mix - 1.0)
-        ry_t = ry * widen + (mean_r * widen - ry * widen) * min(1.0, round_mix - 1.0)
-        for seg in range(segments):
-            angle = 2.0 * math.pi * seg / segments
-            sleeve_verts.append(
-                (
-                    cx + math.cos(angle) * rx_t,
-                    cy + math.sin(angle) * ry_t,
-                    z,
-                )
-            )
+        z = cut_z - length * t
+        # Gentle flare: the elbow is ~1.35x the wrist. The section also eases
+        # from the wrist's flat ellipse toward a rounder forearm.
+        widen = 1.0 + 0.35 * (t**0.8)
+        mix = 0.55 * t
+        current: list[bmesh.types.BMVert] = []
+        for vert in loop:
+            dx = vert.co.x - cx
+            dy = vert.co.y - cy
+            radial = math.hypot(dx, dy) or 1.0
+            ux = dx / radial
+            uy = dy / radial
+            # Blend the wrist outline toward a circle of the same mean radius.
+            x = cx + (dx * (1.0 - mix) + ux * mean_r * mix) * widen
+            y = cy + (dy * (1.0 - mix) + uy * mean_r * mix) * widen
+            current.append(bm.verts.new((x, y, z)))
 
-    for ring in range(rings):
-        for seg in range(segments):
-            nxt = (seg + 1) % segments
-            a = ring * segments + seg
-            b = ring * segments + nxt
-            c = (ring + 1) * segments + nxt
-            d = (ring + 1) * segments + seg
-            sleeve_faces.append([a, b, c, d])
+        for index in range(segments):
+            nxt = (index + 1) % segments
+            bm.faces.new((previous[index], previous[nxt], current[nxt], current[index]))
+        previous = current
 
-    cap = len(sleeve_verts)
-    sleeve_verts.append((cx, cy, seam_z - length))
-    last = rings * segments
-    for seg in range(segments):
-        nxt = (seg + 1) % segments
-        sleeve_faces.append([last + seg, last + nxt, cap])
+    cap_center = bm.verts.new((cx, cy, cut_z - length))
+    for index in range(segments):
+        nxt = (index + 1) % segments
+        bm.faces.new((previous[index], previous[nxt], cap_center))
 
-    top_cap = len(sleeve_verts)
-    sleeve_verts.append((cx, cy, seam_z))
-    for seg in range(segments):
-        nxt = (seg + 1) % segments
-        sleeve_faces.append([nxt, seg, top_cap])
-
-    sleeve_mesh = bpy.data.meshes.new("ForearmSleeve")
-    sleeve_mesh.from_pydata(sleeve_verts, [], sleeve_faces)
-    sleeve_mesh.validate()
-    sleeve_mesh.update()
-    sleeve = bpy.data.objects.new("ForearmSleeve", sleeve_mesh)
-    bpy.context.collection.objects.link(sleeve)
-
-    bm = bmesh.new()
-    bm.from_mesh(sleeve_mesh)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
-    bm.to_mesh(sleeve_mesh)
+    bm.to_mesh(hand.data)
     bm.free()
-    for poly in sleeve.data.polygons:
-        poly.use_smooth = True
-    sleeve.data.materials.append(hand.data.materials[0])
+    hand.data.validate()
+    hand.data.update()
 
-    bpy.ops.object.select_all(action="DESELECT")
-    sleeve.select_set(True)
-    hand.select_set(True)
-    bpy.context.view_layer.objects.active = hand
-    bpy.ops.object.join()
+    for poly in hand.data.polygons:
+        poly.use_smooth = True
 
 
 # ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-28T11:50:13.928Z",
+  "generatedAt": "2026-10-28T12:02:08.688Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 17,
@@ -10,7 +10,7 @@
   "totals": {
     "groups": 21,
     "files": 97,
-    "bytes": 19922580,
+    "bytes": 19912266,
     "missing": 0
   },
   "assets": [
@@ -342,18 +342,18 @@
       "label": "Rigged right hand",
       "status": "delivered",
       "role": "delivery",
-      "notes": "Final rigged right hand built from the ZBrush sculpt in public/hand. 3,340 triangles, 1,674 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.",
+      "notes": "Final rigged right hand built from the ZBrush sculpt in public/hand. 2,832 triangles, 1,418 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh). Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.",
       "files": [
         {
           "path": "public/models/hand.glb",
-          "bytes": 25548,
-          "sha256": "556003ff1dc459ea4d231b79065ae6338b89bbb75586d41f9e88ca40db4f8ae3",
+          "bytes": 23516,
+          "sha256": "b09f566e55cb1ffae4bd10c2eb8d9abb776582ed5320d2a700d23522df804324",
           "missing": false
         },
         {
           "path": "public/models/source/hand-rig.blend",
-          "bytes": 172803,
-          "sha256": "76c16b169b5dc347890967e74c91e594f5bf3cbd91dbbd75986a3ac9a39888be",
+          "bytes": 164592,
+          "sha256": "fc611af294b076f5d06a05db8a7950f02b5c53cd48a8e945c8d62119608d45a3",
           "missing": false
         },
         {
@@ -364,12 +364,12 @@
         },
         {
           "path": "scripts/build-hand.py",
-          "bytes": 17487,
-          "sha256": "4f59a291c390077cba4802423cd89db0aba048348f653a03398977e9ae8093ca",
+          "bytes": 17416,
+          "sha256": "d6efdcf705c4c4ae9a2293051bde863632f591a7c39b00b4fa40f7bfc78d6580",
           "missing": false
         }
       ],
-      "bytes": 386079,
+      "bytes": 375765,
       "missing": []
     },
     {

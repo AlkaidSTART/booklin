@@ -32,14 +32,15 @@ const BOOK_THUMB: [number, number, number] = [0.24, 0, -0.08];
 const BOOK_THUMB_TIP = 0;
 
 /** 00 Scan: the hand sits behind the phone, palm on the back cover, four
- * fingers up the back and the thumb around the front-left bezel. */
-const PHONE_ANCHOR: [number, number, number] = [0, 20, 9.5];
+ * fingers up the back and the thumb around the front-left bezel. The 8 mm
+ * shift keeps the thumb's whole wrap outboard of the 46 mm half-width, so it
+ * never pierces the body. */
+const PHONE_ANCHOR: [number, number, number] = [8, 20, 9.5];
 const PHONE_CURL: [number, number, number] = [0.02, 0.03, 0.02];
-/** Tip lands at (x 41, z 10) mm — 5 mm inside the left edge and in front of the
- * glass, so the 20 mm thumb pad covers the bezel and spills past the side.
- * The hidden middle section passes through the body, which the phone hides. */
-const PHONE_THUMB: [number, number, number] = [-0.2, 0, -0.35];
-const PHONE_THUMB_TIP = 0.4;
+/** Tip lands at (x 50, z 10) mm; the wrap crosses the phone's mid-plane at
+ * x 48, clear of the body. */
+const PHONE_THUMB: [number, number, number] = [-0.14, -0.48, -0.27];
+const PHONE_THUMB_TIP = 0.15;
 
 /** How far the arm waits below the frame before it rises in. */
 const ENTER_DISTANCE = 120;

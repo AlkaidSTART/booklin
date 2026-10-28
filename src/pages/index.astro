@@ -395,20 +395,6 @@ const pageDescription =
       aria-labelledby="read-title"
     >
       <div class="sx-read">
-        <header class="sx-read__head">
-          <p class="sx-kicker">
-            <b>{chapterById.read.number}</b>
-            <span>{chapterById.read.label} · {chapterById.read.labelZh}</span>
-          </p>
-          <h2 id="read-title" class="sx-title">
-            <span>{chapterById.read.titleA}</span>
-            <em>{chapterById.read.titleB}</em>
-          </h2>
-          <p class="sx-line">{chapterById.read.line}</p>
-          <p class="sx-line-en">{chapterById.read.lineEn}</p>
-          <p class="sx-meta">{chapterById.read.meta}</p>
-        </header>
-
         <div class="sx-read__stage">
           <div class="sx-read__device">
             <div class="sx-read__frame">
@@ -454,23 +440,39 @@ const pageDescription =
             </div>
           </div>
 
-          <aside class="sx-read__aside" aria-label="Pages">
-            <div class="sx-read__aside-head">
-              <span>PAGES · 页序</span>
-              <span>042 — 045</span>
-            </div>
-            <ol class="sx-read__pages" data-steps data-dispatch="read">
-              {reader.pages.map((page: Record<string, any>, index: number) => (
-                <li class="sx-read__page" data-step={index}>
-                  <span class="sx-read__thumb" aria-hidden="true"><i>{page.no}</i></span>
-                  <span class="sx-read__page-copy">
-                    <b>{page.title}</b>
-                    <small>{page.chapter}</small>
-                  </span>
-                </li>
-              ))}
-            </ol>
-          </aside>
+          <div class="sx-read__side">
+            <header class="sx-read__head">
+              <p class="sx-kicker">
+                <b>{chapterById.read.number}</b>
+                <span>{chapterById.read.label} · {chapterById.read.labelZh}</span>
+              </p>
+              <h2 id="read-title" class="sx-title">
+                <span>{chapterById.read.titleA}</span>
+                <em>{chapterById.read.titleB}</em>
+              </h2>
+              <p class="sx-line">{chapterById.read.line}</p>
+              <p class="sx-line-en">{chapterById.read.lineEn}</p>
+              <p class="sx-meta">{chapterById.read.meta}</p>
+            </header>
+
+            <aside class="sx-read__aside" aria-label="Pages">
+              <div class="sx-read__aside-head">
+                <span>PAGES · 页序</span>
+                <span>042 — 045</span>
+              </div>
+              <ol class="sx-read__pages" data-steps data-dispatch="read">
+                {reader.pages.map((page: Record<string, any>, index: number) => (
+                  <li class="sx-read__page" data-step={index}>
+                    <span class="sx-read__thumb" aria-hidden="true"><i>{page.no}</i></span>
+                    <span class="sx-read__page-copy">
+                      <b>{page.title}</b>
+                      <small>{page.chapter}</small>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </aside>
+          </div>
         </div>
 
         <p class="sx-read__cue" aria-hidden="true">

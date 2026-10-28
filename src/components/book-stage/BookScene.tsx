@@ -347,9 +347,9 @@ function genericCameraPose(phase: number, mobile: boolean): ShelfCameraPose {
 }
 
 const SHELF_WIDE_CAMERA: ShelfCameraPose = {
-  position: [-0.26, 1.2, 1.15],
-  target: [-0.1, 1.0, -0.35],
-  fov: 46,
+  position: [-0.24, 1.32, 0.95],
+  target: [-0.08, 1.22, -0.5],
+  fov: 44,
 };
 
 const PRESENT_CAMERA: ShelfCameraPose = {
@@ -584,6 +584,10 @@ function useMorphMesh(scene: THREE.Object3D) {
    are ordered front-to-back and fan apart mid-turn, then nest together
    again as the book comes fully flat — the 180° sweep inverts the
    stack, so the last leaf turned always lands on top.
+
+   Only the front half of the block turns. The back half stays where it
+   is, so the flat spread shows pages on both sides of the spine
+   instead of the whole block flipped onto the left board.
    ------------------------------------------------------------------ */
 
 const PAGE_SPINE_X = -74; // hinge line in the book's local space
@@ -591,9 +595,7 @@ const PAGE_SHEET_STEP = 2; // depth quantisation for leaf ordering
 const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
 const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
 const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
-// Half-open limit: the leaves stop standing on the desk (~95°) instead of
-// sweeping the full 180° and landing flat beside the back cover.
-const PAGE_OPEN_SWEEP = Math.PI * 0.53;
+const PAGE_TURN_SPLIT = 0.5; // front half of the block turns onto the left board
 
 type PageTurnRig = {
   position: THREE.BufferAttribute;
@@ -653,8 +655,16 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
   for (let i = 0; i < count; i += 1) {
     if (lag[i] < 0) continue;
     const sheet = Math.round(positionArray[i * 3 + 2] / PAGE_SHEET_STEP) * PAGE_SHEET_STEP;
-    // 0 = front cover (leads the turn), 1 = back leaf (trails it).
-    lag[i] = clamp01((frontDepth - sheet) / span);
+    const depth = clamp01((frontDepth - sheet) / span);
+    // The spread splits at the middle of the block: the front half (front
+    // cover and its leaves) turns over onto the left board while the back
+    // half stays put, so both sides of the open book carry pages.
+    if (depth >= PAGE_TURN_SPLIT) {
+      lag[i] = -1;
+      continue;
+    }
+    // 0 = front cover (leads the turn), 1 = middle leaf (trails it).
+    lag[i] = depth / PAGE_TURN_SPLIT;
     // The cloth board stays stiff; paper curls more the deeper it sits.
     bend[i] = lag[i];
   }
@@ -683,7 +693,7 @@ function applyPageTurn(rig: PageTurnRig, openness: number) {
   // The turn always lifts the free edge toward +Z: with the book standing
   // that reads as opening toward the reader, and with the book laid flat
   // (+Z up) the leaves sweep over the desk instead of through it.
-  const base = PAGE_OPEN_SWEEP * smoothstep(openness);
+  const base = Math.PI * smoothstep(openness);
   const envelope = Math.sin(base);
   const settle = clamp01((openness - 0.82) / 0.18);
 
@@ -819,6 +829,15 @@ function CameraRig({
     camera.position.lerp(desiredPosition, damping);
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
+    (window as unknown as { __camDebug?: unknown }).__camDebug = {
+      pos: camera.position.toArray().map((v) => Number(v.toFixed(3))),
+      target: currentTarget.current.toArray().map((v) => Number(v.toFixed(3))),
+      fov: Number(perspective.fov.toFixed(1)),
+      size: [size.width, size.height],
+      mobile,
+      phase: Number(phase.toFixed(3)),
+      custom: Boolean(custom),
+    };
 
     // Ease the field of view with the same damping as the dolly. Snapping it
     // reads as a zoom punch on every framing change (32 → 46 → 34 → 31 → 40).

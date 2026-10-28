@@ -829,18 +829,9 @@ function CameraRig({
     camera.position.lerp(desiredPosition, damping);
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
-    (window as unknown as { __camDebug?: unknown }).__camDebug = {
-      pos: camera.position.toArray().map((v) => Number(v.toFixed(3))),
-      target: currentTarget.current.toArray().map((v) => Number(v.toFixed(3))),
-      fov: Number(perspective.fov.toFixed(1)),
-      size: [size.width, size.height],
-      mobile,
-      phase: Number(phase.toFixed(3)),
-      custom: Boolean(custom),
-    };
 
     // Ease the field of view with the same damping as the dolly. Snapping it
-    // reads as a zoom punch on every framing change (32 → 46 → 34 → 31 → 40).
+    // reads as a zoom punch on every framing change (32 → 44 → 34 → 31 → 40).
     const desiredFov = mobile ? (custom ? pose.fov + 8 : 39) : pose.fov;
     if (perspective.isPerspectiveCamera) {
       const nextFov = THREE.MathUtils.damp(perspective.fov, desiredFov, 5.5, delta);

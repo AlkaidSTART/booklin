@@ -108,39 +108,115 @@
   },
   "services": [
     {
-      "id": "qr",
-      "service": "Book QR / micro-site",
-      "serviceZh": "图书二维码 / 微官网",
-      "world": "Spine mark / preview layer",
-      "worldZh": "脊码 / 试读层"
+      "id": "reader",
+      "label": "Reader services",
+      "labelZh": "读者服务",
+      "items": [
+        {
+          "id": "book-qr",
+          "service": "Book QR codes",
+          "serviceZh": "图书二维码",
+          "detail": "Content rides inside the QR code — readers scan and see it.",
+          "detailZh": "内容「装」进二维码，读者一扫即看",
+          "world": "Spine mark / page-edge mark (Encounter / Claim)",
+          "worldZh": "脊码 / 页边码（邂逅 / 认领）"
+        },
+        {
+          "id": "sample",
+          "service": "Digital sample copies",
+          "serviceZh": "电子样书",
+          "detail": "Sample books delivered online.",
+          "detailZh": "在线电子送样",
+          "world": "Preview layer (Encounter)",
+          "worldZh": "试读层（邂逅）"
+        },
+        {
+          "id": "microsite",
+          "service": "Micro-site",
+          "serviceZh": "微官网",
+          "detail": "Build your own branded site.",
+          "detailZh": "自由创建个性化品牌官网",
+          "world": "Preview layer",
+          "worldZh": "试读层"
+        },
+        {
+          "id": "traffic",
+          "service": "Traffic operations",
+          "serviceZh": "流量运营",
+          "detail": "Build a private-domain audience pool.",
+          "detailZh": "搭建用户私域流量池",
+          "world": "Companion sessions / learning record (mind anchor)",
+          "worldZh": "伴读会话 / 学情记录（脑锚）"
+        }
+      ]
     },
     {
-      "id": "lessons",
-      "service": "Teacher walkthroughs / audio / courseware",
-      "serviceZh": "名师讲题 / 音频录音 / 课件制作",
-      "world": "Lesson video / audio in the cloud soul",
-      "worldZh": "云魂中的讲题视频 / 音频讲解"
+      "id": "production",
+      "label": "Content production",
+      "labelZh": "内容制作服务",
+      "items": [
+        {
+          "id": "audio",
+          "service": "Audio recording",
+          "serviceZh": "音频录音",
+          "detail": "AI recording built for K–12 supplementary books.",
+          "detailZh": "AI 智能录音，专为中小学教辅图书定制",
+          "world": "Audio inside the cloud soul",
+          "worldZh": "云魂中的音频讲解"
+        },
+        {
+          "id": "courseware",
+          "service": "Courseware production",
+          "serviceZh": "课件制作",
+          "detail": "AI learns the book's structure and turns Word into slide decks.",
+          "detailZh": "用 AI 学习图书结构，让 Word 秒变 PPT 课件",
+          "world": "Courseware inside the cloud soul",
+          "worldZh": "云魂中的课件"
+        },
+        {
+          "id": "teacher",
+          "service": "Teacher walkthroughs",
+          "serviceZh": "名师讲题",
+          "detail": "Exercise video explanations taught by frontline teachers.",
+          "detailZh": "习题的视频解析，一线教学老师讲解",
+          "world": "Lesson video inside the cloud soul",
+          "worldZh": "云魂中的讲题视频"
+        }
+      ]
     },
     {
-      "id": "bank",
-      "service": "Digitised question bank / image library",
-      "serviceZh": "数字化题库 / 数字化图库",
-      "world": "Knowledge-graph material pipeline",
-      "worldZh": "知识图谱的素材管线"
-    },
-    {
-      "id": "ops",
-      "service": "Traffic operations / private domain",
-      "serviceZh": "流量运营 / 私域",
-      "world": "Companion sessions / learning record (mind anchor)",
-      "worldZh": "伴读会话 / 学情记录（脑锚）"
-    },
-    {
-      "id": "enterprise",
-      "service": "Enterprise class dashboard / group reading",
-      "serviceZh": "Enterprise 班级看板 / 群组共读",
-      "world": "Shared reading constellation",
-      "worldZh": "共读星座"
+      "id": "publishing-cloud",
+      "label": "Bookln Publishing Cloud",
+      "labelZh": "书链出版云",
+      "items": [
+        {
+          "id": "student-to-teacher",
+          "service": "Student-to-teacher edition",
+          "serviceZh": "学转教",
+          "detail": "AI converts student editions into teacher editions across all subjects and grades, backfilling answers without touching the body text.",
+          "detailZh": "全学科全学段学用图书 AI 一键转换为教用图书，自动回填答案，不影响正文",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        },
+        {
+          "id": "book-to-word",
+          "service": "Book file to Word",
+          "serviceZh": "书版转Word",
+          "detail": "Convert book layout files in one click.",
+          "detailZh": "一键转换书版文件",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        },
+        {
+          "id": "auto-typesetting",
+          "service": "Automatic typesetting",
+          "serviceZh": "智能初排",
+          "detail": "An in-house layout automation model outputs Word manuscripts in FBD format in one click.",
+          "detailZh": "自研排版自动化模型，全学科 Word 稿件一键输出 FBD 格式",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        }
+      ]
     }
   ],
   "policies": [

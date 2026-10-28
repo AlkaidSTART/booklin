@@ -683,6 +683,11 @@ html.is-paper .sx-rail__meta a {
   object-fit: cover;
 }
 
+.sx-trio figure:first-child .sx-trio__frame img,
+.sx-trio figure:first-child .sx-trio__frame video {
+  object-position: 70% center;
+}
+
 .sx-trio figcaption {
   margin-top: 7px;
   color: var(--muted);
@@ -1381,7 +1386,7 @@ html.is-paper .sx-rail__meta a {
   }
 
   .sx-trio__frame {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 3 / 4;
   }
 
   .sx-facts {

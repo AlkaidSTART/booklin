@@ -72,6 +72,7 @@
 
 - 验收：手机后置镜头位姿与屏幕画面严格一致；屏幕光在手背与内页上有可见照明；进入/退出无跳变
 - 回退：P0 的静态屏幕 + 手部特写分镜
+- **状态：blockout 已在 00 扫码段合成。** 手握手机（`hand-phone.glb`）、手机随 phase 进入 → 对准封面码 → 锁定 → 释出，屏幕 FBO 与后置镜头在同一镜头内成立。`binding` 章节的 P.042 页边码落位与图谱交叉淡入仍未开始。实现说明见 §5.6
 
 ### P3 · 打磨（可选）
 
@@ -205,8 +206,17 @@
 - **掌心间隙**：握径约 25 mm 内圈对 30 mm 书厚，留 1 mm 余量刚好贴合；再大就会「握空气」。
 - **必须绕握持轴滚一点**：`GRIP_ROLL ≈ −0.42 rad` 让前臂朝镜头一侧下摆出画；不滚的话手臂会笔直穿过桌面。
 - **`carry` 关键帧必须提书**：原来书贴在桌面（0.772），手无处安放。改为抬到 0.945，相机目标同步抬到 0.99。
-- **材质必须运行时覆盖**：GLB 自带材质在这套暖棚 HDR 下会读成亮陶土。覆盖为 `MeshPhysicalMaterial`（`#120b08`、roughness 0.78、sheen 0.2、envMapIntensity 0.22）才压得住。
-- **进场窗口 2.04–2.18**：早于 2.04 时书还没落位，手会悬在半空与书脱节。
+- **材质必须运行时覆盖**：GLB 自带材质在这套暖棚 HDR 下会读成亮陶土。统一走 `skinMaterial.ts`：底色 `#0d0806`、roughness 0.78、sheen 0.07、envMapIntensity 0.12，再叠加毛孔噪声与 0.16 强度的暖色菲涅尔。sheen 超过 0.24 时整只手会读成浅陶土。
+- **进场窗口 2.04–2.18**：早于 2.04 时书还没落位，手会悬在半空与书脱节。加入手机后整体后移到 **2.14–2.30**，与手机离场（2.00–2.16）不重叠。
+
+#### 5.6.1 握手机（`hand-phone`）
+
+- **手机坐标系直接复用**：`hand-phone` 在 Blender 中按 92 × 188 × 11 mm 机身摆好，glTF Y-up 后局部轴为 +Y = 指尖、+Z = 掌心朝向。运行时挂在手机 group 的 0.001 毫米组内、**不额外旋转**即可贴合：掌面落在机身背面（z = −5.4 mm），四指贴背面朝上，前臂向下。
+- **拇指必须压在前左边缘**：初版拇指尖在 x = −18 mm，正好压在取景框（x ≥ −22 mm 起）上。改为 x = −40 mm 后，指腹跨过机身左边缘（−46 mm），取景框和屏幕文字都干净。
+- **前臂要够长**：343 mm 的前臂在扫码镜头下会被桌沿截断，看起来像断手。延长到 640 mm 后，可见段在桌沿处自然消失；桌沿本身就是遮挡边界，不要再往上抬手机来「找」断点。
+- **两个手部窗口不能重叠**：手机 1.50 → 2.16，握书 2.14 → 2.86。重叠时同一只右手会同时握手机和书，构图会穿帮。
+- **屏幕光只做补光**：屏幕前的点光 8 cm 处约 1 cd 即可，强度再高会把拇指打爆；主光仍由场景负责。
+- **shader 里不能用 `sample`**：GLSL ES 的保留字，ANGLE 直接编译失败，手会整块不可见。`skinMaterial.ts` 中已改为 `skinSamplePos`。
 
 ---
 
@@ -218,8 +228,9 @@
 | --- | --- |
 | `src/components/book-stage/BookStage.tsx` | 在现有 phase 推导处新增 `grip` 与 `scan` 两条权重曲线，写法与 `--handoff` 一致（窄窗口 + clamp） |
 | `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`；01 携归书本关键帧抬到 0.945，相机目标抬到 0.99；`HandRig` 挂在书的毫米组内 |
-| `src/components/book-stage/HandRig.tsx`（新增） | ✅ blockout 版：加载 `hand-blockout.glb`、覆盖皮肤材质、按 phase 驱动进入/退出与 socket 位置 |
-| `src/components/book-stage/ShelfStage.tsx` | ✅ 已接：`PhoneScanner` 拆成相机画面层 + chrome 层，新增 `Phone_Lens_Rear` 锚点与离屏相机、grade、手持抖动；`QrCoverMark` 新增 `markRef` 供扫描对角。机身仍内联，待 P2 抽成可复用组件 |
+| `src/components/book-stage/HandRig.tsx` | ✅ 两套 blockout：`HandRig` 加载 `hand-blockout.glb`（01 携归，进入/退出 + 轻微呼吸）；`PhoneHandRig` 加载 `hand-phone.glb`，挂在手机 group 内，透明度跟随手机，附带毫米级握持漂移 |
+| `src/components/book-stage/skinMaterial.ts`（新增） | ✅ 共享皮肤材质：暗调 PBR + 毛孔噪声 + 暖色菲涅尔；两套手共用，避免材质断档 |
+| `src/components/book-stage/ShelfStage.tsx` | ✅ 已接：`PhoneScanner` 拆成相机画面层 + chrome 层，新增 `Phone_Lens_Rear` 锚点与离屏相机、grade、手持抖动；`QrCoverMark` 新增 `markRef` 供扫描对角；扫码段驱动手机进入/对准/锁定/离场，并在手机 group 内挂 `PhoneHandRig`。机身仍内联，待 P2 抽成可复用组件 |
 | `src/lib/stage/layers.ts`（新增） | ✅ 已交付：`PHONE_CAMERA_LAYER` 与 `enableLayer()` |
 | `public/models/` | `hand.glb`；`phone.glb` 仅在需要握持细节时导出（否则沿用程序化机身） |
 | `public/textures/` | `hand-*.ktx2` |
@@ -234,8 +245,8 @@
 
 | 项 | 状态 | 影响 | 处理 |
 | --- | --- | --- | --- |
-| P.042 页边码贴图 | **缺失** | 阻塞 P0。`public/qr/one-code-entry.*` 是入口卡，`spine-mark.svg` 是脊码，都不是页边码 | 需要一张页边码资产，且二维码本体必须真实可辨（镜头推近会被看清） |
-| `carry` 书本关键帧 | **需重排** | 阻塞 P1。现状书是悬空旋转，手握持要求稳定的可握朝向（书脊朝侧下、封面朝镜） | 重排该章节书本 transform，属于资产/编舞返工，非代码问题 |
+| P.042 页边码贴图 | **已交付** | 曾阻塞 P0/P2。`public/qr/page-edge-p042.svg` + 2048 px PNG，H 级纠错，OpenCV 解码验证通过 | P2 可直接使用；仍需在开页上落位 |
+| `carry` 书本关键帧 | **已重排** | 曾阻塞 P1。原书贴在桌面（0.772），手无处安放 | 已抬到 0.945 并同步相机目标到 0.99；握持方向改为下边缘（见 §5.6） |
 | 肤色与品牌色板 | 待确认 | 参考图为深肤色 + 强侧逆光，与 [brand-guidelines.md](brand-guidelines.md) 的暖中性色关系需确认 | 先按参考图出 P1 单帧比对 |
 | 实时皮肤质感上限 | 已知 | 无法达到离线渲染的 SSS | 用暗调构图约束，不接受明亮正面机位 |
 | FBO 每帧额外开销 | 可控 | 移动端可能掉帧 | 仅窗口内 30fps；超预算即降级为静帧 |

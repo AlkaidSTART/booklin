@@ -1,9 +1,11 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { RoundedBox, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
+import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { enableLayer, PHONE_CAMERA_LAYER } from '../../lib/stage/layers';
+import { PhoneHandRig } from './HandRig';
 
 export const SHELF_PHASE_COUNT = 8;
 
@@ -36,6 +38,20 @@ export type ShelfPick = {
   slot: number;
   title: string;
   subtitle: string;
+};
+
+/**
+ * Live pointer focus for the shelf, in shelf-local millimetres.
+ * `tick` increments on every click so the selection halo can fire one pulse
+ * per press without a React render in the animation loop.
+ */
+export type ShelfFocus = {
+  index: number;
+  x: number;
+  rowY: number;
+  h: number;
+  active: boolean;
+  tick: number;
 };
 
 const PICK_TITLES = [
@@ -204,9 +220,11 @@ function buildShelfBooks(gapX: number): BookSpec[] {
 export function ShelfBooks({
   pick,
   progressRef,
+  focusRef,
 }: {
   pick: ShelfPick;
   progressRef: MutableRefObject<number>;
+  focusRef: MutableRefObject<ShelfFocus | null>;
 }) {
   const specs = useMemo(() => buildShelfBooks(pick.x), [pick.x]);
   const pageTexture = useMemo(makePageTexture, []);
@@ -217,6 +235,15 @@ export function ShelfBooks({
   const roundedSpineRef = useRef<THREE.InstancedMesh>(null);
   const bandRef = useRef<THREE.InstancedMesh>(null);
   const labelRef = useRef<THREE.InstancedMesh>(null);
+  const hitRef = useRef<THREE.InstancedMesh>(null);
+
+  const hoverRef = useRef<number | null>(null);
+  const activeRef = useRef<number | null>(null);
+  const focusTickRef = useRef(0);
+  const pullRef = useRef(new Float32Array(specs.length));
+  const tiltRef = useRef(new Float32Array(specs.length));
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const gl = useThree((state) => state.gl);
 
   const geometry = useMemo(() => new THREE.BoxGeometry(1, 1, 1), []);
   const roundedSpineGeometry = useMemo(
@@ -267,113 +294,261 @@ export function ShelfBooks({
     [],
   );
 
+  // Invisible pick proxy: one box per book, on the same pivot as the modelled
+  // spine, so a click resolves to a single index. Keeping this separate from
+  // the visible instanced meshes means bands and labels can never steal a hit.
+  const hitMaterial = useMemo(
+    () =>
+      new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 0,
+        depthWrite: false,
+        colorWrite: false,
+      }),
+    [],
+  );
+
   const goldBase = useMemo(() => new THREE.Color(GOLD), []);
 
-  useFrame(() => {
+  // Instance slot for each book's decorative bands / label (sparse meshes).
+  const bandStart = useMemo(() => {
+    let cursor = 0;
+    return specs.map((spec) => {
+      if (spec.bands <= 0) return -1;
+      const start = cursor;
+      cursor += 2;
+      return start;
+    });
+  }, [specs]);
+
+  const labelStart = useMemo(() => {
+    let cursor = 0;
+    return specs.map((spec) => {
+      if (!spec.label) return -1;
+      const start = cursor;
+      cursor += 1;
+      return start;
+    });
+  }, [specs]);
+
+  /**
+   * Writes one book into every instanced mesh at once. `pull` slides it out of
+   * the case along +Z; `tilt` rotates the whole book forward around the bottom
+   * of its spine, which is what actually reads from the front-on camera.
+   */
+  const writeBook = (index: number, pull: number, tilt: number) => {
+    const spec = specs[index];
+    if (!spec) return;
+
+    const pivotY = spec.rowY;
+    const pivotZ = -0.6;
+    const cos = Math.cos(tilt);
+    const sin = Math.sin(tilt);
+
+    const place = (
+      mesh: THREE.InstancedMesh | null,
+      slot: number,
+      baseX: number,
+      baseY: number,
+      baseZ: number,
+      scaleX: number,
+      scaleY: number,
+      scaleZ: number,
+    ) => {
+      if (!mesh || slot < 0) return;
+      const dy = baseY - pivotY;
+      const dz = baseZ - pivotZ;
+      dummy.position.set(
+        baseX,
+        pivotY + dy * cos - dz * sin,
+        pivotZ + dy * sin + dz * cos + pull,
+      );
+      dummy.rotation.set(tilt, 0, spec.lean);
+      dummy.scale.set(scaleX, scaleY, scaleZ);
+      dummy.updateMatrix();
+      mesh.setMatrixAt(slot, dummy.matrix);
+      mesh.instanceMatrix.needsUpdate = true;
+    };
+
+    const w = spec.w;
+    const h = spec.h;
+    const d = spec.d;
+
+    place(pageRef.current, index, spec.x, spec.rowY + h / 2, -d / 2, w - 5, h - 8, d - 8);
+    place(
+      coverRef.current,
+      index * 2,
+      spec.x - (w / 2 - 1.2),
+      spec.rowY + h / 2,
+      -d / 2 + 0.5,
+      2.4,
+      h + 2,
+      d + 3,
+    );
+    place(
+      coverRef.current,
+      index * 2 + 1,
+      spec.x + (w / 2 - 1.2),
+      spec.rowY + h / 2,
+      -d / 2 + 0.5,
+      2.4,
+      h + 2,
+      d + 3,
+    );
+    place(spineRef.current, index, spec.x, spec.rowY + h / 2, -0.6, w + 0.4, h + 2, 4);
+    place(
+      roundedSpineRef.current,
+      index,
+      spec.x,
+      spec.rowY + h / 2,
+      0.35,
+      w / 2,
+      h,
+      Math.max(1.4, w * 0.12),
+    );
+
+    const surfaceZ = 0.35 + Math.max(1.4, w * 0.12) + 0.25;
+    const band = bandStart[index];
+    if (band >= 0) {
+      place(bandRef.current, band, spec.x, spec.rowY + h * 0.72, surfaceZ, w + 0.6, 1.5, 0.8);
+      place(bandRef.current, band + 1, spec.x, spec.rowY + h * 0.3, surfaceZ, w + 0.6, 1.5, 0.8);
+    }
+
+    const label = labelStart[index];
+    if (label >= 0) {
+      place(
+        labelRef.current,
+        label,
+        spec.x,
+        spec.rowY + h * 0.55,
+        0.35 + Math.max(1.4, w * 0.12) + 0.2,
+        Math.max(7, w * 0.5),
+        8,
+        0.6,
+      );
+    }
+
+    place(hitRef.current, index, spec.x, spec.rowY + h / 2, -d / 2, w + 2, h + 2, d + 4);
+  };
+
+  const publishFocus = () => {
+    const index = activeRef.current ?? hoverRef.current;
+    if (index == null) {
+      focusRef.current = null;
+      return;
+    }
+    const spec = specs[index];
+    if (!spec) {
+      focusRef.current = null;
+      return;
+    }
+    focusRef.current = {
+      index,
+      x: spec.x,
+      rowY: spec.rowY,
+      h: spec.h,
+      active: activeRef.current === index,
+      tick: focusTickRef.current,
+    };
+  };
+
+  const handlePointerOver = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    if (event.instanceId == null) return;
+    hoverRef.current = event.instanceId;
+    gl.domElement.style.cursor = 'pointer';
+    publishFocus();
+  };
+
+  const handlePointerOut = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    if (hoverRef.current === event.instanceId) hoverRef.current = null;
+    gl.domElement.style.cursor = '';
+    publishFocus();
+  };
+
+  const handleClick = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    if (event.instanceId == null) return;
+    activeRef.current = activeRef.current === event.instanceId ? null : event.instanceId;
+    focusTickRef.current += 1;
+    publishFocus();
+  };
+
+  useFrame((_, delta) => {
     const level = shelfPresence(progressRef.current * SHELF_PHASE_COUNT);
     pageMaterial.color.setScalar(level);
     clothMaterial.color.setScalar(level);
     goldMaterial.color.copy(goldBase).multiplyScalar(level);
     labelMaterial.color.setScalar(level);
+
+    const active = activeRef.current;
+    const hovered = hoverRef.current;
+
+    for (let index = 0; index < specs.length; index += 1) {
+      const targetPull = index === active ? 26 : index === hovered ? 9 : 0;
+      const targetTilt = index === active ? 0.085 : index === hovered ? 0.03 : 0;
+      const pull = THREE.MathUtils.damp(pullRef.current[index], targetPull, 10, delta);
+      const tilt = THREE.MathUtils.damp(tiltRef.current[index], targetTilt, 10, delta);
+      if (
+        Math.abs(pull - pullRef.current[index]) > 0.01 ||
+        Math.abs(tilt - tiltRef.current[index]) > 0.0002
+      ) {
+        pullRef.current[index] = pull;
+        tiltRef.current[index] = tilt;
+        writeBook(index, pull, tilt);
+      }
+    }
   });
 
   useEffect(() => {
     return () => {
       geometry.dispose();
       roundedSpineGeometry.dispose();
+      hitMaterial.dispose();
       pageTexture?.dispose();
       pageMaterial.dispose();
       clothMaterial.dispose();
       goldMaterial.dispose();
       labelMaterial.dispose();
+      gl.domElement.style.cursor = '';
     };
   }, [
     geometry,
     roundedSpineGeometry,
+    hitMaterial,
     pageTexture,
     pageMaterial,
     clothMaterial,
     goldMaterial,
     labelMaterial,
+    gl,
   ]);
 
   useLayoutEffect(() => {
-    const dummy = new THREE.Object3D();
     const color = new THREE.Color();
 
-    const write = (
-      mesh: THREE.InstancedMesh | null,
-      index: number,
-      x: number,
-      y: number,
-      z: number,
-      sx: number,
-      sy: number,
-      sz: number,
-      rotation: number,
-    ) => {
-      if (!mesh) return;
-      dummy.position.set(x, y, z);
-      dummy.rotation.set(0, 0, rotation);
-      dummy.scale.set(sx, sy, sz);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(index, dummy.matrix);
-    };
-
     specs.forEach((spec, index) => {
-      const w = spec.w;
-      const h = spec.h;
-      const d = spec.d;
+      writeBook(index, 0, 0);
 
-      write(pageRef.current, index, spec.x, spec.rowY + h / 2, -d / 2, w - 5, h - 8, d - 8, spec.lean);
       pageRef.current?.setColorAt(index, color.set(spec.pageTint));
 
-      write(coverRef.current, index * 2, spec.x - (w / 2 - 1.2), spec.rowY + h / 2, -d / 2 + 0.5, 2.4, h + 2, d + 3, spec.lean);
       coverRef.current?.setColorAt(index * 2, color.set(spec.color));
-      write(coverRef.current, index * 2 + 1, spec.x + (w / 2 - 1.2), spec.rowY + h / 2, -d / 2 + 0.5, 2.4, h + 2, d + 3, spec.lean);
       coverRef.current?.setColorAt(index * 2 + 1, color.set(spec.color));
 
-      write(spineRef.current, index, spec.x, spec.rowY + h / 2, -0.6, w + 0.4, h + 2, 4, spec.lean);
       spineRef.current?.setColorAt(index, color.set(spec.color));
-
-      write(
-        roundedSpineRef.current,
-        index,
-        spec.x,
-        spec.rowY + h / 2,
-        0.35,
-        w / 2,
-        h,
-        Math.max(1.4, w * 0.12),
-        spec.lean,
-      );
       roundedSpineRef.current?.setColorAt(index, color.set(spec.color));
 
-      const surfaceZ = 0.35 + Math.max(1.4, w * 0.12) + 0.25;
-
-      if (spec.bands > 0) {
-        const bandIndex = specs.slice(0, index).filter((item) => item.bands > 0).length * 2;
-        write(bandRef.current, bandIndex, spec.x, spec.rowY + h * 0.72, surfaceZ, w + 0.6, 1.5, 0.8, spec.lean);
-        write(bandRef.current, bandIndex + 1, spec.x, spec.rowY + h * 0.3, surfaceZ, w + 0.6, 1.5, 0.8, spec.lean);
+      const band = bandStart[index];
+      if (band >= 0) {
+        bandRef.current?.setColorAt(band, color.set(spec.color));
+        bandRef.current?.setColorAt(band + 1, color.set(spec.color));
       }
-    });
 
-    let labelIndex = 0;
-    specs.forEach((spec) => {
-      if (!spec.label) return;
-      write(
-        labelRef.current,
-        labelIndex,
-        spec.x,
-        spec.rowY + spec.h * 0.55,
-        0.35 + Math.max(1.4, spec.w * 0.12) + 0.2,
-        Math.max(7, spec.w * 0.5),
-        8,
-        0.6,
-        spec.lean,
-      );
-      labelRef.current?.setColorAt(labelIndex, color.set(spec.labelTint));
-      labelIndex += 1;
+      const label = labelStart[index];
+      if (label >= 0) {
+        labelRef.current?.setColorAt(label, color.set(spec.labelTint));
+      }
     });
 
     for (const mesh of [
@@ -383,6 +558,7 @@ export function ShelfBooks({
       roundedSpineRef.current,
       bandRef.current,
       labelRef.current,
+      hitRef.current,
     ]) {
       if (!mesh) continue;
       mesh.instanceMatrix.needsUpdate = true;
@@ -410,6 +586,14 @@ export function ShelfBooks({
         ref={labelRef}
         args={[geometry, labelMaterial, specs.filter((spec) => spec.label).length]}
         frustumCulled={false}
+      />
+      <instancedMesh
+        ref={hitRef}
+        args={[geometry, hitMaterial, specs.length]}
+        frustumCulled={false}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+        onClick={handleClick}
       />
     </group>
   );
@@ -757,6 +941,20 @@ const PHONE_LENS_POSITION: [number, number, number] = [-0.026, 0.062, -0.0062];
 // along the same sight line until the mark fills the viewfinder.
 const SCAN_DISTANCE = 0.14;
 
+// Scan beat, in phase units. The phone is held, so it has to enter, aim and
+// leave as one continuous held gesture: it rises in at 1.50, swings the rear
+// camera onto the cover mark by 1.86, holds through the sweep and is gone by
+// 2.16 — before the carry hand starts at 2.14.
+const PHONE_IN_START = 1.5;
+const PHONE_IN_END = 1.7;
+const PHONE_AIM_START = 1.64;
+const PHONE_AIM_END = 1.86;
+const PHONE_RELEASE_START = 1.94;
+const PHONE_RELEASE_END = 2.06;
+const PHONE_OUT_START = 2.0;
+const PHONE_OUT_END = 2.16;
+const PHONE_LOCK_PHASE = 1.84;
+
 // The screen is two layers: the rear camera feed fills the viewfinder rect and
 // this canvas paints only the chrome on top of it, so it must stay transparent.
 function drawPhoneScreen(ctx: CanvasRenderingContext2D, found: boolean, pick: ShelfPick) {
@@ -912,6 +1110,8 @@ export function PhoneScanner({
   const scanMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const lensRef = useRef<THREE.Object3D>(null);
   const screenRef = useRef<THREE.Mesh>(null);
+  const screenLightRef = useRef<THREE.PointLight>(null);
+  const handOpacityRef = useRef(0);
   const [found, setFound] = useState(false);
   const foundRef = useRef(false);
   const { size, scene, camera: mainCamera, gl } = useThree();
@@ -1075,24 +1275,46 @@ export function PhoneScanner({
 
   useFrame((_, delta) => {
     const phase = progressRef.current * SHELF_PHASE_COUNT;
-    const rise = Math.min(1, Math.max(0, (phase - 1.56) / 0.18));
-    const fadeIn = Math.min(1, Math.max(0, (phase - 1.56) / 0.1));
-    const fadeOut = 1 - Math.min(1, Math.max(0, (phase - 2.18) / 0.14));
+    const rise = smoothstep((phase - PHONE_IN_START) / (PHONE_IN_END - PHONE_IN_START));
+    const fadeIn = smoothstep((phase - PHONE_IN_START) / 0.1);
+    const fadeOut =
+      1 - smoothstep((phase - PHONE_OUT_START) / (PHONE_OUT_END - PHONE_OUT_START));
     const vis = fadeIn * fadeOut;
-    const eased = rise * rise * (3 - 2 * rise);
+    // Aim is the held gesture: the phone swings its rear camera square to the
+    // cover and drifts toward the mark, then releases once the read lands.
+    const aim =
+      smoothstep((phase - PHONE_AIM_START) / (PHONE_AIM_END - PHONE_AIM_START)) *
+      (1 - smoothstep((phase - PHONE_RELEASE_START) / (PHONE_RELEASE_END - PHONE_RELEASE_START)));
+    // A short settle when the mark resolves — the hand steadies, it does not
+    // perform a second move.
+    const lock = Math.sin(clamp01((phase - PHONE_LOCK_PHASE) / 0.08) * Math.PI);
+    const drift = reducedMotion ? 0 : Math.sin(performance.now() * 0.0011);
 
     if (groupRef.current) {
       groupRef.current.visible = vis > 0.01;
-      groupRef.current.position.x = mobile ? 0.145 : 0.265;
-      groupRef.current.position.y =
+      groupRef.current.position.set(
+        (mobile ? 0.145 : 0.265) - aim * 0.075,
         (mobile ? 0.842 : 0.862) -
-        (1 - eased) * 0.2 +
-        (reducedMotion ? 0 : Math.sin(performance.now() * 0.0011) * 0.003);
-      groupRef.current.position.z = mobile ? 0.22 : 0.19;
-      groupRef.current.rotation.set(0.02, mobile ? -0.34 : -0.52, 0.015);
-      const scale = (mobile ? 0.8 : 0.86) + eased * (mobile ? 0.12 : 0.14);
+          (1 - rise) * 0.2 +
+          aim * 0.042 +
+          drift * 0.003 +
+          lock * 0.002,
+        (mobile ? 0.22 : 0.19) - aim * 0.07,
+      );
+      groupRef.current.rotation.set(
+        0.02 + aim * 0.05 + lock * 0.006,
+        (mobile ? -0.34 : -0.52) + aim * 0.22,
+        0.015 - aim * 0.01 + (reducedMotion ? 0 : Math.sin(performance.now() * 0.0007) * 0.005),
+      );
+      const scale = (mobile ? 0.8 : 0.86) + rise * (mobile ? 0.12 : 0.14);
       groupRef.current.scale.setScalar(scale);
     }
+
+    handOpacityRef.current = vis;
+    // A candle-power point light falls off with 1/d²: at the thumb (~8 cm) this
+    // is about 1 cd — enough to separate the grip from the body without
+    // blowing the skin out, and invisible on the desk 30 cm away.
+    if (screenLightRef.current) screenLightRef.current.intensity = vis * 0.006;
 
     if (bodyMatRef.current) bodyMatRef.current.opacity = vis;
     if (chromeMatRef.current) chromeMatRef.current.opacity = vis;
@@ -1194,6 +1416,25 @@ export function PhoneScanner({
         <planeGeometry args={[SCAN_PLANE_WIDTH, SCAN_PLANE_HEIGHT]} />
         <primitive object={feedMaterial} attach="material" />
       </mesh>
+
+      {/* The hand is authored in millimetres; the phone group is in metres.
+          A local boundary keeps the GLB from suspending the whole stage. */}
+      <group scale={0.001}>
+        <Suspense fallback={null}>
+          <PhoneHandRig opacityRef={handOpacityRef} reducedMotion={reducedMotion} />
+        </Suspense>
+      </group>
+
+      {/* Screen spill on the thumb and wrist. Kept far enough in front of the
+          glass that it never lands as a hotspot. */}
+      <pointLight
+        ref={screenLightRef}
+        position={[0, 0.01, 0.09]}
+        intensity={0}
+        color="#d9c6a4"
+        distance={0.4}
+        decay={2}
+      />
 
       <mesh ref={scanRef} position={[0, 0.06, 0.0085]} visible={false}>
         <planeGeometry args={[0.071, 0.0022]} />

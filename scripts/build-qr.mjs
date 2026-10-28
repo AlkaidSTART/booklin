@@ -174,12 +174,56 @@ if (spineLink) {
   fs.writeFileSync(path.join(outDir, 'spine-mark.svg'), spineSvg);
 }
 
+// Asset A10: page-edge mark — printed on the fore-edge at P.042 and read by the
+// phone in the claim chapter. Higher error correction than the entry code: it is
+// scanned at an angle on a curved edge, and the camera feed pushes in close.
+const pageEdge = links.pageEdge;
+let pageEdgeModules = null;
+if (pageEdge) {
+  const edgeQr = qrcode(0, pageEdge.errorCorrection || 'H');
+  edgeQr.addData(pageEdge.qrTarget);
+  edgeQr.make();
+  pageEdgeModules = edgeQr.getModuleCount();
+  const edgeQuiet = Number(pageEdge.quietZoneModules || 2);
+  const edgeTotal = pageEdgeModules + edgeQuiet * 2;
+  const edgeParts = [];
+  for (let row = 0; row < pageEdgeModules; row += 1) {
+    for (let col = 0; col < pageEdgeModules; col += 1) {
+      if (edgeQr.isDark(row, col)) edgeParts.push(`M${col + edgeQuiet} ${row + edgeQuiet}h1v1h-1z`);
+    }
+  }
+  const edgeSvg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 ${edgeTotal} ${edgeTotal}" width="1024" height="1024" shape-rendering="crispEdges">
+  <title id="title">Bookln page-edge mark, P.042</title>
+  <desc id="desc">Claim layer: scanning attaches the cloud soul to this copy. Carries no reader data. Target: ${xmlEscape(pageEdge.qrTarget)}</desc>
+  <rect width="${edgeTotal}" height="${edgeTotal}" fill="${paper}"/>
+  <path d="${edgeParts.join('')}" fill="${ink}"/>
+</svg>
+`;
+  fs.writeFileSync(path.join(outDir, 'page-edge-p042.svg'), edgeSvg);
+
+  const edgeSize = Math.floor(2048 / edgeTotal) * edgeTotal;
+  const edgeScale = edgeSize / edgeTotal;
+  writePng(path.join(outDir, 'page-edge-p042.png'), edgeSize, edgeSize, (x, y) => {
+    const col = Math.floor(x / edgeScale) - edgeQuiet;
+    const row = Math.floor(y / edgeScale) - edgeQuiet;
+    if (col < 0 || row < 0 || col >= pageEdgeModules || row >= pageEdgeModules) return paperRgb;
+    return edgeQr.isDark(row, col) ? inkRgb : paperRgb;
+  });
+}
+
 console.log(JSON.stringify({
   target,
   errorCorrection,
   modules,
   total,
   png: `${pngSize}x${pngSize}`,
-  outputs: ['one-code-entry.svg', 'one-code-entry.png', 'one-code-entry-card.svg', ...(spineLink ? ['spine-mark.svg'] : [])],
+  outputs: [
+    'one-code-entry.svg',
+    'one-code-entry.png',
+    'one-code-entry-card.svg',
+    ...(spineLink ? ['spine-mark.svg'] : []),
+    ...(pageEdge ? ['page-edge-p042.svg', 'page-edge-p042.png'] : []),
+  ],
   spineModules,
+  pageEdgeModules,
 }, null, 2));

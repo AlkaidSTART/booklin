@@ -1,6 +1,6 @@
 # Asset Manifest / 资产交付清单
 
-> Generated: `2026-10-28T06:32:08.104Z`  
+> Generated: `2026-10-28T08:23:51.327Z`  
 > Source: [`assets.md`](assets.md)  
 > Machine-readable: [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)  
 > Excludes raw source masters under `public/models/source/`, `public/textures/source/`, `public/fonts/source/`, and the pre-existing `public/voice/voice.mp3` (not part of the current asset scope).
@@ -9,14 +9,14 @@
 
 | Status | Groups |
 | --- | ---: |
-| delivered | 15 |
+| delivered | 16 |
 | blockout | 1 |
 | placeholder | 3 |
 | pending-external | 1 |
 
-- Groups: **20**
-- Files: **95**
-- Total inventory bytes: **21.67 MB** (includes source/reference docs; not first-screen transfer)
+- Groups: **21**
+- Files: **100**
+- Total inventory bytes: **23.04 MB** (includes source/reference docs; not first-screen transfer)
 - Missing files: **0**
 
 ## Assets
@@ -30,8 +30,9 @@
 | A5 | Fonts | delivered | 1244.1 KB | `public/fonts/cormorant-garamond-medium.woff2`<br />`public/fonts/cormorant-garamond-semibold.woff2`<br />`public/fonts/noto-sans-sc-regular.woff2`<br />`public/fonts/noto-sans-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-medium.woff2`<br />`public/fonts/noto-serif-sc-semibold.woff2`<br />`public/fonts/cormorant-garamond-medium.ttf`<br />`public/fonts/cormorant-garamond-semibold.ttf`<br />`public/fonts/noto-sans-sc-regular.ttf`<br />`public/fonts/noto-sans-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-medium.ttf`<br />`public/fonts/noto-serif-sc-semibold.ttf` |
 | A6 | Visual specification and design references | delivered | 6767.6 KB | `docs/design/visual-spec.html`<br />`docs/design/visual-spec-desktop.png`<br />`docs/design/visual-spec-desktop.webp`<br />`docs/design/visual-spec-mobile.png`<br />`docs/design/visual-spec-mobile.webp`<br />`docs/design/book-cover-art.png`<br />`docs/design/book-preview-closed.png`<br />`docs/design/book-preview-open.png`<br />`public/design/tokens.json`<br />`public/design/tokens.css` |
 | A7 | Final bilingual copy | delivered | 42.1 KB | `docs/script-final.md`<br />`docs/script.md`<br />`docs/copy-fields.json` |
-| A8 | Grip blockout hand | blockout | 313.2 KB | `public/models/hand-blockout.glb`<br />`public/models/source/hand-blockout.blend`<br />`scripts/build-hand.py` |
-| B1 | One-code entry QR and links | placeholder | 154.4 KB | `public/data/links.json`<br />`public/qr/one-code-entry.svg`<br />`public/qr/one-code-entry.png`<br />`public/qr/one-code-entry-card.svg`<br />`public/qr/one-code-entry-card.png`<br />`public/qr/one-code-entry-card.webp` |
+| A8 | Grip blockout hands | blockout | 1628.8 KB | `public/models/hand-blockout.glb`<br />`public/models/source/hand-blockout.blend`<br />`public/models/hand-phone.glb`<br />`public/models/source/hand-phone.blend`<br />`scripts/build-hand.py` |
+| A10 | P.042 page-edge mark | delivered | 81.5 KB | `public/qr/page-edge-p042.svg`<br />`public/qr/page-edge-p042.png`<br />`public/data/links.json` |
+| B1 | One-code entry QR and links | placeholder | 155.0 KB | `public/data/links.json`<br />`public/qr/one-code-entry.svg`<br />`public/qr/one-code-entry.png`<br />`public/qr/one-code-entry-card.svg`<br />`public/qr/one-code-entry-card.png`<br />`public/qr/one-code-entry-card.webp` |
 | B2 | Editions, prices and checkout | pending-external | 2.6 KB | `public/data/editions.json` |
 | B3 | Lesson video and poster | placeholder | 2173.7 KB | `public/video/lesson-preview.mp4`<br />`public/video/lesson-preview-poster.webp`<br />`public/video/lesson-preview.vtt`<br />`docs/design/lesson-preview-poster.png`<br />`docs/design/lesson-preview.html`<br />`docs/video-spec.md` |
 | B4 | Knowledge graph data and preview | delivered | 604.3 KB | `public/data/knowledge-graph.json`<br />`public/design/knowledge-graph.svg`<br />`public/design/knowledge-graph.png`<br />`public/design/knowledge-graph.webp` |
@@ -41,7 +42,7 @@
 | B8 | Benchmark sources and evidence | delivered | 16.1 KB | `public/data/benchmark.json`<br />`docs/benchmark-sources.md` |
 | C1 | Shelf model | delivered | 135.5 KB | `public/models/shelf.glb`<br />`public/models/source/shelf.blend` |
 | C2 | Sleeping spines and hero glow | delivered | 17.5 KB | `public/models/shelf.glb` |
-| C3 | Spine mark | placeholder | 16.9 KB | `public/qr/spine-mark.svg`<br />`public/data/shelf.json`<br />`public/data/links.json` |
+| C3 | Spine mark | placeholder | 17.5 KB | `public/qr/spine-mark.svg`<br />`public/data/shelf.json`<br />`public/data/links.json` |
 | C4 | Night desk HDRI and lamp light | delivered | 2048.1 KB | `public/hdri/night-desk.hdr` |
 
 ## Missing files

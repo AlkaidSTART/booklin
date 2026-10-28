@@ -1769,7 +1769,7 @@ function BookRig({
             <primitive object={book.scene} dispose={null} />
             <PageTurnRig mesh={bookMorphMesh} progressRef={progressRef} />
             <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} markRef={qrMarkRef} />
-            <HandRig progressRef={progressRef} />
+            <HandRig progressRef={progressRef} reducedMotion={reducedMotion} />
           </group>
         </group>
       </group>

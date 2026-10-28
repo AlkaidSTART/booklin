@@ -18,9 +18,13 @@ The page should read its volatile content from these JSON files rather than hard
 | `qr.file` / `qr.png` / `qr.card` | string | Public paths to the generated QR assets. |
 | `qr.errorCorrection` | `"L" \| "M" \| "Q" \| "H"` | Current: `M`. |
 | `qr.quietZoneModules` | number | Current: `4`. |
+| `spine.*` | object | Spine mark (asset C3): own `qrTarget`, `errorCorrection` `Q`, quiet zone `2`, output `/qr/spine-mark.svg`. |
+| `pageEdge.*` | object | Page-edge mark at P.042 (asset A10): own `qrTarget`, `errorCorrection` `H`, quiet zone `2`, output `/qr/page-edge-p042.svg` + 2048 px PNG. Higher error correction because it is scanned at an angle on a curved edge. |
 | `status` | string | `placeholder` until a production host is supplied. |
 
 **Update rule:** change `landing.url` and `landing.qrTarget`, then run `node scripts/build-qr.mjs` and `node scripts/render-media.mjs`. Do not edit the SVG/PNG by hand.
+
+**Verify:** every generated mark must decode — `uv run --with opencv-python-headless python -c "import cv2; print(cv2.QRCodeDetector().detectAndDecode(cv2.imread('public/qr/page-edge-p042.png'))[0])"`.
 
 ---
 

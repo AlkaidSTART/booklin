@@ -6,7 +6,7 @@
 >
 > - 清单：[asset-manifest.md](asset-manifest.md) 与机器可读的 [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)
 > - **A1–A7：** 已交付可用于开发
-> - **A8–A10：** 新增（手部与扫码）。A9 已交付（机身、取景 UI、后置镜头锚点与离屏屏幕画面）；A8 已交付 blockout 并接入 01 携归，正式绑定手待替换；A10 未交付并阻塞 04 认领
+> - **A8–A10：** 新增（手部与扫码）。A9 已交付（机身、取景 UI、后置镜头锚点与离屏屏幕画面）；A8 已交付两套 blockout（握书 / 握手机），分别接入 01 携归与 00 扫码，正式绑定手待替换；A10 已交付页边码资产，场景内落位待 P2
 > - **B1/B3：** 已有可用占位资产，正式二维码/讲师视频待替换
 > - **B2：** 数据结构已交付，价格与购买链接待商务提供
 > - **C1–C4：** ✅ 已交付（书架模型、沉睡书脊与主书微光、脊码、夜景 HDRI 与台灯布光，均已接入场景）；脊码 URL 为 `.example` 占位
@@ -112,7 +112,9 @@
 - **禁止**：烘焙进模型的握姿形变、IK 控制器、相机灯光残留对象。
 - **交付物**：`.blend` 源文件 + `hand.glb`（Draco + KTX2）+ 两个握姿的比对截图。
 - **预算影响**：引入后面数总预算需上修至 < 70,000，详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。
-- **当前状态：blockout 已交付**（`public/models/hand-blockout.glb`，9,000 三角面，体素融合，握持半径 34 mm，抓握中心在原点）。由 `scripts/build-hand.py` 确定性生成，仅用于验证 socket 跟随、遮挡、光照与构图，**不具备骨骼与正确拓扑**，上线前必须替换为正式绑定手。运行时材质在 `HandRig.tsx` 内覆盖，不用 GLB 自带材质。
+- **当前状态：两套带骨骼的雕刻手已交付**（各约 21,700 三角面，22 骨骼蒙皮，含五指甲片、指节多重褶皱、掌纹腕纹；握书姿态为参考图的托握：拇指上扶、食指横托、其余三指逐级内扣）。由 `scripts/build-hand.py` 确定性生成，另导出 `hand.glb` / `source/hand.blend`。贴图（hand-*.ktx2）与握姿动画尚未做，面数略高于 20k 预算。运行时材质由 `skinMaterial.ts` 统一覆盖（暗调 + 毛孔噪声 + 暖色菲涅尔），不用 GLB 自带材质。
+  - `hand-blockout.glb`：握书，握持半径 34 mm，接入 01 携归。
+  - `hand-phone.glb`：握手机，掌在后、四指贴背面、拇指压前左边缘（避开取景框 x ≥ −22 mm），前臂 640 mm 向下出画；接入 00 扫码段。
 
 ### A9 手机后置镜头锚点与屏幕离屏画面
 
@@ -131,6 +133,7 @@
 - **格式**：SVG 矢量（近距离不糊）+ 导出 2048 PNG 供 KTX2 贴图。
 - **命名**：`page-edge-p042.svg`、`page-edge-p042.png`。
 - **生成**：扩展 `scripts/build-qr.mjs`，与 B1 共用同一套编码逻辑。
+- **当前状态：已交付。** `public/qr/page-edge-p042.svg` + `page-edge-p042.png`（2048 px，53×53 模块，H 级纠错，安静区 2）。已用 OpenCV `QRCodeDetector` 实际解码通过，目标为 `https://bookln.example/page-042?...utm_medium=page-edge`。场景内落位与手机合成仍属 P2。
 
 ---
 
@@ -243,9 +246,9 @@ C 系列验收补充：
 | B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
-| A8 | 🟡 blockout | `public/models/hand-blockout.glb`、`src/components/book-stage/HandRig.tsx` | 9,000 面抓握 blockout 已接入 01 携归；正式绑定手（retopo + 骨骼 + 两套握姿）仍待交付 |
+| A8 | 🟡 blockout | `public/models/hand-blockout.glb`、`public/models/hand-phone.glb`、`src/components/book-stage/HandRig.tsx` | 握书 / 握手机两套 22,000 面 blockout 已分别接入 01 携归与 00 扫码；正式绑定手（retopo + 骨骼 + 两套握姿）仍待交付 |
 | A9 | ✅ delivered | `src/components/book-stage/ShelfStage.tsx`、`src/lib/stage/layers.ts` | 程序化机身 + Canvas 取景 UI + 后置镜头锚点 + 屏幕离屏画面（含 grade / 边缘虚化 / 手持抖动）。04 认领的复用仍待 P2 |
-| A10 | 🔴 pending | `public/qr/page-edge-p042.svg` | 页边码缺失，阻塞 04 认领；必须真实可解码 |
+| A10 | ✅ delivered | `public/qr/page-edge-p042.svg`、`public/qr/page-edge-p042.png` | 53×53 模块、H 级纠错、2048 px PNG；已用 OpenCV 解码验证。场景内落位（04 认领）仍待 P2 |
 
 生成/刷新清单：
 

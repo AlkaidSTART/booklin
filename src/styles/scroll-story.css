@@ -436,6 +436,69 @@ html.is-paper .sx-rail__meta a {
   transition-delay: 400ms;
 }
 
+/* ------------------------------------------------------------------
+   Hero arrival — orchestrated with loader dismiss
+   ------------------------------------------------------------------ */
+.sx-sec--hero .sx-kicker,
+.sx-sec--hero .sx-hero,
+.sx-sec--hero .sx-hero-zh,
+.sx-sec--hero .sx-hero-line,
+.sx-sec--hero .sx-line-en,
+.sx-sec--hero .sx-meta {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-kicker,
+html.is-loaded .sx-sec--hero.is-live .sx-hero,
+html.is-loaded .sx-sec--hero.is-live .sx-hero-zh,
+html.is-loaded .sx-sec--hero.is-live .sx-hero-line,
+html.is-loaded .sx-sec--hero.is-live .sx-line-en,
+html.is-loaded .sx-sec--hero.is-live .sx-meta {
+  opacity: 1;
+  transform: none;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-kicker {
+  transition-delay: 60ms;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-hero {
+  transition-delay: 150ms;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-hero-zh {
+  transition-delay: 240ms;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-hero-line {
+  transition-delay: 320ms;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-line-en {
+  transition-delay: 390ms;
+}
+
+html.is-loaded .sx-sec--hero.is-live .sx-meta {
+  transition-delay: 460ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sx-sec--hero .sx-kicker,
+  .sx-sec--hero .sx-hero,
+  .sx-sec--hero .sx-hero-zh,
+  .sx-sec--hero .sx-hero-line,
+  .sx-sec--hero .sx-line-en,
+  .sx-sec--hero .sx-meta {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
 /* The shelf chapter's copy waits for the hand-off label to clear, so the
    two text moments never stack on a phone. */
 html.is-handoff .sx-sec--shelf .sx-kicker,

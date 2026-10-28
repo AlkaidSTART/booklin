@@ -35,5 +35,17 @@
     "errorCorrection": "Q",
     "quietZoneModules": 2,
     "note": "Public preview layer entry; resolves before the book is claimed and carries no reader data (worldview D4)."
+  },
+  "pageEdge": {
+    "url": "https://bookln.example/page-042",
+    "qrTarget": "https://bookln.example/page-042?utm_source=print&utm_medium=page-edge&utm_campaign=bookln",
+    "label": "Page-edge mark",
+    "labelZh": "页边码",
+    "file": "/qr/page-edge-p042.svg",
+    "png": "/qr/page-edge-p042.png",
+    "page": 42,
+    "errorCorrection": "H",
+    "quietZoneModules": 2,
+    "note": "Claim layer at P.042, read by the phone in the claim chapter. Attaches the cloud soul to this copy and writes no reader data (worldview D4). Higher error correction because it is scanned at an angle on a curved edge."
   }
 }

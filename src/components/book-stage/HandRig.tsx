@@ -25,7 +25,7 @@ const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 /** 01 Carry: palm on the camera-facing cover, fingers up it, arm out below.
  * The +6 mm keeps the finger volumes off the board instead of halved by it. */
 const BOOK_ANCHOR: [number, number, number] = [20, 0, 6];
-const BOOK_ROLL = -0.42;
+const BOOK_ROLL = -0.2;
 const BOOK_CURL: [number, number, number] = [0.12, 0.16, 0.08];
 /** thumb_01 local XYZ euler; lifts the relaxed thumb onto the cover. */
 const BOOK_THUMB: [number, number, number] = [0.24, 0, -0.08];

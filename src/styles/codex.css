@@ -1568,6 +1568,18 @@ main,
   width: 44%;
 }
 
+.chain-panel .chain-table thead th:first-child {
+  width: 54%;
+}
+
+.chain-panel .chain-table tbody th {
+  color: var(--text);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-transform: none;
+}
+
 .chain-table tbody th {
   color: var(--text);
   font-size: 10px;
@@ -3294,7 +3306,28 @@ main,
   }
 
   .chain-table {
-    min-width: 520px;
+    min-width: 0;
+  }
+
+  .chain-table tbody td {
+    display: block;
+    padding: 3px 0 0;
+  }
+
+  .chain-table tbody td::before {
+    content: "IN-WORLD · 世界观";
+    display: block;
+    margin-bottom: 3px;
+    color: var(--gold);
+    font-family: var(--font-sans);
+    font-size: 7px;
+    letter-spacing: 0.13em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .chain-table .chain-group__row th {
+    padding-bottom: 2px;
   }
 }
 

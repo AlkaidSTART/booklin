@@ -135,7 +135,8 @@
 | C5 | 伴读浮窗三件套 UI | 05 伴读 | 组件 + 2D 视觉稿 | `src/` + `docs/design/` | 🟡 新建。讲题视频小窗 / 图谱缩略 / AI 问答框，全部贴页边排布，**不得遮挡正文**；复用 B3 视频与 `knowledge-graph.json` 数据 |
 | C6 | 双锚点循环图（2D 印刷层） | 05 伴读 | SVG / CSS 动效 | `src/` 组件 | 🟡 新建。卡壳 → 扫码 → 开讲 → 回纸，四步首尾相接成环；交互响应遵循 400ms / `Curves.easeOutCubic` 约束 |
 | C7 | 2D 章节转场视觉稿扩展 | 00/01/05/06 章 | 桌面 1440 + 移动 390 两套 | `docs/design/visual-spec.html` 扩展 | ✅ 已交付。扩展现有 A6 视觉稿，覆盖四个新章节的排版节奏与 telemetry 状态 |
-| C8 | App「阅读里程」归档界面 | 06 传承 | 概念 UI 视觉稿 | `docs/design/reading-journey.html` | ✅ 已交付。仅一屏概念图：「第 N 本 · 共读 47 夜」归档瞬间；**红线**：不得出现整页正文阅读、推送、红点、弹窗（见 [worldview.md](worldview.md) §10） |
+| C8 | App「阅读里程」归档界面 | 06 传承 | 概念 UI 视觉稿 | `docs/design/reading-journey.html` | ✅ 已交付。仅一屏概念图：「第 N 本 · 共读 47 夜」归档瞬间；**红线**：纸书伴读界面不得出现整页正文阅读、推送、红点、弹窗；电子档内页见 READ 章（见 [worldview.md](worldview.md) §10） |
+| C9 | READ 电子档内页界面 | R 阅读 | 手机构图 + 4 页内页（P.042–P.045） | `src/styles/scroll-story.css` + `src/components/reader/ReaderFigure.astro` + `public/data/reader.json` | ✅ 已交付。钉住式编辑页：虚线选框手机、右侧页序、滚动翻页；无点击 / 无分页控件（worldview D5） |
 
 C 系列验收补充：
 

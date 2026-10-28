@@ -1,7 +1,7 @@
 # Data Contracts / 资产数据契约
 
 > Status: **concept data — commerce and CMS values pending**  
-> Version: `2026-10-26`
+> Version: `2026-10-28`
 
 The page should read its volatile content from these JSON files rather than hard-coding it into components. This keeps copy, pricing, links, graph data and benchmark evidence reviewable in one place.
 

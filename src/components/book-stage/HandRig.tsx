@@ -23,10 +23,15 @@ const CURL_AXIS = new THREE.Vector3(1, 0, 0);
 const FINGERS = ['index', 'middle', 'ring', 'pinky'] as const;
 
 /** 01 Carry: palm on the camera-facing cover, fingers up it, arm out below.
- * The +6 mm keeps the finger volumes off the board instead of halved by it. */
-const BOOK_ANCHOR: [number, number, number] = [20, 0, 6];
-const BOOK_ROLL = -0.2;
-const BOOK_CURL: [number, number, number] = [0.12, 0.16, 0.08];
+ *
+ * The +10 mm Z offset is the geometric clearance the sculpt needs: its palm
+ * and finger axes share one plane, so letting the palm touch the board buries
+ * the backs of the fingers (and a roll about X buries the palm heel). With the
+ * hand 12 mm below the bottom edge and 10 mm proud of the cover, no vertex
+ * lands inside the book. */
+const BOOK_ANCHOR: [number, number, number] = [20, -12, 10];
+const BOOK_ROLL = 0;
+const BOOK_CURL: [number, number, number] = [0.03, 0.04, 0.02];
 /** thumb_01 local XYZ euler; lifts the relaxed thumb onto the cover. */
 const BOOK_THUMB: [number, number, number] = [0.24, 0, -0.08];
 const BOOK_THUMB_TIP = 0;

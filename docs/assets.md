@@ -6,6 +6,7 @@
 >
 > - 清单：[asset-manifest.md](asset-manifest.md) 与机器可读的 [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)
 > - **A1–A7：** 已交付可用于开发
+> - **A8–A10：** 新增（手部与扫码）。A9 的程序化机身与 Canvas 取景 UI 已交付，后置镜头锚点与离屏屏幕待做；A8 未交付；A10 未交付并阻塞 04 认领
 > - **B1/B3：** 已有可用占位资产，正式二维码/讲师视频待替换
 > - **B2：** 数据结构已交付，价格与购买链接待商务提供
 > - **C1–C4：** ✅ 已交付（书架模型、沉睡书脊与主书微光、脊码、夜景 HDRI 与台灯布光，均已接入场景）；脊码 URL 为 `.example` 占位
@@ -31,6 +32,9 @@
 | A5 | 字体文件 | 全片 | woff2 + ttf/otf | `public/fonts/` |
 | A6 | 视觉稿 | 全片 2D UI | Figma 链接/文件 | `docs/design/visual-spec.html`、`public/design/tokens.*` |
 | A7 | 定稿文案 | 全片 | Markdown / 飞书文档 | `docs/script-final.md`、`docs/copy-fields.json` |
+| A8 | 右手模型与握姿 | 01 携归 / 04 认领 / 06 传承（可选） | GLB（Draco + KTX2）+ `.blend` | `public/models/hand.glb` |
+| A9 | 手机后置镜头锚点与屏幕离屏画面 | 00 停泊 / 04 认领 | 程序化几何 + 空物体 + 离屏 RenderTarget | `src/components/book-stage/ShelfStage.tsx` |
+| A10 | P.042 页边码 | 04 认领 | SVG（真实可解码） + PNG 2048 | `public/qr/page-edge-p042.svg` |
 
 ### A1 书本模型（Blender 源文件 + GLB）
 
@@ -97,6 +101,35 @@
 - 明确各字段长度上限（主标题、副标题、注释微字、卡片文案），避免排版溢出。
 - 参数表（iPad Pro / Kindle）需提供数据来源或免责声明，见 [benchmark-sources.md](benchmark-sources.md)。
 - 机器可读文案与移动端变体见 [`copy-fields.json`](copy-fields.json)，用 `node scripts/validate-copy.mjs` 校验。
+
+### A8 右手模型与握姿
+
+- **用途**：01 携归托握书本、04 认领持手机、06 传承归架（可选，与 01 共用握姿）。
+- **网格**：右手，静止放松姿态，正视 +Z，单位米，导出应用变换；含手臂截断，**≤ 20,000 三角面**，≤ 32 骨骼（腕 + 5 指 × 3–4 节），UV 无重叠。
+- **握姿**：两个静态握姿 `grip_book`、`grip_phone`，在 Blender 内贴合物体表面，指腹压缩 1–2 mm；**不作为动画片段导出**，前端用 socket + 固定偏移刚性附着，运行时不跑 IK。
+- **贴图**：`hand-basecolor`、`hand-normal`、`hand-roughness`、`hand-thickness`；桌面 2048、移动 1024；KTX2。
+- **材质约束**：`MeshPhysicalMaterial` + sheen，接受 three.js 无真实 SSS，只允许出现在暗调、侧逆光、局部入画的构图；禁止明亮中性光下正面呈现。
+- **禁止**：烘焙进模型的握姿形变、IK 控制器、相机灯光残留对象。
+- **交付物**：`.blend` 源文件 + `hand.glb`（Draco + KTX2）+ 两个握姿的比对截图。
+- **预算影响**：引入后面数总预算需上修至 < 70,000，详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。
+
+### A9 手机后置镜头锚点与屏幕离屏画面
+
+- **现状**：00 停泊已由 `ShelfStage.tsx` 的 `PhoneScanner` 程序化交付机身（`RoundedBox` 92 × 188 × 11 mm）与 `CanvasTexture` 屏幕（`drawPhoneScreen` 绘制取景框、`SCANNING…`、命中态），扫描窗口为 phase 1.66–1.9。**不新建手机模型。**
+- **新增锚点**：机身背面增加空物体 `Phone_Lens_Rear`（约左上 1/4 处），屏幕离屏相机的位置与朝向由此推导；不得手工摆位，否则「屏幕显示背后画面」的错觉失效。
+- **新增画面层**：保留现有 Canvas 取景 UI，其下叠一层离屏相机画面（book / 桌面 / 页边码）。分辨率随屏幕在视口内的像素尺寸浮动，clamp 384–1024，不写死。
+- **色彩**：离屏这一趟 `NoToneMapping` + sRGB 输出，屏幕材质用 `MeshBasicMaterial`；单独一级调色（偏冷、对比更高、细噪点），刻意与主场景暖棚光区隔。
+- **复用**：00 章（不持机，扫脊码）与 04 认领（持机，扫 P.042 页边码）共用同一实例。
+- **详见**：[hand-scan-spec.md](hand-scan-spec.md) §4。
+
+### A10 P.042 页边码
+
+- **阻塞 04 认领**。现有 `public/qr/one-code-entry.*` 是入口卡、`spine-mark.svg` 是脊码，**均不可代用**。
+- 必须是**真实可解码**的二维码：镜头推近后会被看清，任何占位图形都会当场暴露。
+- 内容指向 [`links.json`](data-contracts.md) 中的认领地址；域名替换后走同一重建流程。
+- **格式**：SVG 矢量（近距离不糊）+ 导出 2048 PNG 供 KTX2 贴图。
+- **命名**：`page-edge-p042.svg`、`page-edge-p042.png`。
+- **生成**：扩展 `scripts/build-qr.mjs`，与 B1 共用同一套编码逻辑。
 
 ---
 
@@ -172,6 +205,8 @@ C 系列验收补充：
   - 绘制调用 **< 40 / 帧**
 - 所有模型导出前需在 Blender 中执行：应用变换、合并同材质网格、删除隐藏对象、重算法线。
 
+> **预算修订（A8 引入后）**：手部模型 +20,000 面会突破上表红线。经评估将模型面数总预算上修至 **< 70,000**，同时要求书架与桌面做 LOD、移动端骨骼蒙皮网格 ≤ 2 个（书 + 手）、纹理驻留 ≤ 96 MB。详见 [hand-scan-spec.md](hand-scan-spec.md) §5.5。[TDD.md](TDD.md) §4.1 的 50,000 需同步修订。
+
 ---
 
 ## 5. 验收清单
@@ -207,6 +242,9 @@ C 系列验收补充：
 | B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
+| A8 | 🔴 pending | `public/models/hand.glb` | 需采购或制作绑定手；两个静态握姿在 Blender 内完成，运行时不跑 IK |
+| A9 | 🟡 partial | `src/components/book-stage/ShelfStage.tsx` | 程序化机身与 Canvas 取景 UI 已交付；后置镜头锚点、屏幕离屏画面、色彩调色待做 |
+| A10 | 🔴 pending | `public/qr/page-edge-p042.svg` | 页边码缺失，阻塞 04 认领；必须真实可解码 |
 
 生成/刷新清单：
 

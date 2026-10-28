@@ -47,6 +47,7 @@ src/                  Astro application
 | [`docs/copy-fields.json`](docs/copy-fields.json) | Machine-readable copy and length limits |
 | [`docs/scroll-copy.json`](docs/scroll-copy.json) | Short-form copy deck for the scroll edition (one headline, one line, one telemetry strip per chapter) |
 | [`docs/assets.md`](docs/assets.md) | Asset checklist and delivery status |
+| [`docs/hand-scan-spec.md`](docs/hand-scan-spec.md) | Hand-hold and phone-scan spec: chapter placement, screen FBO pipeline, hand rig rules and build order |
 | [`docs/asset-manifest.md`](docs/asset-manifest.md) | Generated inventory with sizes and hashes |
 | [`docs/benchmark-sources.md`](docs/benchmark-sources.md) | Comparison claim register and disclaimers |
 | [`docs/brand-guidelines.md`](docs/brand-guidelines.md) | Brand usage, files, colours and type |

@@ -436,6 +436,18 @@ html.is-paper .sx-rail__meta a {
   transition-delay: 400ms;
 }
 
+/* The shelf chapter's copy waits for the hand-off label to clear, so the
+   two text moments never stack on a phone. */
+html.is-handoff .sx-sec--shelf .sx-kicker,
+html.is-handoff .sx-sec--shelf .sx-title,
+html.is-handoff .sx-sec--shelf .sx-line,
+html.is-handoff .sx-sec--shelf .sx-line-en,
+html.is-handoff .sx-sec--shelf .sx-meta,
+html.is-handoff .sx-sec--shelf .sx-module {
+  opacity: 0;
+  transform: translateY(22px);
+}
+
 /* ------------------------------------------------------------------
    Chapter modules (all scroll-driven, no clicks)
    ------------------------------------------------------------------ */

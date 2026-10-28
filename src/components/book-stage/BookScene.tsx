@@ -42,22 +42,37 @@ type CameraKey = {
 type PointerRef = MutableRefObject<{ x: number; y: number }>;
 type InteractionRef = MutableRefObject<StageInteractionState>;
 
-// Deployment slipcase. The book's outer boards make it 218 mm tall while the
-// tray is 212 mm deep, so the book is seated with its top a hair under the case
-// ceiling and the lower board hidden inside the base. The case's x shifts with
-// the chosen edition.
+// Deployment slipcase. The case is 160 x 220 x 38 mm with an open front; the
+// book boards are 148 x 210 x 30 mm, so the fit is half a millimetre per side
+// once the liner is counted. The stow therefore happens in the case's own
+// frame: the book turns square first, then travels along the case's front axis
+// onto the tray. Blending position and yaw at the same time scrapes the walls.
+const SLIPCASE_POSITION: Vec3 = [-0.128, 0.763, -0.008];
 const SLIPCASE_ROTATION: Vec3 = [0.02, -0.32, 0.006];
 const SLIPCASE_X: Record<StageInteractionState['activeEdition'], number> = {
   standard: -0.155,
   pro: -0.128,
   enterprise: -0.14,
 };
-// Book origin (body bottom) sits 6 mm above the tray floor at 0.767.
-const SLIPCASE_SEAT_Y = 0.769;
-// Book centre stopped at the case mouth: rim 19 mm + half the 30 mm thickness + air.
-const SLIPCASE_MOUTH: Vec3 = [-0.142, 0.7641, 0.034];
-// Book centre once seated on the tray (tray centre z = -16…15.5 mm).
-const SLIPCASE_SEAT: Vec3 = [-0.128, SLIPCASE_SEAT_Y, -0.0082];
+// Case-local anchors in metres (full-size case). The tray floor is 4.5 mm above
+// the case base and the front face is at z = +19 mm; the book's board adds
+// 15 mm, so the mouth anchor leaves 6 mm of air in front of the opening.
+const SLIPCASE_TRAY_SEAT: Vec3 = [0, 0.0045, 0];
+const SLIPCASE_TRAY_MOUTH: Vec3 = [0, 0.0045, 0.04];
+// Front flap hinge: its bottom edge, mid-thickness, in the asset's millimetres.
+// Opening it forward onto the desk keeps the whole panel outside the book's
+// path (the seated cover sits 4 mm behind the closed flap).
+const SLIPCASE_FLAP_HINGE_Z = 19.75;
+
+// Stow beats in phase units (phase 8 = deployment section pinned).
+const STOW_START = 7.3;
+const STOW_ALIGN_END = 7.62;
+const STOW_SLIDE_START = 7.7;
+const STOW_SEAT_END = 7.9;
+const SLIPCASE_IN_START = 7.52;
+const SLIPCASE_IN_END = 7.68;
+const SLIPCASE_FLAP_CLOSE_START = 7.9;
+const SLIPCASE_FLAP_CLOSE_END = 8;
 
 // Unified desk coordinate space across all 9 sections (prologue -> epilogue B)
 // so the object never teleports off the oak desk.
@@ -110,10 +125,11 @@ const BOOK_KEYS: BookKey[] = [
     rotation: [0.04, 0.58, 0.01],
     open: 0,
   },
-  // Epilogue B Deployment — closed at the mouth of the clothbound slipcase,
-  // ready to slide onto the tray (the last travel is added in BookRig).
+  // Epilogue B Deployment — square to the slipcase at its mouth. The stow
+  // itself (mouth -> tray -> seated) is driven in the case's own frame by
+  // BookRig, so this key only anchors the end of the generic timeline.
   {
-    position: [SLIPCASE_MOUTH[0], SLIPCASE_MOUTH[1], SLIPCASE_MOUTH[2]],
+    position: [-0.1406, 0.7676, 0.03],
     rotation: SLIPCASE_ROTATION,
     open: 0,
   },
@@ -296,6 +312,19 @@ type BookPose = {
 
 function mixVec3(a: Vec3, b: Vec3, t: number): Vec3 {
   return [lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t)];
+}
+
+/** Writes a case-local anchor into world space, expanded by the case scale. */
+function readCaseAnchor(
+  out: THREE.Vector3,
+  caseGroup: THREE.Object3D,
+  caseScale: number,
+  local: Vec3,
+) {
+  return out
+    .set(local[0] * caseScale, local[1] * caseScale, local[2] * caseScale)
+    .applyQuaternion(caseGroup.quaternion)
+    .add(caseGroup.position);
 }
 
 function mixCameraPose(a: ShelfCameraPose, b: ShelfCameraPose, t: number): ShelfCameraPose {
@@ -787,14 +816,8 @@ function CameraRig({
     const pointerY = reducedMotion || mobile ? 0 : pointerRef.current.y;
 
     const targetX = pose.target[0];
-    let targetY = pose.target[1];
+    const targetY = pose.target[1];
     const targetZ = pose.target[2];
-
-    // On phones the copy sits over the upper half; lift the shelf framing so
-    // the case and the selected spine breathe in the lower band.
-    if (mobile && custom && phase < 1.12) {
-      targetY += 0.26 * smoothstep((phase - 0.8) / 0.2);
-    }
 
     // Narrow desktop windows lose horizontal field of view. Pull the camera
     // back along the view ray so the staged object stays framed instead of
@@ -1327,6 +1350,9 @@ function BookRig({
   const deskGroupRef = useRef<THREE.Group>(null);
   const pedestalGroupRef = useRef<THREE.Group>(null);
   const slipcaseGroupRef = useRef<THREE.Group>(null);
+  const slipcaseFlapRef = useRef<THREE.Group>(null);
+  const stowMouthRef = useRef(new THREE.Vector3());
+  const stowSeatRef = useRef(new THREE.Vector3());
   const shelfGroupRef = useRef<THREE.Group>(null);
   const shelfGlowRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const shelfBaseRef = useRef<Array<{ material: THREE.MeshStandardMaterial; color: THREE.Color }>>([]);
@@ -1486,6 +1512,27 @@ function BookRig({
     });
   }, [shelf.scene]);
 
+  useEffect(() => {
+    // Re-pivot the front flap (and the foil seal sitting on it) on its bottom
+    // edge so it can fold forward onto the desk while the book slides in. The
+    // asset is authored with the hinge at the top edge, which would swing the
+    // panel through the book's path instead of out of it.
+    const flap = slipcase.scene.getObjectByName('Slipcase_Flap');
+    const seal = slipcase.scene.getObjectByName('Slipcase_Seal');
+    const pivot = slipcaseFlapRef.current;
+    if (!flap || !seal || !pivot) return;
+
+    pivot.add(flap, seal);
+    flap.position.set(0, 0, -SLIPCASE_FLAP_HINGE_Z);
+    seal.position.set(0, 0, -SLIPCASE_FLAP_HINGE_Z);
+
+    return () => {
+      slipcase.scene.add(flap, seal);
+      flap.position.set(0, 0, 0);
+      seal.position.set(0, 0, 0);
+    };
+  }, [slipcase.scene]);
+
   useFrame((_, delta) => {
     const { phase, index, t } = timeline(progressRef.current);
     const a = BOOK_KEYS[index];
@@ -1497,13 +1544,8 @@ function BookRig({
     const scrollLanding = phase < 0.18 ? (1 - phase / 0.18) * 0.045 : 0;
     const idle = reducedMotion ? 0 : Math.sin(performance.now() * 0.00055) * 0.0015;
 
-    // Epilogue B (Deployment): the case shifts with the chosen edition, and once
-    // the case has grown in the book slides the last 42 mm from the mouth onto
-    // the tray. Tied to the phase, so the stow is visible while scrolling in and
-    // the seated state is already reached when the chapter pins.
     const edition = interactionRef.current.activeEdition;
     const editionShift = SLIPCASE_X[edition] - SLIPCASE_X.pro;
-    const dock = smoothstep((phase - 7.72) / 0.28);
 
     // Gentle turntable rotation on the pedestal during Epilogue A (Benchmark)
     const benchmarkSpin =
@@ -1516,8 +1558,21 @@ function BookRig({
     const pedestalOut = 1 - smoothstep((phase - 7.36) / 0.22);
     const plinthRideY =
       BOOK_KEYS[7].position[1] - (1 - pedestalOut) * PEDESTAL_HEIGHT;
-    // Slipcase only arrives once the plinth is flush and the desk is clear.
-    const slipcaseTarget = smoothstep((phase - 7.58) / 0.16);
+
+    // Epilogue B (Deployment) beats, all tied to the phase so the stow is
+    // visible on the way in and complete once the chapter pins:
+    //   1. lift the book off the retracting plinth and arc it forward
+    //   2. square it to the case while the case grows in and folds its flap open
+    //   3. slide it along the case's own front axis onto the tray
+    //   4. fold the flap shut over the lower cover and its foil seal
+    const caseIn = smoothstep((phase - SLIPCASE_IN_START) / (SLIPCASE_IN_END - SLIPCASE_IN_START));
+    const flapOpen =
+      caseIn *
+      (1 -
+        smoothstep(
+          (phase - SLIPCASE_FLAP_CLOSE_START) /
+            (SLIPCASE_FLAP_CLOSE_END - SLIPCASE_FLAP_CLOSE_START),
+        ));
 
     if (bookGroupRef.current) {
       const shelfPose = shelfBookPose(phase, pick);
@@ -1546,6 +1601,51 @@ function BookRig({
           8,
           delta,
         );
+      } else if (phase >= STOW_START && slipcaseGroupRef.current) {
+        // Deployment stow. The case group is the authority for x (edition
+        // shifts are damped on the case itself), so reading its live transform
+        // keeps the book and the cavity locked together for every edition.
+        const caseGroup = slipcaseGroupRef.current;
+        const caseScale = mobile ? 0.84 : 1;
+        const travel = smoothstep((phase - STOW_START) / (STOW_ALIGN_END - STOW_START));
+        const insert = smoothstep(
+          (phase - STOW_SLIDE_START) / (STOW_SEAT_END - STOW_SLIDE_START),
+        );
+        const arc = Math.sin(Math.PI * travel);
+        const from = BOOK_KEYS[7];
+
+        const mouth = readCaseAnchor(
+          stowMouthRef.current,
+          caseGroup,
+          caseScale,
+          SLIPCASE_TRAY_MOUTH,
+        );
+        const seat = readCaseAnchor(stowSeatRef.current, caseGroup, caseScale, SLIPCASE_TRAY_SEAT);
+
+        // The book leaves the retracting plinth with a small lift and a forward
+        // bow, so its sweep to the mouth never crosses the case body.
+        const startY = from.position[1] - (1 - pedestalOut) * PEDESTAL_HEIGHT;
+        const travelX = lerp(from.position[0], mouth.x, travel);
+        const travelZ = lerp(from.position[2], mouth.z, travel) + arc * 0.05;
+        const travelY =
+          lerp(startY, mouth.y, travel) + arc * 0.03 + idle * (1 - travel);
+
+        bookGroupRef.current.position.set(
+          lerp(travelX, seat.x, insert),
+          lerp(travelY, seat.y, insert),
+          lerp(travelZ, seat.z, insert),
+        );
+
+        // Turn square while still in front of the case, then hold the exact
+        // case yaw for the straight slide into the tray.
+        const turn = smoothstep(travel / 0.85);
+        const fromRotation: Vec3 = [
+          from.rotation[0],
+          from.rotation[1] + benchmarkSpin,
+          from.rotation[2],
+        ];
+        const rotation = mixVec3(fromRotation, SLIPCASE_ROTATION, turn);
+        bookGroupRef.current.rotation.set(rotation[0], rotation[1], rotation[2]);
       } else {
         const presentationX = lerp(a.position[0], b.position[0], t) + editionShift;
         const lerpedY = lerp(a.position[1], b.position[1], t);
@@ -1555,23 +1655,21 @@ function BookRig({
           (phase > 7.36 ? Math.min(lerpedY, plinthRideY) : lerpedY) +
           intro * 0.16 +
           scrollLanding;
-        // The last travel is a straight slide along the case's own axis: from the
-        // mouth (desk height) onto the tray floor, flush with the front rim.
-        const targetX = lerp(presentationX, SLIPCASE_X[edition], dock);
-        const targetY = lerp(deskY, SLIPCASE_SEAT[1], dock) + idle;
-        const targetZ = lerp(lerp(a.position[2], b.position[2], t), SLIPCASE_SEAT[2], dock);
 
         bookGroupRef.current.position.set(
-          THREE.MathUtils.damp(bookGroupRef.current.position.x, targetX, 7, delta),
-          THREE.MathUtils.damp(bookGroupRef.current.position.y, targetY, 7, delta),
-          THREE.MathUtils.damp(bookGroupRef.current.position.z, targetZ, 7, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.x, presentationX, 7, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.y, deskY + idle, 7, delta),
+          THREE.MathUtils.damp(
+            bookGroupRef.current.position.z,
+            lerp(a.position[2], b.position[2], t),
+            7,
+            delta,
+          ),
         );
         bookGroupRef.current.rotation.set(
-          // Square the book up with the case as it enters, otherwise the slight
-          // yaw difference scrapes its corners along the tray walls.
-          lerp(lerp(a.rotation[0], b.rotation[0], t), SLIPCASE_ROTATION[0], dock) + intro * 0.1,
-          lerp(lerp(a.rotation[1], b.rotation[1], t), SLIPCASE_ROTATION[1], dock) + benchmarkSpin,
-          lerp(lerp(a.rotation[2], b.rotation[2], t), SLIPCASE_ROTATION[2], dock),
+          lerp(a.rotation[0], b.rotation[0], t) + intro * 0.1,
+          lerp(a.rotation[1], b.rotation[1], t) + benchmarkSpin,
+          lerp(a.rotation[2], b.rotation[2], t),
         );
       }
     }
@@ -1600,15 +1698,18 @@ function BookRig({
     }
 
     if (slipcaseGroupRef.current) {
-      const next = THREE.MathUtils.damp(slipcaseGroupRef.current.scale.x, slipcaseTarget, 6, delta);
-      slipcaseGroupRef.current.scale.setScalar(Math.max(0.001, next));
-      slipcaseGroupRef.current.visible = next > 0.005;
+      slipcaseGroupRef.current.scale.setScalar(Math.max(0.001, caseIn));
+      slipcaseGroupRef.current.visible = caseIn > 0.005;
       slipcaseGroupRef.current.position.x = THREE.MathUtils.damp(
         slipcaseGroupRef.current.position.x,
         SLIPCASE_X[edition],
         6,
         delta,
       );
+    }
+
+    if (slipcaseFlapRef.current) {
+      slipcaseFlapRef.current.rotation.x = flapOpen * (Math.PI / 2);
     }
   });
 
@@ -1642,13 +1743,14 @@ function BookRig({
 
       <group
         ref={slipcaseGroupRef}
-        position={[-0.128, 0.763, -0.008]}
-        rotation={[0.02, -0.32, 0.006]}
+        position={[SLIPCASE_POSITION[0], SLIPCASE_POSITION[1], SLIPCASE_POSITION[2]]}
+        rotation={[SLIPCASE_ROTATION[0], SLIPCASE_ROTATION[1], SLIPCASE_ROTATION[2]]}
         visible={false}
       >
         <group scale={mobile ? 0.84 : 1}>
           <group scale={0.001}>
             <primitive object={slipcase.scene} dispose={null} />
+            <group ref={slipcaseFlapRef} position={[0, 0, SLIPCASE_FLAP_HINGE_Z]} />
           </group>
         </group>
       </group>

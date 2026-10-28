@@ -16,7 +16,7 @@ function smoothstep(value: number) {
 }
 
 export function shelfPresence(phase: number) {
-  const shelfIn = smoothstep((phase - 0.3) / 0.22);
+  const shelfIn = smoothstep((phase - 0.28) / 0.36);
   const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
   const shelfReturn = smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
   return Math.max(shelfIn * shelfOut, shelfReturn);

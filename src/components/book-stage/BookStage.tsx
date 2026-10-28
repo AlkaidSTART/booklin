@@ -185,6 +185,7 @@ export default function BookStage() {
       );
       document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
       document.documentElement.style.setProperty('--handoff-type', type.toFixed(3));
+      document.documentElement.classList.toggle('is-handoff', phase < 0.9);
     };
 
     const schedule = () => {

@@ -36,20 +36,18 @@ pose only.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 import bmesh
 import bpy
-from mathutils import Matrix, Vector
+from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_OBJ = ROOT / "public" / "hand" / "hand.OBJ"
 MODELS = ROOT / "public" / "models"
 SOURCE = MODELS / "source"
-PREVIEW = Path("/tmp/bookln-hand")
 SOURCE.mkdir(parents=True, exist_ok=True)
-PREVIEW.mkdir(parents=True, exist_ok=True)
 
 CM_TO_MM = 10.0
 

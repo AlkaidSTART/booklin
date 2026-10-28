@@ -90,12 +90,10 @@ const groups = [
       'docs/design/visual-spec-mobile.png',
       'docs/design/visual-spec-mobile.webp',
       'docs/design/book-cover-art.png',
-      'docs/design/book-preview-closed.png',
-      'docs/design/book-preview-open.png',
       'public/design/tokens.json',
       'public/design/tokens.css',
     ],
-    notes: 'Desktop and mobile visual spec, book previews, and implementation-ready design tokens. Figma handoff is not required for the concept build.',
+    notes: 'Desktop and mobile visual spec, cover art, and implementation-ready design tokens. Figma handoff is not required for the concept build.',
   },
   {
     id: 'A7',

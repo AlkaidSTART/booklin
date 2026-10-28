@@ -46,10 +46,8 @@ export type ShelfPick = {
  * per press without a React render in the animation loop.
  */
 export type ShelfFocus = {
-  index: number;
   x: number;
   rowY: number;
-  h: number;
   active: boolean;
   tick: number;
 };
@@ -443,10 +441,8 @@ export function ShelfBooks({
       return;
     }
     focusRef.current = {
-      index,
       x: spec.x,
       rowY: spec.rowY,
-      h: spec.h,
       active: activeRef.current === index,
       tick: focusTickRef.current,
     };
@@ -700,7 +696,7 @@ export function ShelfSelection({
     for (const item of basesRef.current) {
       item.material.opacity = THREE.MathUtils.damp(
         item.material.opacity,
-        item.base * level * (1 + seat * 0.7),
+        item.base * level * (1 + seat * 0.7 + (focus?.active ? 0.34 : 0)),
         6,
         delta,
       );
@@ -710,7 +706,7 @@ export function ShelfSelection({
       const breath = 0.58 + Math.sin(now * 0.0014) * 0.14;
       glowRef.current.opacity = THREE.MathUtils.damp(
         glowRef.current.opacity,
-        level * (breath + approach * 0.55 + seat * 1.15),
+        level * (breath + approach * 0.55 + seat * 1.15 + (focus?.active ? 0.3 : 0)),
         4,
         delta,
       );

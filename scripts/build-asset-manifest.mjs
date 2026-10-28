@@ -107,18 +107,17 @@ const groups = [
   },
   {
     id: 'A8',
-    label: 'Grip blockout hands',
-    status: 'blockout',
+    label: 'Rigged right hand',
+    status: 'delivered',
     role: 'delivery',
     files: [
-      'public/models/hand-blockout.glb',
-      'public/models/source/hand-blockout.blend',
-      'public/models/hand-phone.glb',
-      'public/models/source/hand-phone.blend',
+      'public/models/hand.glb',
+      'public/models/source/hand-rig.blend',
+      'public/hand/hand.OBJ',
       'scripts/build-hand.py',
     ],
     notes:
-      'Blockout only: two 22k-triangle voxel-fused right hands built from the same script. `hand-blockout` closes around the book\'s 34 mm bottom edge for the 01 Carry chapter; `hand-phone` wraps a 92 x 188 x 11 mm phone (palm behind, thumb on the front-left bezel) for the 00 scan beat. Rebuild both with `blender -b --python scripts/build-hand.py`. Replace with a properly retopologised and skinned right hand (A8 final) before launch.',
+      'Final rigged right hand built from the ZBrush sculpt in public/hand. 2,704 triangles, 1,368 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.',
   },
   {
     id: 'A10',

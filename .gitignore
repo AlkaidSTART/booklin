@@ -16,6 +16,10 @@ pnpm-debug.log*
 # asset render cache
 scripts/.cache/
 
+# python bytecode
+__pycache__/
+*.pyc
+
 # Blender backups and intermediate exports
 *.blend1
 public/models/source/*-raw.glb

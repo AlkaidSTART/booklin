@@ -1,17 +1,16 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-28T08:23:51.327Z",
+  "generatedAt": "2026-10-28T11:21:31.041Z",
   "source": "docs/assets.md",
   "statusCounts": {
-    "delivered": 16,
-    "blockout": 1,
+    "delivered": 17,
     "placeholder": 3,
     "pending-external": 1
   },
   "totals": {
     "groups": 21,
-    "files": 100,
-    "bytes": 24159009,
+    "files": 99,
+    "bytes": 22777973,
     "missing": 0
   },
   "assets": [
@@ -53,8 +52,8 @@
         },
         {
           "path": "public/textures/book-basecolor.webp",
-          "bytes": 36826,
-          "sha256": "0ae51be405c06c8f845e24ac681c51c7f97361bd1c5b35173db39e5229951262",
+          "bytes": 33248,
+          "sha256": "69fe61e63aa852ab126e925e783ecdd42ef676896ba9af93cb3012b790e6dc5d",
           "missing": false
         },
         {
@@ -106,7 +105,7 @@
           "missing": false
         }
       ],
-      "bytes": 2687366,
+      "bytes": 2683788,
       "missing": []
     },
     {
@@ -259,38 +258,38 @@
       "files": [
         {
           "path": "docs/design/visual-spec.html",
-          "bytes": 48183,
-          "sha256": "7107a5d7ebafaabe6dfd3657a2cbba4601436b620244e6913d69f19c338469e2",
+          "bytes": 48177,
+          "sha256": "f1a843e870754a462d375f340cff2a49dc97bf78af5ac4e79c457c7cdc11658c",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-desktop.png",
-          "bytes": 1836277,
-          "sha256": "5b45c3b67c529a0bf77d8a21769d1460fac7a19ee6499d2b81f1b91f0621ea7e",
+          "bytes": 1816579,
+          "sha256": "8cde1d80c8ad5d37c05becf07e45cf8e74d5405e3c9efc94a6b33aa15fd81142",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-desktop.webp",
-          "bytes": 501206,
-          "sha256": "3df309f82cc587ea25311a2df30e1b16ba17230bd367d4981216f14273033638",
+          "bytes": 497640,
+          "sha256": "d894caef3bb9f6f043013979a97a35c78c39bf2ae3c2180248d62f0e63402f28",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-mobile.png",
-          "bytes": 1232605,
-          "sha256": "899058ccace0d922f7dde55d72b179fe74967ed40a5eab822443379f63cac66a",
+          "bytes": 1223508,
+          "sha256": "3a0856da12d68f09ab04e838eb4547593f266a7119532bec1173f286efbce3d7",
           "missing": false
         },
         {
           "path": "docs/design/visual-spec-mobile.webp",
-          "bytes": 372592,
-          "sha256": "e64d79bd4684baadf7dee3a71b9db126392d09d8817c561a6b5a7708106fac6a",
+          "bytes": 370228,
+          "sha256": "38a9f9b6bec0f42b245223d09b66b2c0ca090ee77dfbd2f6cccb79b649cb5425",
           "missing": false
         },
         {
           "path": "docs/design/book-cover-art.png",
-          "bytes": 64831,
-          "sha256": "ce9b50dd65fef53e43889bbeb71097e6da2d97c1b90c1005906403da49284cf2",
+          "bytes": 51328,
+          "sha256": "f5d0465b7c23672bcaba19bd3fb53ecb992adefe0bebf78e56b1dd91a0825669",
           "missing": false
         },
         {
@@ -313,12 +312,12 @@
         },
         {
           "path": "public/design/tokens.css",
-          "bytes": 1653,
-          "sha256": "183994eb9a241e4edd33a3c71cc2902d365d742deca64beadfaf79e975aab147",
+          "bytes": 1670,
+          "sha256": "18c31f24b6fe1b92fb86894997702363cdc1bde0501bd4b4c557f9bc15608aa8",
           "missing": false
         }
       ],
-      "bytes": 6930022,
+      "bytes": 6881805,
       "missing": []
     },
     {
@@ -330,65 +329,59 @@
       "files": [
         {
           "path": "docs/script-final.md",
-          "bytes": 14990,
-          "sha256": "a2f5bd53d91d9cf77e26f954686971cab8f551ef6c701bf75cbd6a3bdf1187bc",
+          "bytes": 14981,
+          "sha256": "20823c9e7dabca7cd21f44b664c6cc8d75e7207d3b8e120e90f1c5f3ffc27664",
           "missing": false
         },
         {
           "path": "docs/script.md",
-          "bytes": 7707,
-          "sha256": "8d560301c997927ac38e106c6df8da515dd512e6328aa44b86bb2d7739889059",
+          "bytes": 7701,
+          "sha256": "f4b3deb96d35613f0c8cabee5a35d8a4400a1b138237d67ca78fb0886f44f9dc",
           "missing": false
         },
         {
           "path": "docs/copy-fields.json",
-          "bytes": 20429,
-          "sha256": "eb3fccc5ab226bcec540ec5372df91d4a162d21a92126df3f85cbda84d1da9e0",
+          "bytes": 20427,
+          "sha256": "056c469d7c1a30c1c3a5d37ca70e670cc82ba04b651113a8a888e95475763f34",
           "missing": false
         }
       ],
-      "bytes": 43126,
+      "bytes": 43109,
       "missing": []
     },
     {
       "id": "A8",
-      "label": "Grip blockout hands",
-      "status": "blockout",
+      "label": "Rigged right hand",
+      "status": "delivered",
       "role": "delivery",
-      "notes": "Blockout only: two 22k-triangle voxel-fused right hands built from the same script. `hand-blockout` closes around the book's 34 mm bottom edge for the 01 Carry chapter; `hand-phone` wraps a 92 x 188 x 11 mm phone (palm behind, thumb on the front-left bezel) for the 00 scan beat. Rebuild both with `blender -b --python scripts/build-hand.py`. Replace with a properly retopologised and skinned right hand (A8 final) before launch.",
+      "notes": "Final rigged right hand built from the ZBrush sculpt in public/hand. 2,704 triangles, 1,368 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, plus a lofted 250 mm forearm sleeve. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the book and phone holds are posed at runtime by bone rotations instead of baked into the mesh. Rebuild with `blender -b --python scripts/build-hand.py`.",
       "files": [
         {
-          "path": "public/models/hand-blockout.glb",
-          "bytes": 111956,
-          "sha256": "dd7e13c2518f1c1d6d179eb118f4622dd5ee2550162f457dc3e8e8052b26a63d",
+          "path": "public/models/hand.glb",
+          "bytes": 23532,
+          "sha256": "ecc22e70c719a21e83c2121f1e83d9f0e9c4b29286b95ca464178f09d205552d",
           "missing": false
         },
         {
-          "path": "public/models/source/hand-blockout.blend",
-          "bytes": 712145,
-          "sha256": "f0812b7b6fc08ab427f3e88f65b2ec3fffc9c0da0a53a8a138129df1a3187d2b",
+          "path": "public/models/source/hand-rig.blend",
+          "bytes": 161857,
+          "sha256": "289dc75f65470412bd246725fa16b35167839f2b0734cfcba89ad29646d3b5e0",
           "missing": false
         },
         {
-          "path": "public/models/hand-phone.glb",
-          "bytes": 101992,
-          "sha256": "35f545c331e13189f058c5615ae0394c08be3421a9ccab8f1e3929c852a1bf35",
-          "missing": false
-        },
-        {
-          "path": "public/models/source/hand-phone.blend",
-          "bytes": 689133,
-          "sha256": "f7fa0545430a4c1af348fdcdec80e64f9bdaeabe93675a7fee6df18d902a4ca9",
+          "path": "public/hand/hand.OBJ",
+          "bytes": 170241,
+          "sha256": "f93636fd59616dd10bfa3a16f6f9d96591821efcbc89d0823b79906339de7b89",
           "missing": false
         },
         {
           "path": "scripts/build-hand.py",
-          "bytes": 52625,
-          "sha256": "6ea5b341d785d2a5ffe3f829a6e1312350700987252d0524774efbbc0f14ea7e",
+          "bytes": 16618,
+          "sha256": "da66ce842ac29a87e8e05536c8d56085ec7e6f822a312472bc48c97630a55d07",
           "missing": false
         }
       ],
-      "bytes": 1667851,
+      "bytes": 372248,
       "missing": []
     },
     {
@@ -493,14 +486,14 @@
       "files": [
         {
           "path": "public/video/lesson-preview.mp4",
-          "bytes": 1566039,
-          "sha256": "7cc292cc813dd977f3fdf22fa58461e6061a8d528f123e48eb447783721af9b9",
+          "bytes": 1580527,
+          "sha256": "a9e8509593f99439bae23d4f0b23f24bfd9a1ea416e95d5bfd47ef394788991f",
           "missing": false
         },
         {
           "path": "public/video/lesson-preview-poster.webp",
-          "bytes": 30408,
-          "sha256": "f4c8bef0350de35af5b9d7207976606c2ce9d735a24b22b1dac9133c4c977834",
+          "bytes": 27526,
+          "sha256": "592b596f667cc0a823dddbd781151052ec8e9fadcb4d65f3b48ed51d5a0d8127",
           "missing": false
         },
         {
@@ -511,14 +504,14 @@
         },
         {
           "path": "docs/design/lesson-preview-poster.png",
-          "bytes": 602660,
-          "sha256": "d8cb6b85af8c53223fa74b49ebc8840885a913ef5adcd9b380d5b94970774abf",
+          "bytes": 591505,
+          "sha256": "074cb1cd99c205a05035b95ffc8b2063753d38aaae5967941a88f62ba2e04815",
           "missing": false
         },
         {
           "path": "docs/design/lesson-preview.html",
-          "bytes": 22321,
-          "sha256": "3ad7a46f0c7cde06a6a4c2e61c765c7e9f8477a8f07940d6917ca4fa9bf02c3a",
+          "bytes": 22303,
+          "sha256": "f5036c330d4117e0960706885eb26bf72f1f530ae6370525b54934fa9f8679fc",
           "missing": false
         },
         {
@@ -528,7 +521,7 @@
           "missing": false
         }
       ],
-      "bytes": 2225869,
+      "bytes": 2226302,
       "missing": []
     },
     {
@@ -699,42 +692,42 @@
       "files": [
         {
           "path": "public/fallback/book-cover-art.webp",
-          "bytes": 12644,
-          "sha256": "50110deb1e453bcbeb61f5fa804f06b37b024f45080ace67e1ea02b3c6ba3fd4",
+          "bytes": 9546,
+          "sha256": "f65c47779fa02461d63d1aa8ba86608e442073ae200482fe7b6e7a3be4262fed",
           "missing": false
         },
         {
           "path": "public/fallback/fallback-desktop.webp",
-          "bytes": 41430,
-          "sha256": "022dee0285b4bc6a2c305865ce1b92968b1b07783f091d2b2dfa0999735e39c1",
+          "bytes": 37248,
+          "sha256": "9027a8c0c54e13bc1464cdaad4b10bd482508d23acbcff3154ef3f683e6e5b1a",
           "missing": false
         },
         {
           "path": "public/fallback/fallback-mobile.webp",
-          "bytes": 19148,
-          "sha256": "4047df2a8ee1999c3b166c6082cfb9b6ee9d664c9a83469deda47e837c658fff",
+          "bytes": 17140,
+          "sha256": "364184c77c49001e19e37fb55a02b5258d28657e09e84be781e86601dd148927",
           "missing": false
         },
         {
           "path": "docs/design/fallback-poster.html",
-          "bytes": 10490,
-          "sha256": "60b83ccd985e130360f6d7a024f1e2acd62d743c23f2b0ad2dbc1f5227c2b114",
+          "bytes": 10476,
+          "sha256": "0f3b8354e9c7e90462cefe3d145b2c8d67a5015ec432dea0e89c1a2716998594",
           "missing": false
         },
         {
           "path": "docs/design/fallback-desktop.png",
-          "bytes": 979151,
-          "sha256": "aba088bea49629fc144989da15594cdfadbccd5430636ac66c30a4ddbd633338",
+          "bytes": 957740,
+          "sha256": "76504e9e82ecf3184671b890877825028fe05d500fbdf91f314922f2ff07cfec",
           "missing": false
         },
         {
           "path": "docs/design/fallback-mobile.png",
-          "bytes": 328196,
-          "sha256": "af0ac67e5d939b1dd6ee7a894131c1c61f66b7ec6cbd0e4cf8e88188eba083eb",
+          "bytes": 324855,
+          "sha256": "725d72c54e7220e6f7effc671d1d08e7826eeddea3d16a9afe45ea5acf809144",
           "missing": false
         }
       ],
-      "bytes": 1391059,
+      "bytes": 1357005,
       "missing": []
     },
     {

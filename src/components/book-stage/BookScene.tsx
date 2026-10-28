@@ -80,13 +80,13 @@ const SLIPCASE_FLAP_CLOSE_END = 8;
 const BOOK_KEYS: BookKey[] = [
   // Prologue — closed, standing on the oak desk, turned toward the reader.
   {
-    position: [0, 0.765, 0],
+    position: [0, 0.768, 0],
     rotation: [0.035, -0.28, 0.012],
     open: 0,
   },
   // 00 Shelf — closed, sleeping on the shelf (asset C1 pending: staged on the desk, single-book framing).
   {
-    position: [0, 0.765, 0],
+    position: [0, 0.768, 0],
     rotation: [0.05, -0.34, 0.01],
     open: 0,
   },
@@ -98,31 +98,31 @@ const BOOK_KEYS: BookKey[] = [
   },
   // 02 Interaction — laid 180° flat on the desk, ribbon sweeping onto Page 042.
   {
-    position: [0, 0.772, 0.015],
+    position: [0, 0.775, 0.015],
     rotation: [-Math.PI / 2, 0.06, 0],
     open: 1,
   },
   // 03 Binding — flat on the desk, lifted slightly as the Page 042 hologram rises above it.
   {
-    position: [0.01, 0.785, 0.01],
+    position: [0.01, 0.788, 0.01],
     rotation: [-Math.PI / 2, 0.14, 0],
     open: 1,
   },
   // 04 Loop — flat on the night desk, reading posture (asset C4 pending).
   {
-    position: [0, 0.778, 0.012],
+    position: [0, 0.781, 0.012],
     rotation: [-Math.PI / 2, 0.09, 0],
     open: 1,
   },
   // 05 Return — closed, back on the shelf; mirrors the 00 shelf composition (ring closure).
   {
-    position: [0, 0.765, 0],
+    position: [0, 0.768, 0],
     rotation: [0.05, -0.34, 0.01],
     open: 0,
   },
   // Epilogue A Benchmark — closed, seated on the pedestal's felt pad at a 45° hero angle.
   {
-    position: [0.01, 0.8385, 0],
+    position: [0.01, 0.8436, 0],
     rotation: [0.04, 0.58, 0.01],
     open: 0,
   },
@@ -219,17 +219,26 @@ type GraphNodeSpec = {
   size: number;
 };
 
-// 3D coordinates above the open book (Page 042 sits around [0.035, 0.785, 0.02])
+// Page 042 mark in the book's local millimetres: on the right-hand page, close
+// to the fore-edge. Everything that belongs to the page (the edge code, the
+// ribbon landing, the scan halo, the graph root) is authored around this point
+// so the overlays stay welded to the paper instead of the desk.
+const PAGE_MARK_X = 42;
+const PAGE_MARK_Y = 42;
+
+// The constellation is authored in the book's own millimetres: x/y run across
+// the open page and z rises out of the paper. Parenting it to the book keeps
+// the graph welded to Page 042 through the lift and the chapter hand-off.
 const GRAPH_NODES_3D: GraphNodeSpec[] = [
-  { id: 'page', type: 'page', pos: [0.032, 0.845, 0.025], color: '#e8dcc4', size: 0.011 },
-  { id: 'concept', type: 'concept', pos: [0.105, 0.935, -0.035], color: '#c8a96d', size: 0.0095 },
-  { id: 'citation', type: 'citation', pos: [0.165, 0.895, 0.02], color: '#d27c65', size: 0.0075 },
-  { id: 'lecture', type: 'video', pos: [0.115, 0.855, 0.095], color: '#e0b872', size: 0.009 },
-  { id: 'discussion', type: 'discussion', pos: [0.03, 0.83, 0.125], color: '#b9af9e', size: 0.0075 },
-  { id: 'glossary', type: 'glossary', pos: [-0.055, 0.86, 0.09], color: '#a78750', size: 0.0072 },
-  { id: 'author', type: 'author', pos: [-0.105, 0.9, 0.015], color: '#f3ead8', size: 0.0075 },
-  { id: 'related', type: 'chapter', pos: [-0.055, 0.94, -0.045], color: '#c8a96d', size: 0.008 },
-  { id: 'ai', type: 'ai', pos: [0.032, 0.985, -0.02], color: '#d27c65', size: 0.01 },
+  { id: 'page', type: 'page', pos: [PAGE_MARK_X, PAGE_MARK_Y, 26], color: '#e8dcc4', size: 10 },
+  { id: 'concept', type: 'concept', pos: [60, 104, 62], color: '#c8a96d', size: 9 },
+  { id: 'citation', type: 'citation', pos: [66, 62, 48], color: '#d27c65', size: 7.5 },
+  { id: 'lecture', type: 'video', pos: [46, 22, 42], color: '#e0b872', size: 9 },
+  { id: 'discussion', type: 'discussion', pos: [14, 16, 34], color: '#b9af9e', size: 7.5 },
+  { id: 'glossary', type: 'glossary', pos: [-14, 66, 58], color: '#a78750', size: 7.2 },
+  { id: 'author', type: 'author', pos: [-32, 112, 54], color: '#f3ead8', size: 7.5 },
+  { id: 'related', type: 'chapter', pos: [12, 142, 70], color: '#c8a96d', size: 8 },
+  { id: 'ai', type: 'ai', pos: [28, 168, 92], color: '#d27c65', size: 10 },
 ];
 
 const GRAPH_LINKS_3D: Array<readonly [string, string]> = [
@@ -618,9 +627,9 @@ function useMorphMesh(scene: THREE.Object3D) {
    ------------------------------------------------------------------ */
 
 const PAGE_SPINE_X = -74; // hinge line in the book's local space
-const PAGE_FAN = 0.86; // radians the deepest leaf trails at mid-turn
-const PAGE_CURL = 0.3; // radians of bend at the free edge, mid-turn
-const PAGE_BOUNCE = 0.05; // free-edge lift as the paper settles
+const PAGE_FAN = 0.34; // radians the deepest leaf trails at mid-turn
+const PAGE_CURL = 0.16; // radians of bend at the free edge, mid-turn
+const PAGE_BOUNCE = 0.016; // free-edge lift as the paper settles
 const PAGE_TURN_SPLIT = 0.5; // front half of the block turns onto the left board
 const PAGE_LEAF_HALF = 2; // half the thickness of one page leaf (mm)
 const PAGE_HINGE_RADIUS = 2; // spine fold stays with the board underneath
@@ -686,8 +695,11 @@ function buildPageTurnRig(mesh: THREE.Mesh): PageTurnRig | null {
     // cover and its leaves) turns over onto the left board while the back
     // half stays put, so both sides of the open book carry pages.
     if (depth >= PAGE_TURN_SPLIT) continue;
-    // 0 = front cover (leads the turn), 1 = middle leaf (trails it).
-    lag[i] = depth / PAGE_TURN_SPLIT;
+    // 0 = front cover (leads the turn), 1 = middle leaf (trails it). Ease the
+    // lag so the block turns as one glued wedge and only the innermost leaves
+    // trail — a linear ladder fans the paper into loose cards.
+    const rank = depth / PAGE_TURN_SPLIT;
+    lag[i] = rank * rank * (3 - 2 * rank);
     // The cloth board stays stiff; paper curls more the deeper it sits.
     bend[i] = lag[i];
   }
@@ -864,31 +876,24 @@ function CameraRig({
   return null;
 }
 
-// Chapter 02: Haptic page-turn airflow & 280mm bookmark ribbon landing on Page 042
-function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number> }) {
+// Chapter 02: the 280 mm bookmark ribbon settling onto Page 042. Authored in
+// the book's own millimetres so it rides the board through the open turn
+// instead of floating over the desk in world space.
+function PageRibbon({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const groupRef = useRef<THREE.Group>(null);
   const ringRef = useRef<THREE.Mesh>(null);
 
   const ribbonMaterial = useMemo(
     () =>
-      new THREE.LineBasicMaterial({
-        color: '#d27c65',
+      new THREE.MeshStandardMaterial({
+        color: '#b4422f',
+        roughness: 0.66,
+        metalness: 0,
+        envMapIntensity: 0.35,
+        side: THREE.DoubleSide,
         transparent: true,
         opacity: 0,
         depthWrite: false,
-        toneMapped: false,
-      }),
-    [],
-  );
-
-  const arcMaterial = useMemo(
-    () =>
-      new THREE.LineBasicMaterial({
-        color: '#c8a96d',
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-        toneMapped: false,
       }),
     [],
   );
@@ -896,7 +901,7 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
   const ringMaterial = useMemo(
     () =>
       new THREE.MeshBasicMaterial({
-        color: '#d27c65',
+        color: '#e0a05a',
         transparent: true,
         opacity: 0,
         depthWrite: false,
@@ -906,71 +911,108 @@ function InteractionArcs({ progressRef }: { progressRef: MutableRefObject<number
     [],
   );
 
-  const { ribbonGeo, arcGeo1, arcGeo2 } = useMemo(() => {
-    // Graceful 280mm bookmark ribbon curve landing on Page 042
-    const ribbonCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-0.07, 0.782, -0.095),
-      new THREE.Vector3(-0.015, 0.855, -0.04),
-      new THREE.Vector3(0.028, 0.825, 0.025),
-      new THREE.Vector3(0.042, 0.779, 0.055),
+  // A ribbon is a strip, not a hairline: sweep a 6 mm tape along the curve so
+  // it reads as cloth lying on the page and picks up the key light.
+  const ribbonGeometry = useMemo(() => {
+    const curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-54, 206, 0.9),
+      new THREE.Vector3(-34, 174, 2.4),
+      new THREE.Vector3(-10, 138, 2.0),
+      new THREE.Vector3(12, 104, 1.6),
+      new THREE.Vector3(30, 72, 1.2),
+      new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y + 3, 0.8),
     ]);
-    const rGeo = new THREE.BufferGeometry().setFromPoints(ribbonCurve.getPoints(48));
-
-    // Page-flip trajectory arcs from left spread to right spread (Page 042)
-    const flipCurve1 = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(-0.068, 0.78, -0.03),
-      new THREE.Vector3(0.0, 0.845, -0.03),
-      new THREE.Vector3(0.065, 0.78, -0.03),
-    );
-    const aGeo1 = new THREE.BufferGeometry().setFromPoints(flipCurve1.getPoints(36));
-
-    const flipCurve2 = new THREE.QuadraticBezierCurve3(
-      new THREE.Vector3(-0.068, 0.78, 0.035),
-      new THREE.Vector3(0.0, 0.83, 0.035),
-      new THREE.Vector3(0.065, 0.78, 0.035),
-    );
-    const aGeo2 = new THREE.BufferGeometry().setFromPoints(flipCurve2.getPoints(36));
-
-    return { ribbonGeo: rGeo, arcGeo1: aGeo1, arcGeo2: aGeo2 };
+    const segments = 80;
+    const halfWidth = 3.1;
+    const points = curve.getPoints(segments);
+    const positions = new Float32Array((segments + 1) * 6);
+    const indices: number[] = [];
+    const tangent = new THREE.Vector3();
+    for (let i = 0; i <= segments; i += 1) {
+      const point = points[i];
+      curve.getTangent(i / segments, tangent);
+      const length = Math.hypot(tangent.x, tangent.y) || 1;
+      const ox = (-tangent.y / length) * halfWidth;
+      const oy = (tangent.x / length) * halfWidth;
+      const offset = i * 6;
+      positions[offset] = point.x - ox;
+      positions[offset + 1] = point.y - oy;
+      positions[offset + 2] = point.z;
+      positions[offset + 3] = point.x + ox;
+      positions[offset + 4] = point.y + oy;
+      positions[offset + 5] = point.z;
+      if (i < segments) {
+        const a = i * 2;
+        indices.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
+      }
+    }
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setIndex(indices);
+    geometry.computeVertexNormals();
+    return geometry;
   }, []);
 
-  useEffect(() => {
-    return () => {
-      ribbonGeo.dispose();
-      arcGeo1.dispose();
-      arcGeo2.dispose();
+  useEffect(
+    () => () => {
+      ribbonGeometry.dispose();
       ribbonMaterial.dispose();
-      arcMaterial.dispose();
       ringMaterial.dispose();
-    };
-  }, [ribbonGeo, arcGeo1, arcGeo2, ribbonMaterial, arcMaterial, ringMaterial]);
+    },
+    [ribbonGeometry, ribbonMaterial, ringMaterial],
+  );
 
   useFrame((_, delta) => {
     const { phase } = timeline(progressRef.current);
-    const active = band(phase, 3.15, 0.68);
-    ribbonMaterial.opacity = THREE.MathUtils.damp(ribbonMaterial.opacity, active * 0.9, 6, delta);
-    arcMaterial.opacity = THREE.MathUtils.damp(arcMaterial.opacity, active * 0.48, 6, delta);
-    ringMaterial.opacity = THREE.MathUtils.damp(ringMaterial.opacity, active * 0.75, 6, delta);
+    // Only once the spread is flat: the ribbon belongs to the opened page, so
+    // it must not trail across the cover while the block is still turning.
+    const active = lightEnvelope(phase, 2.96, 3.12, 3.62, 3.82);
+    ribbonMaterial.opacity = THREE.MathUtils.damp(ribbonMaterial.opacity, active * 0.95, 6, delta);
+    ringMaterial.opacity = THREE.MathUtils.damp(ringMaterial.opacity, active * 0.62, 6, delta);
 
-    if (groupRef.current) {
-      groupRef.current.visible = ribbonMaterial.opacity > 0.01;
-    }
+    if (groupRef.current) groupRef.current.visible = ribbonMaterial.opacity > 0.01;
     if (ringRef.current) {
-      const pulse = 1 + Math.sin(performance.now() * 0.004) * 0.12;
+      const pulse = 1 + Math.sin(performance.now() * 0.0035) * 0.08;
       ringRef.current.scale.setScalar(pulse);
     }
   });
 
   return (
     <group ref={groupRef} visible={false}>
-      <line geometry={ribbonGeo as never} material={ribbonMaterial as never} />
-      <line geometry={arcGeo1 as never} material={arcMaterial as never} />
-      <line geometry={arcGeo2 as never} material={arcMaterial as never} />
-      <mesh ref={ringRef} position={[0.042, 0.779, 0.055]} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.011, 0.014, 32]} />
+      <mesh geometry={ribbonGeometry} material={ribbonMaterial} renderOrder={1} />
+      <mesh ref={ringRef} position={[PAGE_MARK_X, PAGE_MARK_Y, 0.9]} renderOrder={2}>
+        <ringGeometry args={[10.6, 12.6, 40]} />
         <primitive object={ringMaterial} attach="material" />
       </mesh>
     </group>
+  );
+}
+
+// The delivered P.042 edge code, printed onto the page instead of the cover.
+// The atlas carries only a thumbnail; this decal replaces it at reading
+// distance, which is the mark the scan beat and the phone feed actually frame.
+function PageEdgeMark() {
+  const qr = useTexture('/qr/page-edge-p042.png');
+
+  useEffect(() => {
+    qr.colorSpace = THREE.SRGBColorSpace;
+    qr.anisotropy = 8;
+    qr.needsUpdate = true;
+  }, [qr]);
+
+  return (
+    <mesh position={[PAGE_MARK_X, PAGE_MARK_Y, 0.8]} renderOrder={1}>
+      <planeGeometry args={[19, 19]} />
+      <meshBasicMaterial
+        map={qr}
+        transparent
+        depthWrite={false}
+        blending={THREE.MultiplyBlending}
+        toneMapped={false}
+        polygonOffset
+        polygonOffsetFactor={-1}
+      />
+    </mesh>
   );
 }
 
@@ -1030,7 +1072,8 @@ function NeuralGraph3D({
       const start = new THREE.Vector3(...s.pos);
       const end = new THREE.Vector3(...t.pos);
       const mid = start.clone().lerp(end, 0.5);
-      mid.y += 0.018 + (idx % 2) * 0.01;
+      // Bow each cord out of the page so the web reads in three dimensions.
+      mid.z += 16 + (idx % 2) * 9;
       const curve = new THREE.QuadraticBezierCurve3(start, mid, end);
       const geometry = new THREE.BufferGeometry().setFromPoints(curve.getPoints(28));
       const material = new THREE.LineBasicMaterial({
@@ -1044,11 +1087,11 @@ function NeuralGraph3D({
     });
   }, [nodeMap]);
 
-  // Vertical anchor beam from Page 042 QR mark ([0.042, 0.779, 0.055]) up to the central 'page' node
+  // Gold stem from the printed P.042 code up into the root node.
   const anchorStem = useMemo(() => {
     const geometry = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(0.042, 0.779, 0.055),
-      new THREE.Vector3(0.032, 0.845, 0.025),
+      new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 1),
+      new THREE.Vector3(PAGE_MARK_X, PAGE_MARK_Y, 17),
     ]);
     const material = new THREE.LineBasicMaterial({
       color: '#e8dcc4',
@@ -1060,15 +1103,15 @@ function NeuralGraph3D({
     return { geometry, material };
   }, []);
 
-  // Ambient dust particles around the graph
+  // Ambient dust particles around the graph, in book-local millimetres
   const positions = useMemo(() => {
     const values = new Float32Array(72 * 3);
     for (let i = 0; i < 72; i += 1) {
       const angle = (i / 72) * Math.PI * 10;
-      const r = 0.04 + (i % 9) * 0.018;
-      values[i * 3] = 0.03 + Math.cos(angle) * r * 1.2;
-      values[i * 3 + 1] = 0.81 + (i / 72) * 0.2;
-      values[i * 3 + 2] = 0.02 + Math.sin(angle) * r;
+      const r = 30 + (i % 9) * 11;
+      values[i * 3] = 28 + Math.cos(angle) * r * 1.2;
+      values[i * 3 + 1] = 92 + Math.sin(angle) * r;
+      values[i * 3 + 2] = 18 + (i / 72) * 80;
     }
     return values;
   }, []);
@@ -1125,13 +1168,14 @@ function NeuralGraph3D({
       const mesh = nodeMeshesRef.current[idx];
       const halo = haloMeshesRef.current[idx];
       const scale = node.size * (isFocused ? 1.45 + Math.sin(now * 2) * 0.12 : 1);
+      const bob = Math.sin(now + idx * 0.8) * 2.4;
       if (mesh) {
         mesh.scale.setScalar(scale);
-        mesh.position.y = node.pos[1] + Math.sin(now + idx * 0.8) * 0.003;
+        mesh.position.z = node.pos[2] + bob;
       }
       if (halo) {
         halo.scale.setScalar(scale * (isFocused ? 1.35 : 1));
-        halo.position.y = node.pos[1] + Math.sin(now + idx * 0.8) * 0.003;
+        halo.position.z = node.pos[2] + bob;
         halo.lookAt(camera.position);
       }
     });
@@ -1146,7 +1190,7 @@ function NeuralGraph3D({
       const visible = strength > 0.01 || anchorStem.material.opacity > 0.01;
       groupRef.current.visible = visible;
       const lift = 0.85 + 0.15 * clamp01(strength);
-      groupRef.current.scale.set(1, lift, 1);
+      groupRef.current.scale.set(1, 1, lift);
     }
   });
 
@@ -1221,8 +1265,8 @@ function ScanRing({ progressRef }: { progressRef: MutableRefObject<number> }) {
 
   return (
     <>
-      <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]} position={[0.01, 0.779, 0.01]} visible={false}>
-        <ringGeometry args={[0.17, 0.172, 96]} />
+      <mesh ref={meshRef} position={[PAGE_MARK_X, PAGE_MARK_Y, 0.8]} visible={false}>
+        <ringGeometry args={[34, 36, 96]} />
         <meshBasicMaterial
           ref={materialRef}
           color="#c8a96d"
@@ -1234,8 +1278,8 @@ function ScanRing({ progressRef }: { progressRef: MutableRefObject<number> }) {
           toneMapped={false}
         />
       </mesh>
-      <mesh ref={innerRingRef} rotation={[-Math.PI / 2, 0, 0]} position={[0.042, 0.78, 0.055]} visible={false}>
-        <ringGeometry args={[0.018, 0.021, 48]} />
+      <mesh ref={innerRingRef} position={[PAGE_MARK_X, PAGE_MARK_Y, 0.9]} visible={false}>
+        <ringGeometry args={[12, 14, 48]} />
         <meshBasicMaterial
           color="#e8dcc4"
           transparent
@@ -1347,6 +1391,7 @@ function BookRig({
   pick: ShelfPick;
 }) {
   const mobile = useThree((state) => state.size.width < 760);
+  const gl = useThree((state) => state.gl);
   const bookGroupRef = useRef<THREE.Group>(null);
   const deskGroupRef = useRef<THREE.Group>(null);
   const pedestalGroupRef = useRef<THREE.Group>(null);
@@ -1397,10 +1442,24 @@ function BookRig({
     applyPreset(bookMaterials, {
       map: bookCoverAtlas,
       color: '#ffffff',
-      metalness: 1,
-      envMapIntensity: 0.15,
-      normalScale: 0.65,
+      metalness: 0.9,
+      envMapIntensity: 0.28,
+      normalScale: 0.22,
     });
+
+    // The cloth's normal map is ETC1S-compressed and nearly sub-pixel at the
+    // hero framing. Without anisotropic filtering a near-black metallic cover
+    // resolves it as silver speckle, so let the mips average it out and keep
+    // the weave only for close-ups.
+    const anisotropy = Math.min(8, gl.capabilities.getMaxAnisotropy());
+    for (const material of bookMaterials) {
+      const m = material as THREE.MeshStandardMaterial;
+      for (const texture of [m.map, m.normalMap, m.roughnessMap, m.metalnessMap, m.aoMap]) {
+        if (!texture) continue;
+        texture.anisotropy = anisotropy;
+        texture.needsUpdate = true;
+      }
+    }
 
     // Oak desk (A4): use the delivered oak PBR maps with a dark-walnut grade.
     applyPreset(deskMaterials, {
@@ -1408,7 +1467,7 @@ function BookRig({
       roughness: 0.92,
       metalness: 0,
       envMapIntensity: 0.55,
-      normalScale: 0.8,
+      normalScale: 0.45,
       repeat: [2, 2],
     });
 
@@ -1496,7 +1555,7 @@ function BookRig({
       const mesh = material as THREE.MeshStandardMaterial;
       return { material: mesh, color: mesh.color.clone() };
     });
-  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials]);
+  }, [bookCoverAtlas, bookMaterials, deskMaterials, pedestalMaterials, slipcaseMaterials, shelfMaterials, gl]);
 
   useEffect(() => {
     if (bookMorphMesh) {
@@ -1769,6 +1828,10 @@ function BookRig({
           <group scale={0.001}>
             <primitive object={book.scene} dispose={null} />
             <PageTurnRig mesh={bookMorphMesh} progressRef={progressRef} />
+            <PageEdgeMark />
+            <PageRibbon progressRef={progressRef} />
+            <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
+            <ScanRing progressRef={progressRef} />
             <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} markRef={qrMarkRef} />
             <HandRig progressRef={progressRef} reducedMotion={reducedMotion} />
           </group>
@@ -1785,9 +1848,6 @@ function BookRig({
       <CloudSoulPanel progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
       <CarryLight progressRef={progressRef} pick={pick} />
 
-      <InteractionArcs progressRef={progressRef} />
-      <NeuralGraph3D progressRef={progressRef} interactionRef={interactionRef} />
-      <ScanRing progressRef={progressRef} />
       <QrCompanionCard progressRef={progressRef} />
 
       <ContactShadows

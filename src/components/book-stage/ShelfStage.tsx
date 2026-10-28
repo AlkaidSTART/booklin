@@ -3,6 +3,7 @@ import type { MutableRefObject } from 'react';
 import { RoundedBox, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { enableLayer, PHONE_CAMERA_LAYER } from '../../lib/stage/layers';
 
 export const SHELF_PHASE_COUNT = 8;
 
@@ -597,9 +598,11 @@ export function ShelfSelection({
 export function QrCoverMark({
   progressRef,
   reducedMotion,
+  markRef,
 }: {
   progressRef: MutableRefObject<number>;
   reducedMotion: boolean;
+  markRef?: MutableRefObject<THREE.Object3D | null>;
 }) {
   const qr = useTexture('/qr/one-code-entry.png');
   const sweepRef = useRef<THREE.Mesh>(null);
@@ -669,7 +672,7 @@ export function QrCoverMark({
         />
       </mesh>
 
-      <group position={[46, 43.5, 15.5]}>
+      <group ref={markRef} position={[46, 43.5, 15.5]}>
       <mesh position={[0, 0, 0.15]}>
         <planeGeometry args={[31.5, 31.5]} />
         <meshStandardMaterial
@@ -730,22 +733,50 @@ export function QrCoverMark({
    Phone scanner
    ------------------------------------------------------------------ */
 
-function drawPhoneScreen(
-  ctx: CanvasRenderingContext2D,
-  found: boolean,
-  pick: ShelfPick,
-  qrImage: HTMLImageElement | null,
-) {
-  const w = 512;
-  const h = 1024;
+const PHONE_SCREEN_SIZE: [number, number] = [0.079, 0.158];
+const PHONE_CANVAS_SIZE: [number, number] = [512, 1024];
+const SCAN_VIEW = { x: 36, y: 170, width: 440, height: 404 };
+
+// The live camera feed only fills the viewfinder rect, not the whole screen:
+// the chrome canvas paints the status bar and result block around it.
+const SCAN_PLANE_WIDTH = PHONE_SCREEN_SIZE[0] * (SCAN_VIEW.width / PHONE_CANVAS_SIZE[0]);
+const SCAN_PLANE_HEIGHT = PHONE_SCREEN_SIZE[1] * (SCAN_VIEW.height / PHONE_CANVAS_SIZE[1]);
+const SCAN_PLANE_ASPECT = SCAN_PLANE_WIDTH / SCAN_PLANE_HEIGHT;
+const SCAN_PLANE_POSITION: [number, number, number] = [
+  ((SCAN_VIEW.x + SCAN_VIEW.width / 2) / PHONE_CANVAS_SIZE[0] - 0.5) * PHONE_SCREEN_SIZE[0],
+  (0.5 - (SCAN_VIEW.y + SCAN_VIEW.height / 2) / PHONE_CANVAS_SIZE[1]) * PHONE_SCREEN_SIZE[1],
+  0.0073,
+];
+
+// Rear lens sits behind the screen. The phone faces the viewer, so the lens is
+// aimed at the book rather than derived from its own orientation — strict optics
+// would put empty room in the feed.
+const PHONE_LENS_POSITION: [number, number, number] = [-0.026, 0.062, -0.0062];
+
+// A phone scanning a mark sits a hand's width away, so the feed camera rides in
+// along the same sight line until the mark fills the viewfinder.
+const SCAN_DISTANCE = 0.14;
+
+// The screen is two layers: the rear camera feed fills the viewfinder rect and
+// this canvas paints only the chrome on top of it, so it must stay transparent.
+function drawPhoneScreen(ctx: CanvasRenderingContext2D, found: boolean, pick: ShelfPick) {
+  const w = PHONE_CANVAS_SIZE[0];
+  const h = PHONE_CANVAS_SIZE[1];
   ctx.clearRect(0, 0, w, h);
 
-  const bg = ctx.createLinearGradient(0, 0, 0, h);
-  bg.addColorStop(0, '#0b0a08');
-  bg.addColorStop(0.55, '#080706');
-  bg.addColorStop(1, '#050504');
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, w, h);
+  // The viewfinder stays clear so the camera feed shows through; everything
+  // else gets a dark screen backdrop instead of the phone's metal body. This
+  // has to land before any text or the chrome gets washed out.
+  ctx.fillStyle = 'rgba(7, 6, 5, 0.94)';
+  ctx.fillRect(0, 0, w, SCAN_VIEW.y);
+  ctx.fillRect(0, SCAN_VIEW.y + SCAN_VIEW.height, w, h - (SCAN_VIEW.y + SCAN_VIEW.height));
+  ctx.fillRect(0, SCAN_VIEW.y, SCAN_VIEW.x, SCAN_VIEW.height);
+  ctx.fillRect(
+    SCAN_VIEW.x + SCAN_VIEW.width,
+    SCAN_VIEW.y,
+    w - (SCAN_VIEW.x + SCAN_VIEW.width),
+    SCAN_VIEW.height,
+  );
 
   ctx.strokeStyle = 'rgba(200, 169, 109, 0.38)';
   ctx.lineWidth = 2;
@@ -777,10 +808,8 @@ function drawPhoneScreen(
   ctx.font = '400 14px ui-monospace, SFMono-Regular, Menlo, monospace';
   ctx.fillText('PUBLIC PREVIEW LAYER', 36, 142);
 
-  const vf = { x: 36, y: 170, w: 440, h: 404 };
+  const vf = { x: SCAN_VIEW.x, y: SCAN_VIEW.y, w: SCAN_VIEW.width, h: SCAN_VIEW.height };
 
-  ctx.fillStyle = '#0c0b09';
-  ctx.fillRect(vf.x, vf.y, vf.w, vf.h);
   ctx.strokeStyle = 'rgba(200, 169, 109, 0.12)';
   ctx.lineWidth = 1;
   for (let i = 1; i < 6; i += 1) {
@@ -792,16 +821,6 @@ function drawPhoneScreen(
     ctx.moveTo(vf.x, vf.y + (vf.h / 6) * i);
     ctx.lineTo(vf.x + vf.w, vf.y + (vf.h / 6) * i);
     ctx.stroke();
-  }
-
-  if (qrImage && qrImage.complete) {
-    ctx.save();
-    ctx.globalAlpha = found ? 0.94 : 0.8;
-    ctx.drawImage(qrImage, vf.x + 68, vf.y + 52, 304, 304);
-    ctx.restore();
-  } else {
-    ctx.fillStyle = 'rgba(232, 220, 196, 0.1)';
-    ctx.fillRect(vf.x + 96, vf.y + 80, 248, 248);
   }
 
   const bracket = 34;
@@ -876,33 +895,113 @@ export function PhoneScanner({
   progressRef,
   pick,
   reducedMotion,
+  cameraSubjects = [],
+  cameraAim,
 }: {
   progressRef: MutableRefObject<number>;
   pick: ShelfPick;
   reducedMotion: boolean;
+  cameraSubjects?: ReadonlyArray<MutableRefObject<THREE.Object3D | null>>;
+  cameraAim?: MutableRefObject<THREE.Object3D | null>;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const bodyMatRef = useRef<THREE.MeshStandardMaterial>(null);
-  const screenMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const chromeMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const glowMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const scanRef = useRef<THREE.Mesh>(null);
   const scanMatRef = useRef<THREE.MeshBasicMaterial>(null);
+  const lensRef = useRef<THREE.Object3D>(null);
+  const screenRef = useRef<THREE.Mesh>(null);
   const [found, setFound] = useState(false);
   const foundRef = useRef(false);
-  const { size } = useThree();
+  const { size, scene, camera: mainCamera, gl } = useThree();
   const mobile = size.width < 760;
-  const qrImage = useMemo(() => {
-    if (typeof window === 'undefined') return null;
-    const image = new Image();
-    image.src = '/qr/one-code-entry.png';
-    return image;
+
+  const feedTarget = useMemo(() => {
+    const target = new THREE.WebGLRenderTarget(512, 512);
+    target.texture.colorSpace = THREE.SRGBColorSpace;
+    target.texture.minFilter = THREE.LinearFilter;
+    target.texture.magFilter = THREE.LinearFilter;
+    target.texture.generateMipmaps = false;
+    return target;
   }, []);
+
+  const feedCamera = useMemo(
+    () => new THREE.PerspectiveCamera(32, SCAN_PLANE_ASPECT, 0.02, 8),
+    [],
+  );
+  const feedAim = useMemo(() => new THREE.Vector3(), []);
+  const feedDirection = useMemo(() => new THREE.Vector3(), []);
+  const feedLens = useMemo(() => new THREE.Vector3(), []);
+  const [feedHeight, setFeedHeight] = useState(512);
+
+  const feedUniforms = useMemo(
+    () => ({ uScanBlur: { value: 0.6 }, uScanTime: { value: 0 } }),
+    [],
+  );
+
+  // The room's own grade is not a camera: the feed needs a cooler, contrastier
+  // image with soft edges, so the grade rides on top of the map sample.
+  const feedMaterial = useMemo(() => {
+    const material = new THREE.MeshBasicMaterial({
+      map: feedTarget.texture,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      toneMapped: false,
+    });
+    material.customProgramCacheKey = () => 'bookln-phone-feed';
+    material.onBeforeCompile = (shader) => {
+      shader.uniforms.uScanBlur = feedUniforms.uScanBlur;
+      shader.uniforms.uScanTime = feedUniforms.uScanTime;
+      shader.fragmentShader = shader.fragmentShader
+        .replace(
+          'uniform vec3 diffuse;',
+          'uniform vec3 diffuse;\nuniform float uScanBlur;\nuniform float uScanTime;',
+        )
+        .replace(
+          '#include <map_fragment>',
+          `
+          #ifdef USE_MAP
+          vec2 scanOffset = vMapUv - 0.5;
+          float scanRadius = length(scanOffset) * 1.9;
+          float scanBlur = uScanBlur * smoothstep(0.3, 1.0, scanRadius);
+          vec4 sampledDiffuseColor = vec4(0.0);
+          for (int i = 0; i < 5; i++) {
+            float scanAngle = float(i) * 2.399963;
+            float scanStep = float(i) * 0.25;
+            sampledDiffuseColor += texture2D(
+              map,
+              vMapUv + vec2(cos(scanAngle), sin(scanAngle)) * 0.012 * scanBlur * scanStep
+            );
+          }
+          sampledDiffuseColor /= 5.0;
+          diffuseColor.rgb *= sampledDiffuseColor.rgb;
+
+          float scanLuma = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+          vec3 scanColor = mix(vec3(scanLuma), diffuseColor.rgb, 0.92);
+          scanColor *= 1.02;
+          scanColor += vec3(0.0, 0.005, 0.016) * (1.0 - scanLuma);
+          scanColor *= mix(0.82, 1.0, smoothstep(1.2, 0.32, scanRadius));
+          float scanGrain =
+            fract(sin(dot(vMapUv * 900.0 + uScanTime, vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
+          diffuseColor.rgb = max(scanColor + scanGrain * 0.015, vec3(0.0));
+          #endif
+          `,
+        );
+    };
+    return material;
+  }, [feedTarget, feedUniforms]);
+
+  useEffect(() => {
+    return () => feedMaterial.dispose();
+  }, [feedMaterial]);
 
   const canvas = useMemo(() => {
     if (typeof document === 'undefined') return null;
     const element = document.createElement('canvas');
-    element.width = 512;
-    element.height = 1024;
+    element.width = PHONE_CANVAS_SIZE[0];
+    element.height = PHONE_CANVAS_SIZE[1];
     return element;
   }, []);
 
@@ -919,23 +1018,60 @@ export function PhoneScanner({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const redraw = () => {
-      drawPhoneScreen(ctx, found, pick, qrImage);
+      drawPhoneScreen(ctx, found, pick);
       texture.needsUpdate = true;
     };
     redraw();
     void document.fonts?.ready.then(redraw);
-    if (qrImage) {
-      if (qrImage.complete) redraw();
-      else qrImage.addEventListener('load', redraw, { once: true });
-    }
-    return () => {
-      qrImage?.removeEventListener('load', redraw);
-    };
-  }, [canvas, texture, found, pick, qrImage]);
+  }, [canvas, texture, found, pick]);
 
   useEffect(() => {
     return () => texture?.dispose();
   }, [texture]);
+
+  // Resolution follows the screen's on-screen size, so the feed is never
+  // upscaled on a wide viewport nor wasted on a phone.
+  useEffect(() => {
+    const screen = screenRef.current;
+    if (!screen) return;
+    screen.updateWorldMatrix(true, false);
+    const point = new THREE.Vector3();
+    let top = -Infinity;
+    let bottom = Infinity;
+    for (const x of [-0.5, 0.5]) {
+      for (const y of [-0.5, 0.5]) {
+        point
+          .set(x * PHONE_SCREEN_SIZE[0], y * PHONE_SCREEN_SIZE[1], 0)
+          .applyMatrix4(screen.matrixWorld)
+          .project(mainCamera);
+        top = Math.max(top, point.y);
+        bottom = Math.min(bottom, point.y);
+      }
+    }
+    const cssHeight = ((top - bottom) / 2) * size.height;
+    setFeedHeight(
+      Math.round(Math.min(1024, Math.max(384, cssHeight * gl.getPixelRatio() * 1.25))),
+    );
+  }, [gl, mainCamera, size.width, size.height]);
+
+  useEffect(() => {
+    const width = Math.round(feedHeight * SCAN_PLANE_ASPECT);
+    feedTarget.setSize(width, feedHeight);
+  }, [feedHeight, feedTarget]);
+
+  useEffect(() => {
+    return () => feedTarget.dispose();
+  }, [feedTarget]);
+
+  // The feed camera sees a chosen subset of the scene; lights must join that
+  // layer too or the subject renders black.
+  useEffect(() => {
+    feedCamera.layers.set(PHONE_CAMERA_LAYER);
+    for (const subject of cameraSubjects) enableLayer(subject.current, PHONE_CAMERA_LAYER);
+    scene.traverse((object) => {
+      if ((object as THREE.Light).isLight) object.layers.enable(PHONE_CAMERA_LAYER);
+    });
+  }, [cameraSubjects, feedCamera, scene]);
 
   useFrame((_, delta) => {
     const phase = progressRef.current * SHELF_PHASE_COUNT;
@@ -959,7 +1095,8 @@ export function PhoneScanner({
     }
 
     if (bodyMatRef.current) bodyMatRef.current.opacity = vis;
-    if (screenMatRef.current) screenMatRef.current.opacity = vis;
+    if (chromeMatRef.current) chromeMatRef.current.opacity = vis;
+    feedMaterial.opacity = vis;
     if (glowMatRef.current) {
       glowMatRef.current.opacity = vis * (reducedMotion ? 0.09 : 0.07 + Math.sin(performance.now() * 0.0016) * 0.025);
     }
@@ -978,7 +1115,38 @@ export function PhoneScanner({
       setFound(shouldFound);
     }
 
-    void delta;
+    feedUniforms.uScanTime.value += delta * 0.8;
+
+    if (vis <= 0.01 || !lensRef.current) return;
+
+    // Paint the rear camera before the main pass: same scene, restricted layer
+    // set, and no tone mapping so the feed lands on the screen as display colour.
+    lensRef.current.getWorldPosition(feedLens);
+    if (cameraAim?.current) cameraAim.current.getWorldPosition(feedAim);
+    else feedAim.copy(feedLens).setZ(feedLens.z - 1);
+
+    feedDirection.copy(feedAim).sub(feedLens);
+    const lensDistance = feedDirection.length() || SCAN_DISTANCE;
+    feedDirection.divideScalar(lensDistance);
+    feedCamera.position
+      .copy(feedAim)
+      .addScaledVector(feedDirection, -Math.min(SCAN_DISTANCE, lensDistance * 0.85));
+    feedCamera.lookAt(feedAim);
+
+    // Handheld drift lives on the feed camera, never on the phone itself.
+    if (!reducedMotion) {
+      const drift = performance.now() * 0.001;
+      feedCamera.rotateX(Math.sin(drift * 2.1) * 0.0035);
+      feedCamera.rotateY(Math.cos(drift * 1.7) * 0.0045);
+    }
+
+    const previousTarget = gl.getRenderTarget();
+    const previousToneMapping = gl.toneMapping;
+    gl.toneMapping = THREE.NoToneMapping;
+    gl.setRenderTarget(feedTarget);
+    gl.render(scene, feedCamera);
+    gl.setRenderTarget(previousTarget);
+    gl.toneMapping = previousToneMapping;
   });
 
   return (
@@ -1008,16 +1176,23 @@ export function PhoneScanner({
         />
       </RoundedBox>
 
-      <mesh position={[0, 0, 0.0074]}>
-        <planeGeometry args={[0.079, 0.158]} />
+      <object3D ref={lensRef} position={PHONE_LENS_POSITION} />
+
+      <mesh ref={screenRef} position={[0, 0, 0.0074]} renderOrder={2}>
+        <planeGeometry args={[PHONE_SCREEN_SIZE[0], PHONE_SCREEN_SIZE[1]]} />
         <meshBasicMaterial
-          ref={screenMatRef}
+          ref={chromeMatRef}
           map={texture ?? undefined}
           transparent
           opacity={0}
           depthWrite={false}
           toneMapped={false}
         />
+      </mesh>
+
+      <mesh position={SCAN_PLANE_POSITION} renderOrder={1}>
+        <planeGeometry args={[SCAN_PLANE_WIDTH, SCAN_PLANE_HEIGHT]} />
+        <primitive object={feedMaterial} attach="material" />
       </mesh>
 
       <mesh ref={scanRef} position={[0, 0.06, 0.0085]} visible={false}>

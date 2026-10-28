@@ -1354,6 +1354,13 @@ function BookRig({
   const stowMouthRef = useRef(new THREE.Vector3());
   const stowSeatRef = useRef(new THREE.Vector3());
   const shelfGroupRef = useRef<THREE.Group>(null);
+  const qrMarkRef = useRef<THREE.Group>(null);
+  // What the phone's rear camera is allowed to see. Refs are stable, so the
+  // scanner's layer setup runs once per mount.
+  const scanCameraSubjects = useMemo(
+    () => [bookGroupRef, deskGroupRef, shelfGroupRef],
+    [],
+  );
   const shelfGlowRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const shelfBaseRef = useRef<Array<{ material: THREE.MeshStandardMaterial; color: THREE.Color }>>([]);
   const introRef = useRef(0);
@@ -1760,12 +1767,18 @@ function BookRig({
           <group scale={0.001}>
             <primitive object={book.scene} dispose={null} />
             <PageTurnRig mesh={bookMorphMesh} progressRef={progressRef} />
-            <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} />
+            <QrCoverMark progressRef={progressRef} reducedMotion={reducedMotion} markRef={qrMarkRef} />
           </group>
         </group>
       </group>
 
-      <PhoneScanner progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
+      <PhoneScanner
+        progressRef={progressRef}
+        pick={pick}
+        reducedMotion={reducedMotion}
+        cameraSubjects={scanCameraSubjects}
+        cameraAim={qrMarkRef}
+      />
       <CloudSoulPanel progressRef={progressRef} pick={pick} reducedMotion={reducedMotion} />
       <CarryLight progressRef={progressRef} pick={pick} />
 

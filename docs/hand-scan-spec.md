@@ -56,6 +56,7 @@
 
 - 验收：屏幕画面与主场景色温明显不同且可信；无「手机里套手机」；推近构图下二维码可辨
 - 回退：静态屏幕贴图，不影响主场景
+- **状态：已落地。** 实测桌面 1440×900 与移动 390×844 构图成立，扫码段帧时中位数 16.7 ms（p95 16.8 ms）；`pnpm build` 通过。实现偏差见 §4.10
 
 ### P1 · 手资产 + 握姿 + `carry`
 
@@ -81,11 +82,11 @@
 
 ### 4.1 相机
 
-- 相机位姿直接取自手机模型的**后置镜头空物体**世界矩阵，FOV 66°，near 0.02，far 12
-- 现有 `PhoneScanner` 是程序化 `RoundedBox`，**没有镜头节点**，需在其背面新增空物体 `Phone_Lens_Rear`（约左上 1/4 处），并让 `binding` 复用的同一实例继承该锚点
-- aspect 等于屏幕物理比例（约 9:19.5）
-- 位置/朝向不允许手调，必须由镜头 object 推导，否则「屏幕显示背后画面」的错觉立即失效
-- 每帧对 FBO 相机叠加 ±0.25° 的高频噪声旋转，作为手持抖动；**手机本体不动**
+- 镜头锚点：手机背面空物体 `Phone_Lens_Rear`（本地 −0.026, 0.062, −0.0062），只提供视线起点
+- **朝向不取自镜头本身**：手机屏幕朝观众，严格按光学推导时后置相机只会拍到空房间。改为沿「镜头 → 页边码」视线，在距标记 0.14 m 处落位并对准标记；距离按镜头到标记距离的 85% 封顶，避免相机穿到书后面
+- FOV 32°，near 0.02，far 8
+- aspect 等于取景框子矩形宽高比（≈1.09），见 §4.3
+- 每帧对 FBO 相机叠加约 0.2°–0.26° 的高频旋转，作为手持抖动；**手机本体不动**
 
 ### 4.2 层划分
 
@@ -99,11 +100,13 @@
 
 手与手机必须排除出 FBO，否则出现递归。
 
+落地：`src/lib/stage/layers.ts` 定义 `PHONE_CAMERA_LAYER = 1`，`enableLayer()` 对书/桌/书架整棵子树开启；**灯光必须同时加入该层**，否则主体会被渲成全黑。
+
 ### 4.3 分辨率策略
 
-- `height = clamp(round(屏幕在视口内的高度 px × dpr × 1.25), 384, 1024)`
-- `width = round(height × 屏幕宽高比)`，约 0.46 × height
-- 尺寸不是常量：手机在画面里越大越清晰
+- FBO 只覆盖**取景框子矩形**（canvas 坐标 36,170 → 440×404），不是整块屏幕；该矩形在屏面上的实际尺寸约 0.0679 × 0.0623 m，宽高比 ≈ 1.09
+- `height = clamp(round(屏幕在视口内的高度 px × dpr × 1.25), 384, 1024)`，`width = round(height × 1.09)`
+- 尺寸不是常量：手机在画面里越大越清晰；脚本按主相机投影实测屏幕像素高度，不写死
 - 若推镜头后屏幕仍小于视口 22%，优先改构图（让 `binding` 0.45 前后镜头推近），而不是继续提高分辨率
 
 ### 4.4 更新频率
@@ -123,6 +126,8 @@
 
 不做真实 DOF（需要额外深度通道与后处理链）。改为屏幕着色器内做中心锐、边缘虚的径向模糊（5 抽头），半径随「对焦呼吸」在 0.6–1.0 之间缓动；`seek` 阶段呼吸幅度加大，`lock` 后收敛。手机拍二维码是微距，这一层是可信度的主要来源。
 
+落地形态：`onBeforeCompile` 注入到屏幕面的 `MeshBasicMaterial`，替换 `<map_fragment>`，因此仍走 three 的色彩空间与 tone mapping 管线。
+
 ### 4.7 扫描 UI
 
 - 独立 Canvas 纹理，与相机画面三层叠加（画面 / 取景框与扫光 / 状态提示），UI 层带 alpha
@@ -133,10 +138,20 @@
 
 - emissive 不影响其他物体：补一盏屏幕色弱光（不投影）照亮手背与内页，这是 `binding` 一帧的观感核心
 - bloom 用选择性 bloom 只作用于屏幕层：阈值 1.0，强度桌面 0.6 / 移动 0.35
+- 落地：P0 **不做 bloom**。全站未引入 `EffectComposer`（`@react-three/postprocessing` 虽在依赖里但未使用），加 composer 会波及整条渲染路径；屏幕亮度暂由既有 additive 光晕平面承担，引入 composer 留到 P3 评估
 
 ### 4.9 移动端降级
 
 关闭 FBO，屏幕替换为预渲染静帧 `public/fallback/scan-screen.webp`；扫描 UI 改为静态叠加。判据与现有 reduced-motion / 低功耗判定合并。
+
+落地：未实现。移动端目前直接复用同一路 FBO（390×844 实测帧时正常），静帧兜底随 P3 补。
+
+### 4.10 实现说明
+
+- 屏幕由两层构成：底层相机画面（仅覆盖取景框矩形）+ 上层 Canvas chrome。chrome 必须先铺不透明底、再画文字，否则底色会把状态栏压暗
+- 离屏这一趟关闭 tone mapping 并以 sRGB 输出，屏幕面用 `MeshBasicMaterial` + `toneMapped: false`，避免二次 ACES 发灰
+- grade 与 5 抽头边缘虚化通过 `onBeforeCompile` 注入屏幕面材质，并设置 `customProgramCacheKey`，防止与其他基础材质共用编译结果
+- 首版 grade 过猛（对比 +14%、暗角压到 0.52）导致画面偏红发黑，已收敛为：饱和度 −8%、轻微提亮、阴影偏冷、边缘暗角 0.82、颗粒 0.015
 
 ---
 
@@ -191,9 +206,9 @@
 | 位置 | 变更 |
 | --- | --- |
 | `src/components/book-stage/BookStage.tsx` | 在现有 phase 推导处新增 `grip` 与 `scan` 两条权重曲线，写法与 `--handoff` 一致（窄窗口 + clamp） |
-| `src/components/book-stage/BookScene.tsx` | 新增 HandRig（socket 跟随 + `gripWeight`）、ScreenMaterial（FBO 贴图 + UI 层）、ScanCamera（第二相机 + render target） |
-| `src/components/book-stage/ShelfStage.tsx` | 改造 `PhoneScanner` 与 `drawPhoneScreen`：屏幕底层换为 FBO 画面，新增 `Phone_Lens_Rear` 锚点，机身抽为可复用组件供 `binding` 使用 |
-| `src/lib/stage/layers.ts`（新增） | 层常量与 `setLayers` 辅助 |
+| `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`。HandRig 待 P1 |
+| `src/components/book-stage/ShelfStage.tsx` | ✅ 已接：`PhoneScanner` 拆成相机画面层 + chrome 层，新增 `Phone_Lens_Rear` 锚点与离屏相机、grade、手持抖动；`QrCoverMark` 新增 `markRef` 供扫描对角。机身仍内联，待 P2 抽成可复用组件 |
+| `src/lib/stage/layers.ts`（新增） | ✅ 已交付：`SCENE_LAYER` / `PHONE_CAMERA_LAYER` 与 `enableLayer()` |
 | `public/models/` | `hand.glb`；`phone.glb` 仅在需要握持细节时导出（否则沿用程序化机身） |
 | `public/textures/` | `hand-*.ktx2` |
 | `public/fallback/` | `scan-screen.webp`、含手的 `hand-carry` 静帧 |

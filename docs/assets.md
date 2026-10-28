@@ -6,7 +6,7 @@
 >
 > - 清单：[asset-manifest.md](asset-manifest.md) 与机器可读的 [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)
 > - **A1–A7：** 已交付可用于开发
-> - **A8–A10：** 新增（手部与扫码）。A9 的程序化机身与 Canvas 取景 UI 已交付，后置镜头锚点与离屏屏幕待做；A8 未交付；A10 未交付并阻塞 04 认领
+> - **A8–A10：** 新增（手部与扫码）。A9 已交付（机身、取景 UI、后置镜头锚点与离屏屏幕画面）；A8 未交付；A10 未交付并阻塞 04 认领
 > - **B1/B3：** 已有可用占位资产，正式二维码/讲师视频待替换
 > - **B2：** 数据结构已交付，价格与购买链接待商务提供
 > - **C1–C4：** ✅ 已交付（书架模型、沉睡书脊与主书微光、脊码、夜景 HDRI 与台灯布光，均已接入场景）；脊码 URL 为 `.example` 占位
@@ -243,7 +243,7 @@ C 系列验收补充：
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
 | A8 | 🔴 pending | `public/models/hand.glb` | 需采购或制作绑定手；两个静态握姿在 Blender 内完成，运行时不跑 IK |
-| A9 | 🟡 partial | `src/components/book-stage/ShelfStage.tsx` | 程序化机身与 Canvas 取景 UI 已交付；后置镜头锚点、屏幕离屏画面、色彩调色待做 |
+| A9 | ✅ delivered | `src/components/book-stage/ShelfStage.tsx`、`src/lib/stage/layers.ts` | 程序化机身 + Canvas 取景 UI + 后置镜头锚点 + 屏幕离屏画面（含 grade / 边缘虚化 / 手持抖动）。04 认领的复用仍待 P2 |
 | A10 | 🔴 pending | `public/qr/page-edge-p042.svg` | 页边码缺失，阻塞 04 认领；必须真实可解码 |
 
 生成/刷新清单：

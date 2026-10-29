@@ -4,9 +4,9 @@ import { AdaptiveDpr, useProgress } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { createWheelScroll } from '../../lib/scroll/wheelScroll';
-import { BookScene, SHELF_CUT } from './BookScene';
+import { BookScene } from './BookScene';
 import type { StageInteractionState } from './BookScene';
-import { SHELF_PHASE_COUNT, shelfPresence } from './ShelfStage';
+import { SHELF_CUT, SHELF_PHASE_COUNT, shelfPresence } from './ShelfStage';
 import BookLoader from './BookLoader';
 
 type SceneErrorBoundaryProps = {

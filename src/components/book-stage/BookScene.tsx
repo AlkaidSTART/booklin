@@ -10,6 +10,7 @@ import {
   CloudSoulPanel,
   PhoneScanner,
   QrCoverMark,
+  SHELF_CUT,
   ShelfBooks,
   ShelfSelection,
   shelfPresence,
@@ -303,10 +304,9 @@ function lightEnvelope(
    Chapter 00 — shelf take-down / scan / uplink beat
    ------------------------------------------------------------------ */
 
-// Prologue -> 00 is a cut, not a carry: past this phase the book is already
-// seated in its slot, so the stage switches pose on one frame while the
-// transition mask covers the frame.
-export const SHELF_CUT = 0.6;
+// Prologue -> 00 is a cut, not a carry: the book is already seated in its slot
+// past the cut, so the stage switches pose on one frame while the transition
+// mask covers the frame. See SHELF_CUT in ShelfStage for the shared phase.
 const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;

@@ -8,6 +8,11 @@ import { enableLayer, PHONE_CAMERA_LAYER } from '../../lib/stage/layers';
 
 export const SHELF_PHASE_COUNT = 8;
 
+// Prologue -> 00 is a cut, not a carry: at this phase the stage swaps the book
+// into its slot behind the transition mask. The shelf only exists from here on,
+// so the case is never glimpsed before the mask closes over the cut.
+export const SHELF_CUT = 0.6;
+
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
@@ -18,7 +23,9 @@ function smoothstep(value: number) {
 }
 
 export function shelfPresence(phase: number) {
-  const shelfIn = smoothstep((phase - 0.28) / 0.36);
+  // The case arrives with the cut, while the mask is still solid: it is fully
+  // lit by the time the mask starts to lift.
+  const shelfIn = smoothstep((phase - SHELF_CUT) / 0.06);
   const shelfOut = 1 - smoothstep((phase - 2.3) / 0.12);
   const shelfReturn = smoothstep((phase - 5.55) / 0.18) * (1 - smoothstep((phase - 6.6) / 0.15));
   return Math.max(shelfIn * shelfOut, shelfReturn);

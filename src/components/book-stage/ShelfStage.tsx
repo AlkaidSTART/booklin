@@ -1,11 +1,10 @@
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { MutableRefObject } from 'react';
 import { RoundedBox, useTexture } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { ThreeEvent } from '@react-three/fiber';
 import * as THREE from 'three';
 import { enableLayer, PHONE_CAMERA_LAYER } from '../../lib/stage/layers';
-import { PhoneHandRig } from './HandRig';
 
 export const SHELF_PHASE_COUNT = 8;
 
@@ -1392,7 +1391,6 @@ export function PhoneScanner({
   const lensRef = useRef<THREE.Object3D>(null);
   const screenRef = useRef<THREE.Mesh>(null);
   const screenLightRef = useRef<THREE.PointLight>(null);
-  const handOpacityRef = useRef(0);
   const [found, setFound] = useState(false);
   const foundRef = useRef(false);
   const { size, scene, camera: mainCamera, gl } = useThree();
@@ -1591,7 +1589,6 @@ export function PhoneScanner({
       groupRef.current.scale.setScalar(scale);
     }
 
-    handOpacityRef.current = vis;
     // A candle-power point light falls off with 1/d²: at the thumb (~8 cm) this
     // is about 1 cd — enough to separate the grip from the body without
     // blowing the skin out, and invisible on the desk 30 cm away.
@@ -1697,14 +1694,6 @@ export function PhoneScanner({
         <planeGeometry args={[SCAN_PLANE_WIDTH, SCAN_PLANE_HEIGHT]} />
         <primitive object={feedMaterial} attach="material" />
       </mesh>
-
-      {/* The hand is authored in millimetres; the phone group is in metres.
-          A local boundary keeps the GLB from suspending the whole stage. */}
-      <group scale={0.001}>
-        <Suspense fallback={null}>
-          <PhoneHandRig opacityRef={handOpacityRef} reducedMotion={reducedMotion} />
-        </Suspense>
-      </group>
 
       {/* Screen spill on the thumb and wrist. Kept far enough in front of the
           glass that it never lands as a hotspot. */}

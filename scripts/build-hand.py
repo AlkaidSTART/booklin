@@ -94,16 +94,6 @@ def to_canonical(point: Vector) -> Vector:
     return Vector((delta.dot(AXIS_X), delta.dot(AXIS_Y), delta.dot(AXIS_Z)))
 
 
-def segment_distance(point: Vector, start: Vector, end: Vector) -> tuple[float, float]:
-    """Distance from point to the segment, plus the clamped parameter."""
-    axis = end - start
-    length_sq = axis.length_squared
-    if length_sq < 1e-8:
-        return (point - start).length, 0.0
-    t = max(0.0, min(1.0, (point - start).dot(axis) / length_sq))
-    return (point - (start + axis * t)).length, t
-
-
 def canonical_to_blender(point: Vector) -> Vector:
     """Canonical (X across, Y fingers, Z back) -> Blender Z-up for glTF Y-up.
 
@@ -361,161 +351,6 @@ def add_forearm(hand: bpy.types.Object) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Nails
-# ---------------------------------------------------------------------------
-
-NAIL_ARC = 0.74
-THUMB_DORSAL = Vector((-0.86, 0.20, -0.44)).normalized()
-
-
-def make_nail_material() -> bpy.types.Material:
-    material = bpy.data.materials.new("Hand_Nail")
-    material.use_nodes = True
-    principled = material.node_tree.nodes["Principled BSDF"]
-    principled.inputs["Base Color"].default_value = (0.36, 0.17, 0.14, 1.0)
-    principled.inputs["Roughness"].default_value = 0.34
-    if "Coat Weight" in principled.inputs:
-        principled.inputs["Coat Weight"].default_value = 0.75
-        principled.inputs["Coat Roughness"].default_value = 0.10
-    return material
-
-
-def dorsal_height(
-    verts: list[Vector],
-    head: Vector,
-    tail: Vector,
-    dorsal: Vector,
-    s_center: float,
-    band: float = 0.08,
-) -> float:
-    """Height of the skin above the bone axis on the dorsal side near s_center."""
-    axis = tail - head
-    length = axis.length
-    if length < 1e-6:
-        return 0.0
-    t = axis / length
-    d = dorsal - t * dorsal.dot(t)
-    if d.length < 1e-5:
-        return 0.0
-    d.normalize()
-
-    heights: list[float] = []
-    for v in verts:
-        rel = v - head
-        s = rel.dot(t) / length
-        if abs(s - s_center) > band:
-            continue
-        perp = rel - t * rel.dot(t)
-        if perp.length > 18.0:
-            continue
-        h = rel.dot(d)
-        if h > 1.5:
-            heights.append(h)
-    if not heights:
-        return 0.0
-    heights.sort()
-    return heights[int((len(heights) - 1) * 0.85)]
-
-
-def build_nails(hand: bpy.types.Object, specs: list[BoneSpec]) -> None:
-    """Curved nail plates on the dorsal side of every distal phalanx.
-
-    Each plate is a small arched grid that follows the measured skin height,
-    so it sits 0.3 mm proud of the sculpt instead of floating or sinking. The
-    plates join the hand mesh with their own material slot and are then pinned
-    to the matching `*_03` bone, which keeps them rigid under the fingertip.
-    """
-    verts = [v.co.copy() for v in hand.data.vertices]
-    nail_material = make_nail_material()
-    objects: list[bpy.types.Object] = []
-
-    for spec in specs:
-        if not spec.name.endswith("_03"):
-            continue
-        digit = spec.name[:-3]
-        head, tail = spec.head, spec.tail
-        axis = tail - head
-        length = axis.length
-        if length < 1e-4:
-            continue
-        t = axis / length
-        dorsal = THUMB_DORSAL if digit == "thumb" else spec.dorsal
-        d = dorsal - t * dorsal.dot(t)
-        if d.length < 1e-5:
-            continue
-        d.normalize()
-        b = t.cross(d).normalized()
-
-        nu, nv = 10, 18
-        plate: list[tuple[float, float, float]] = []
-        faces: list[list[int]] = []
-        for iv in range(nv + 1):
-            v = iv / nv
-            s = 0.34 + 0.60 * v
-            r_s = dorsal_height(verts, head, tail, dorsal, s)
-            if r_s <= 0.0:
-                r_s = 6.0
-            arc = NAIL_ARC * (0.90 + 0.10 * math.sin(math.pi * v) - 0.05 * v * v)
-            for iu in range(nu + 1):
-                u = -1.0 + 2.0 * iu / nu
-                a = u * arc
-                crown = 0.26 * math.sin(math.pi * v)
-                tip_bevel = -0.16 * math.exp(-(((1.0 - v) / 0.07) ** 2))
-                radial = r_s + 0.45 + crown + tip_bevel
-                point = head + t * (s * length) + (d * math.cos(a) + b * math.sin(a)) * radial
-                plate.append((point.x, point.y, point.z))
-        for iv in range(nv):
-            for iu in range(nu):
-                a = iv * (nu + 1) + iu
-                faces.append([a, a + 1, a + nu + 2, a + nu + 1])
-
-        mesh = bpy.data.meshes.new(f"Nail_{digit}")
-        mesh.from_pydata(plate, [], faces)
-        mesh.validate()
-        mesh.update()
-        obj = bpy.data.objects.new(f"Nail_{digit}", mesh)
-        bpy.context.collection.objects.link(obj)
-        for poly in obj.data.polygons:
-            poly.use_smooth = True
-        obj.data.materials.append(nail_material)
-        objects.append(obj)
-
-    if not objects:
-        return
-
-    bpy.ops.object.select_all(action="DESELECT")
-    for obj in objects:
-        obj.select_set(True)
-    hand.select_set(True)
-    bpy.context.view_layer.objects.active = hand
-    bpy.ops.object.join()
-
-    hand.data.validate()
-    for poly in hand.data.polygons:
-        poly.use_smooth = True
-
-    # Pin the plate vertices to the nearest distal bone: they were added after
-    # the heat bind, so they have no weights yet.
-    distal = [spec for spec in specs if spec.name.endswith("_03")]
-    nail_vertices: set[int] = set()
-    for poly in hand.data.polygons:
-        if poly.material_index > 0:
-            nail_vertices.update(poly.vertices)
-
-    for index in nail_vertices:
-        co = hand.data.vertices[index].co
-        bone = min(
-            distal,
-            key=lambda spec: segment_distance(co, spec.head, spec.tail)[0],
-        )
-        for group in hand.vertex_groups:
-            group.remove([index])
-        hand.vertex_groups[bone.name].add([index], 1.0, "REPLACE")
-
-    print(f"NAIL_VERTS={len(nail_vertices)} MATERIALS={[m.name for m in hand.data.materials]}")
-
-
-# ---------------------------------------------------------------------------
 # Armature + skinning
 # ---------------------------------------------------------------------------
 
@@ -718,8 +553,6 @@ def main() -> None:
             % (spec.name, *head, *tail)
         )
 
-    add_nails = globals()["build_nails"]
-    add_nails(hand, specs)
     pose_probe(hand, armature)
     export(hand, armature, "hand.glb", "hand-rig.blend")
 

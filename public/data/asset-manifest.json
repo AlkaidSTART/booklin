@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-28T13:49:08.653Z",
+  "generatedAt": "2026-10-28T14:26:18.858Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 17,
@@ -10,7 +10,7 @@
   "totals": {
     "groups": 21,
     "files": 99,
-    "bytes": 20213991,
+    "bytes": 20128753,
     "missing": 0
   },
   "assets": [
@@ -342,30 +342,30 @@
       "label": "Rigged right hand",
       "status": "delivered",
       "role": "delivery",
-      "notes": "Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 4,632 triangles, 2,463 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh) and five curved nail plates on the distal phalanges in their own Hand_Nail material slot. Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the holds are posed at runtime by bone rotations instead of baked into the mesh; the 01 Carry beat shows both hands on the cover at 0.75 scale. Rebuild with `blender -b --python scripts/build-hand.py`.",
+      "notes": "Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 2,832 triangles, 1,418 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh). Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the poses are driven by bone rotations at runtime: the pair fades in only while the book is being opened, releases as the cover turns, and settles onto the two flat pages. No hand is shown holding the phone. Rebuild with `blender -b --python scripts/build-hand.py`.",
       "files": [
         {
           "path": "public/models/hand.glb",
-          "bytes": 29560,
-          "sha256": "09fd798ac69d5eeff38ce3f0bf9835901285198c8cd09176b872c113b4bcfec9",
+          "bytes": 23516,
+          "sha256": "b09f566e55cb1ffae4bd10c2eb8d9abb776582ed5320d2a700d23522df804324",
           "missing": false
         },
         {
           "path": "public/models/hand-left.glb",
-          "bytes": 29980,
-          "sha256": "41a9f989319a45a0fb288b0540eb305ac00e7383a64f392003d9849519a18e97",
+          "bytes": 24000,
+          "sha256": "01e426718cc29a914eddd456232cb940504476717f8202f24dd85fcf26fcf0ac",
           "missing": false
         },
         {
           "path": "public/models/source/hand-rig.blend",
-          "bytes": 191631,
-          "sha256": "06e37b40427fe57b6f42666cf9bddef6f82833a3a6b9ed7916d6fcabd3e700a9",
+          "bytes": 164616,
+          "sha256": "c38c65db22c3a18ecfa0bbf8fd3455ba08eaf4f71aa837982e7451ae5b0d65fa",
           "missing": false
         },
         {
           "path": "public/models/source/hand-left-rig.blend",
-          "bytes": 230835,
-          "sha256": "a25dd24a226fed6b4c623d59f2a9971805a63af1ffaaa735aeedd9042de84eaa",
+          "bytes": 190383,
+          "sha256": "df1db03fad4f7a0aa917337c29f26a45b270fbcdce32c3f83c131f94e03569b3",
           "missing": false
         },
         {
@@ -376,12 +376,12 @@
         },
         {
           "path": "scripts/build-hand.py",
-          "bytes": 25243,
-          "sha256": "37d5ca6551cd68f7bf186d6317c2f015073c11cb6c3e1e919886d6120f0484f5",
+          "bytes": 19496,
+          "sha256": "3f831add8a7e0132f02af25fc55a4124f96169c419212179fed90a96741277ea",
           "missing": false
         }
       ],
-      "bytes": 677490,
+      "bytes": 592252,
       "missing": []
     },
     {

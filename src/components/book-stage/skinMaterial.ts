@@ -98,29 +98,3 @@ export function createSkinMaterial(): THREE.MeshPhysicalMaterial {
 
   return material;
 }
-
-/** Nail plate material: a thin keratin surface, so the read is a tight
- * clearcoat highlight over a warmer, lighter base than the skin. The plates
- * are single-sided geometry in the GLB, hence DoubleSide. */
-export function createNailMaterial(): THREE.MeshPhysicalMaterial {
-  const material = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#c09a8c'),
-    roughness: 0.3,
-    metalness: 0,
-    clearcoat: 1,
-    clearcoatRoughness: 0.08,
-    sheen: 0,
-    envMapIntensity: 0.5,
-    side: THREE.DoubleSide,
-  });
-
-  material.onBeforeCompile = (shader) => {
-    shader.fragmentShader = shader.fragmentShader.replace(
-      '#include <opaque_fragment>',
-      `outgoingLight += vec3(1.0, 0.72, 0.55) * pow(1.0 - clamp(dot(normal, normalize(vViewPosition)), 0.0, 1.0), 3.0) * 0.12;
-      #include <opaque_fragment>`,
-    );
-  };
-
-  return material;
-}

@@ -111,8 +111,8 @@
 - **材质约束**：`MeshPhysicalMaterial` + sheen，接受 three.js 无真实 SSS，只允许出现在暗调、侧逆光、局部入画的构图；禁止明亮中性光下正面呈现。
 - **禁止**：烘焙进模型的握姿形变、IK 控制器、相机灯光残留对象。
 - **交付物**：`.blend` 源文件 + `hand.glb` / `hand-left.glb`（Draco，左右手）+ `scripts/build-hand.py` + `public/hand/hand.OBJ` 源雕刻。
-- **预算影响**：实际 4,632 三角面 / 2,463 顶点 / 22 骨骼（含 5 片指甲共 900 个面），远低于 §5.5 为手部预留的 20,000；无需再上修 [TDD.md](TDD.md) 的面数红线。
-- **当前状态：正式绑定手已交付（左右一双）。** `scripts/build-hand.py` 直接读取 `public/hand/hand.OBJ`（ZBrush 导出，1,102 顶点封闭雕刻），在脚本内重建手部局部坐标系，按测地线量出的指节位置生成 22 骨骼（forearm / wrist / palm / 4×metacarpal + 4×3 指节 / thumb 3 节），用 Blender 热权重蒙皮，并从腕口断面**续接** 250 mm 前臂（与手共用顶点、同一网格）避免断面入画。另在五个远端指骨背面加了贴合指腹曲率的指甲片（弧面栅格、指缘唇线与月牙收口、独立 `Hand_Nail` 材质槽，顶点钉到对应 `*_03` 骨骼）；运行时不走皮肤材质，改用高光 clearcoat 的 `createNailMaterial()`。右手的网格、权重与骨骼再整体镜像出 `hand-left.glb` / `source/hand-left-rig.blend`；01 携归用两只手在封面上对称托住（缩放 0.75，掌心在书两侧、拇指在下边缘中间相向），读作「双手翻开」，摊平后落到左右两页上停留。
+- **预算影响**：实际 2,832 三角面 / 1,418 顶点 / 22 骨骼，远低于 §5.5 为手部预留的 20,000；无需再上修 [TDD.md](TDD.md) 的面数红线。
+- **当前状态：正式绑定手已交付（左右一双）。** `scripts/build-hand.py` 直接读取 `public/hand/hand.OBJ`（ZBrush 导出，1,102 顶点封闭雕刻），在脚本内重建手部局部坐标系，按测地线量出的指节位置生成 22 骨骼（forearm / wrist / palm / 4×metacarpal + 4×3 指节 / thumb 3 节），用 Blender 热权重蒙皮，并从腕口断面**续接** 250 mm 前臂（与手共用顶点、同一网格）避免断面入画。右手的网格、权重与骨骼再整体镜像出 `hand-left.glb` / `source/hand-left-rig.blend`。双手**只在翻开书本时出现**：书本开始翻页时淡入，随封面分开松手；书摊平后落到左右两页上停留，随后淡出。00 扫码段不再显示持手机的手。
   - **局部坐标**：`+Y` = 腕→指尖，`−Z` = 掌心，`+X` = 食指→小指（拇指在 −X）。导出原点落在书脊下边缘的握持中心（掌侧 15 mm），因此运行时可直接挂到书的毫米组，无需魔法偏移。
   - **握姿不再烘焙**：源雕刻是放松张开的手，握书 / 握手机由骨骼在运行时摆（`HandRig.tsx` 中 `BOOK_CURL` / `BOOK_THUMB` / `PHONE_CURL` / `PHONE_THUMB`），以 `weight` 平滑混入。每根骨骼的 roll 对齐手背方向，所以绕局部 X 负向旋转 = 向掌心屈曲。
   - **两处挂载**：01 携归 `[20, 0, 6]`，掌贴面向镜头的那面封面、四指沿封面向上、小臂向下出画；00 扫码在手机毫米组内 `[0, 20, 9.5]` 且绕 Y 轴 π，掌贴机身背面、四指沿背面向上、拇指压前左边缘。
@@ -125,7 +125,7 @@
 - **新增锚点**：机身背面增加空物体 `Phone_Lens_Rear`（约左上 1/4 处），屏幕离屏相机的位置与朝向由此推导；不得手工摆位，否则「屏幕显示背后画面」的错觉失效。
 - **新增画面层**：保留现有 Canvas 取景 UI，其下叠一层离屏相机画面（book / 桌面 / 页边码）。分辨率随屏幕在视口内的像素尺寸浮动，clamp 384–1024，不写死。
 - **色彩**：离屏这一趟 `NoToneMapping` + sRGB 输出，屏幕材质用 `MeshBasicMaterial`；单独一级调色（偏冷、对比更高、细噪点），刻意与主场景暖棚光区隔。
-- **复用**：00 章（不持机，扫脊码）与 04 认领（持机，扫 P.042 页边码）共用同一实例。
+- **复用**：00 章（扫脊码）与 04 认领（扫 P.042 页边码）共用同一实例；画面中不再出现持机的手。
 - **详见**：[hand-scan-spec.md](hand-scan-spec.md) §4。
 
 ### A10 P.042 页边码
@@ -249,7 +249,7 @@ C 系列验收补充：
 | B6 | ✅ delivered | `public/hdri/warm-studio.hdr` | 暖色影棚 HDRI |
 | B7 | ✅ delivered | `public/fallback/` | 桌面/移动静态海报 |
 | B8 | ✅ delivered | `public/data/benchmark.json`、`docs/benchmark-sources.md` | 来源、免责声明与发布前检查表 |
-| A8 | ✅ delivered | `public/models/hand.glb`、`public/models/hand-left.glb`、`scripts/build-hand.py`、`src/components/book-stage/HandRig.tsx` | 由 `public/hand/hand.OBJ` 生成的 4,632 面 / 22 骨骼左右手（含指甲片）；01 携归为双手托封面，00 扫码为右手持机 |
+| A8 | ✅ delivered | `public/models/hand.glb`、`public/models/hand-left.glb`、`scripts/build-hand.py`、`src/components/book-stage/HandRig.tsx` | 由 `public/hand/hand.OBJ` 生成的 2,832 面 / 22 骨骼左右手；翻开书本时双手出现，摊平后停留在两页；扫码段不显示手 |
 | A9 | ✅ delivered | `src/components/book-stage/ShelfStage.tsx`、`src/lib/stage/layers.ts` | 程序化机身 + Canvas 取景 UI + 后置镜头锚点 + 屏幕离屏画面（含 grade / 边缘虚化 / 手持抖动）。04 认领的复用仍待 P2 |
 | A10 | ✅ delivered | `public/qr/page-edge-p042.svg`、`public/qr/page-edge-p042.png` | 53×53 模块、H 级纠错、2048 px PNG；已用 OpenCV 解码验证。场景内落位（04 认领）仍待 P2 |
 

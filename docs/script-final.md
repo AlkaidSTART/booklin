@@ -27,7 +27,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 ---
 
-## 00 · 停泊 The Shelf — 一本书，在架上沉睡（🆕）
+## 00 · 停泊 The Shelf — 一本书，在架上待认领（🆕）
 
 > 场景：书链馆（Bookln Haven，见 [`worldview.md`](worldview.md) §2）。**单书聚焦**：第一眼永远是一本书，书链馆只作虚焦环境。
 
@@ -40,7 +40,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | Annotation `shelf.annotation` | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays at 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
-**Telemetry:** `ON SHELF · DORMANT · 0.00W · PREVIEW ONLY` / `架上沉睡 · 仅试读层开放`
+**Telemetry:** `ON SHELF · UNCLAIMED · 0.00W · PREVIEW ONLY` / `架上未认领 · 仅试读层开放`
 
 **Motion beat:** 8–16%. 镜头沿书脊上摇入书链馆（环境虚焦）→ 单书书脊微光特写 → 脊码扫开试读层全息浮窗（目录 / 样章 / 讲题样例 / 图谱轮廓）。手指悬停在「带走它」上，不按下。
 
@@ -154,7 +154,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | Annotation `return.annotation` | Your journey stays in your account, never in the book. To the next reader, this is a first encounter. | 你的阅读里程只在你自己的账户里，从不在书里。对下一位读者而言，这是一场初见。 |
 | Annotation (mobile) | Your journey lives in your account — never in the book. | 阅读里程只在你的账户里，从不在书里。 |
 
-**Telemetry:** `UNBOUND · BACK ON SHELF · 0.00W` / `解绑归架 · 恢复沉睡`
+**Telemetry:** `UNBOUND · BACK ON SHELF · 0.00W` / `解绑归架 · 恢复未认领`
 
 **Motion beat:** 78–90%. 合书入套 → 归架（回到 00 构图）→ 微光熄灭 + 里程归档进账户 → 新的手入画、另一本书脊微光再亮。黑场。
 

@@ -53,8 +53,8 @@ const chapters = [
     number: '00',
     en: 'Shelf',
     zh: '停泊',
-    telemetry: 'ON SHELF · DORMANT · 0.00W · PREVIEW ONLY',
-    telemetryZh: '架上沉睡 · 仅试读层开放',
+    telemetry: 'ON SHELF · UNCLAIMED · 0.00W · PREVIEW ONLY',
+    telemetryZh: '架上未认领 · 仅试读层开放',
   },
   {
     id: 'carry',
@@ -94,7 +94,7 @@ const chapters = [
     en: 'Return',
     zh: '传承',
     telemetry: 'UNBOUND · BACK ON SHELF · 0.00W',
-    telemetryZh: '解绑归架 · 恢复沉睡',
+    telemetryZh: '解绑归架 · 恢复未认领',
   },
   {
     id: 'benchmark',
@@ -330,15 +330,15 @@ const pageDescription =
       class="chapter"
       data-chapter="shelf"
       data-label="Shelf"
-      data-telemetry="00 · ON SHELF · DORMANT · 0.00W"
-      data-telemetry-zh="00 · 架上沉睡 · 仅试读层开放"
+      data-telemetry="00 · ON SHELF · UNCLAIMED · 0.00W"
+      data-telemetry-zh="00 · 架上未认领 · 仅试读层开放"
       aria-labelledby="shelf-title"
     >
       <div class="chapter__grid">
         <div class="chapter__copy">
           <div class="story-bridge reveal">
             <span class="story-bridge__step">PROLOGUE → 00 · REWIND TO THE SHELF</span>
-            <span class="story-bridge__zh" lang="zh-Hans">开场那本书从哪来？镜头回卷到书链馆：它在架上沉睡，等你取下。</span>
+            <span class="story-bridge__zh" lang="zh-Hans">开场那本书从哪来？镜头回卷到书链馆：它在架上，还没被取下。</span>
           </div>
 
           <p class="eyebrow reveal">
@@ -906,7 +906,7 @@ const pageDescription =
       data-chapter="return"
       data-label="Return"
       data-telemetry="05 · UNBOUND · BACK ON SHELF · 0.00W"
-      data-telemetry-zh="05 · 解绑归架 · 恢复沉睡"
+      data-telemetry-zh="05 · 解绑归架 · 恢复未认领"
       aria-labelledby="return-title"
     >
       <div class="chapter__grid">

@@ -194,7 +194,7 @@ if (pageEdge) {
   }
   const edgeSvg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc" viewBox="0 0 ${edgeTotal} ${edgeTotal}" width="1024" height="1024" shape-rendering="crispEdges">
   <title id="title">Bookln page-edge mark, P.042</title>
-  <desc id="desc">Claim layer: scanning attaches the cloud soul to this copy. Carries no reader data. Target: ${xmlEscape(pageEdge.qrTarget)}</desc>
+  <desc id="desc">Claim layer: scanning attaches the companion layer to this copy. Carries no reader data. Target: ${xmlEscape(pageEdge.qrTarget)}</desc>
   <rect width="${edgeTotal}" height="${edgeTotal}" fill="${paper}"/>
   <path d="${edgeParts.join('')}" fill="${ink}"/>
 </svg>

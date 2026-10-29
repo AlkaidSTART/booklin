@@ -1723,7 +1723,7 @@ export function PhoneScanner({
 }
 
 /* ------------------------------------------------------------------
-   Cloud soul panel + uplink
+   Companion layer panel + uplink
    ------------------------------------------------------------------ */
 
 const CLOUD_NODES = [

@@ -15,7 +15,7 @@
 
 ---
 
-## 00 · 停泊 The Shelf — 一本书，在架上沉睡（🆕）
+## 00 · 停泊 The Shelf — 一本书，在架上待认领（🆕）
 
 > Q1 已拍板（2026-10-27）：**书链馆（Bookln Haven）**，设定见 [`worldview.md`](worldview.md) §2。开场沿用 oryzo 式**单书聚焦**：第一眼永远是这一本书，书链馆只作虚焦环境，不拍群像。供给端为真实网络（2,600+ 合作出版商、100 万+ 品种，见 [`worldview.md`](worldview.md) §7.1）——书架是真实库存的陈列面，不是布景。
 
@@ -37,7 +37,7 @@
 | Annotation | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
-**Telemetry:** `ON SHELF · DORMANT · 0.00W · PREVIEW ONLY` / `架上沉睡 · 仅试读层开放`
+**Telemetry:** `ON SHELF · UNCLAIMED · 0.00W · PREVIEW ONLY` / `架上未认领 · 仅试读层开放`
 
 **Motion beat:** Hero 单书落桌 → 镜头沿书脊上摇入书链馆（环境虚焦）10% → 单书书脊微光特写 60% → 脊码扫开试读层全息浮窗 100%。
 
@@ -194,7 +194,7 @@
 | Annotation | Your journey stays in your account, never in the book. To the next reader, this is a first encounter. | 你的阅读里程只在你自己的账户里，从不在书里。对下一位读者而言，这是一场初见。 |
 | Annotation (mobile) | Your journey lives in your account — never in the book. | 阅读里程只在你的账户里，从不在书里。 |
 
-**Telemetry:** `UNBOUND · BACK ON SHELF · 0.00W` / `解绑归架 · 恢复沉睡`
+**Telemetry:** `UNBOUND · BACK ON SHELF · 0.00W` / `解绑归架 · 恢复未认领`
 
 **Motion beat:** 归架 60% → 微光熄灭 + 里程归档 80% → 新的手 + 新的微光 100%。
 

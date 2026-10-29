@@ -74,16 +74,16 @@
       "chapter": "00-shelf",
       "role": "title",
       "limit": "title",
-      "en": "One Book, Two Bodies.",
-      "zh": "一本书，两个身体。"
+      "en": "One Book, Two Editions.",
+      "zh": "一本书，两个版本。"
     },
     {
       "id": "shelf.subtitle",
       "chapter": "00-shelf",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "This book has two bodies: paper here, companion layer in the cloud.",
-      "zh": "这本书有两个身体：纸身在此处，伴读层在云上。",
+      "en": "This book has two editions: paper here, companion layer in the cloud.",
+      "zh": "这本书有两个版本：纸版在此处，伴读层在云上。",
       "enMobile": "Paper here. Layer in the cloud."
     },
     {
@@ -108,8 +108,9 @@
       "chapter": "01-carry",
       "role": "title",
       "limit": "title",
-      "en": "You Buy Two Bodies.",
-      "zh": "买下的，是两个身体。"
+      "en": "Buy One, Get Two Editions.",
+      "zh": "买一本，得两版。",
+      "enMobile": "Buy One, Two Editions."
     },
     {
       "id": "carry.subtitle",
@@ -117,7 +118,7 @@
       "role": "subtitle",
       "limit": "subtitle",
       "en": "Paper in your bag; the companion layer travels, not yet open.",
-      "zh": "纸身装进包里，伴读层随书到家，认领前只有试读层。",
+      "zh": "纸版装进包里，伴读层随书到家，认领前只有试读层。",
       "enMobile": "Paper in your bag; layer in tow."
     },
     {
@@ -594,7 +595,7 @@
       "role": "cardTitle",
       "limit": "cardTitle",
       "en": "Standard",
-      "zh": "标配版"
+      "zh": "标配"
     },
     {
       "id": "deployment.standard.body",
@@ -610,7 +611,7 @@
       "role": "cardTitle",
       "limit": "cardTitle",
       "en": "Pro",
-      "zh": "专业版"
+      "zh": "专业"
     },
     {
       "id": "deployment.pro.body",

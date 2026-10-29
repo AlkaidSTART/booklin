@@ -192,7 +192,7 @@ node scripts/build-asset-manifest.mjs
 | --- | --- | --- |
 | `haven.nature` / `.natureZh` | string | “A library you can buy from.” |
 | `haven.rules[]` | array | Take, public spine marks, settle at exit, claim at home. |
-| `settlement` | object | Exit receipt: paper body / companion layer states, note and pending companion-layer policy. |
+| `settlement` | object | Exit receipt: paper edition / companion layer states, note and pending companion-layer policy. |
 | `company` | object | Company dossier: legal name (湖州云梯科技有限公司 / formerly 杭州云梯科技有限公司), founded, headquarters, founder/CEO, positioning, core product, summary and English variants. |
 | `model` | object | The operating model in three steps: live code in the book → reader scans for resources → publisher connects, operates and monetises. Bilingual `label` / `labelZh` and `steps[]`. |
 | `clients` | object | Selected public client names plus a usage-rights disclaimer. Confirm authorisation before launch. |

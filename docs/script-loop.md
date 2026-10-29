@@ -31,9 +31,9 @@
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow | WHERE BOOKS WAIT | 书在架上，伴读层在云上 |
-| Main title | **One Book, Two Bodies.** | **一本书，两个身体。** |
-| Subtitle | This book has two bodies: paper here, companion layer in the cloud. | 这本书有两个身体：纸身在此处，伴读层在云上。 |
-| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸身在此，伴读层在云上。 |
+| Main title | **One Book, Two Editions.** | **一本书，两个版本。** |
+| Subtitle | This book has two editions: paper here, companion layer in the cloud. | 这本书有两个版本：纸版在此处，伴读层在云上。 |
+| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸版在此，伴读层在云上。 |
 | Annotation | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
@@ -43,7 +43,7 @@
 
 ---
 
-## 01 · 携归 The Carry — 买下的，是两个身体（🆕 轻章节）
+## 01 · 携归 The Carry — 买一本，得两版（🆕 轻章节）
 
 ### 3D 视觉
 
@@ -57,11 +57,11 @@
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow | THE CARRY | 携归 |
-| Main title | **You Buy Two Bodies.** | **买下的，是两个身体。** |
-| Subtitle | Paper in your bag; the companion layer travels, not yet open. | 纸身装进包里，伴读层随书到家，认领前只有试读层。 |
-| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸身入包，伴读层随行。 |
+| Main title | **Buy One, Get Two Editions.** | **买一本，得两版。** |
+| Subtitle | Paper in your bag; the companion layer travels, not yet open. | 纸版装进包里，伴读层随书到家，认领前只有试读层。 |
+| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸版入包，伴读层随行。 |
 
-**Telemetry:** `PAID & SEALED · TWO BODIES, ONE BAG` / `封签已烙 · 两个身体一同带走`
+**Telemetry:** `PAID & SEALED · TWO EDITIONS, ONE BAG` / `封签已烙 · 两个版本一同带走`
 
 **Motion beat:** 短章（约为 02 结构章时长的 1/3）。封签烙印为唯一高光时刻，克制。
 
@@ -71,7 +71,7 @@
 
 六层材质爆炸图、三个指标、材质检查器——全部沿用现有定稿（[`script-final.md`](script-final.md) §01）。新增一句桥文案（story-bridge）：
 
-> 01 → 02 · 你带走的东西，值得先看清它 / 承接上章：先看清纸身的六层物理结构，再谈它的另一个身体。
+> 01 → 02 · 你带走的东西，值得先看清它 / 承接上章：先看清纸版的六层物理结构，再谈它的另一个版本。
 
 ---
 
@@ -245,7 +245,7 @@
 
 - **00 停泊 · 书链馆规则卡**：可购买的图书馆、随手可取、脊码公开、出口结算、认领在家（数据：`public/data/bookln.json`）。
 - **00 停泊 · 两码两义模拟器**：未认领/已认领 × 脊码/页边码 四种结果；购前扫页边码必须回落到试读层，购后第一次页边扫码才打开完整伴读层（数据：`public/data/marks.json`）。
-- **01 携归 · 出口结算单**：纸身「已带走 / 封签已烙」，伴读层「随行未开放 / 0.00W」，并标注伴读层随书走待商务确认。
+- **01 携归 · 出口结算单**：纸版「已带走 / 封签已烙」，伴读层「随行未开放 / 0.00W」，并标注伴读层随书走待商务确认。
 - **附录 C · 书链**：真实供给数据与 B2B 映射，见上节。
 
 ---

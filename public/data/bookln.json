@@ -27,7 +27,7 @@
         "label": "Settle at the exit",
         "labelZh": "出口结算",
         "detail": "Paper and companion layer change hands together.",
-        "detailZh": "纸身与伴读层，在出口同时归属。"
+        "detailZh": "纸版与伴读层，在出口同时归属。"
       },
       {
         "id": "home",
@@ -46,12 +46,12 @@
     "bodies": [
       {
         "id": "paper",
-        "label": "Paper body",
-        "labelZh": "纸身",
+        "label": "Paper edition",
+        "labelZh": "纸版",
         "status": "Carried home",
         "statusZh": "已带走",
         "detail": "Sealed · 封签已烙",
-        "detailZh": "纸身离开书架，随你回家。"
+        "detailZh": "纸版离开书架，随你回家。"
       },
       {
         "id": "soul",
@@ -340,8 +340,8 @@
       "label": "The book stores no reader",
       "labelZh": "书不存储读者",
       "status": "locked",
-      "note": "No identity, notes or progress are written into the paper body.",
-      "noteZh": "纸身内不写入任何身份、批注或进度数据。"
+      "note": "No identity, notes or progress are written into the paper edition.",
+      "noteZh": "纸版内不写入任何身份、批注或进度数据。"
     }
   ]
 }

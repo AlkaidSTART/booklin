@@ -309,6 +309,24 @@ const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;
 
+// The presented cover stands beside the companion layer panel. Dropping it a
+// touch and easing it outward keeps its top edge under the panel's and its
+// right board clear of the panel's left border; it returns as the panel clears
+// and the carry beat takes the book off the shelf.
+const SHELF_PRESENT_DROP = 0.035;
+const SHELF_PRESENT_SHIFT_X = -0.022;
+const SHELF_PRESENT_IN_START = 1.3;
+const SHELF_PRESENT_IN_END = 1.62;
+const SHELF_PRESENT_OUT_START = 2.12;
+const SHELF_PRESENT_OUT_END = 2.3;
+
+function shelfPresentEnvelope(phase: number) {
+  return (
+    smoothstep((phase - SHELF_PRESENT_IN_START) / (SHELF_PRESENT_IN_END - SHELF_PRESENT_IN_START)) *
+    (1 - smoothstep((phase - SHELF_PRESENT_OUT_START) / (SHELF_PRESENT_OUT_END - SHELF_PRESENT_OUT_START)))
+  );
+}
+
 type ShelfCameraPose = {
   position: Vec3;
   target: Vec3;
@@ -1631,9 +1649,20 @@ function BookRig({
       const shelfPose = shelfBookPose(phase, pick);
 
       if (shelfPose) {
+        const present = shelfPresentEnvelope(phase);
         bookGroupRef.current.position.set(
-          THREE.MathUtils.damp(bookGroupRef.current.position.x, shelfPose.position[0], 8, delta),
-          THREE.MathUtils.damp(bookGroupRef.current.position.y, shelfPose.position[1] + idle, 8, delta),
+          THREE.MathUtils.damp(
+            bookGroupRef.current.position.x,
+            shelfPose.position[0] + present * SHELF_PRESENT_SHIFT_X,
+            8,
+            delta,
+          ),
+          THREE.MathUtils.damp(
+            bookGroupRef.current.position.y,
+            shelfPose.position[1] + idle - present * SHELF_PRESENT_DROP,
+            8,
+            delta,
+          ),
           THREE.MathUtils.damp(bookGroupRef.current.position.z, shelfPose.position[2], 8, delta),
         );
         bookGroupRef.current.rotation.x = THREE.MathUtils.damp(

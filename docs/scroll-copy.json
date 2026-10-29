@@ -2,7 +2,7 @@
   "version": "2026-10-29",
   "status": "scroll-edition-copy",
   "language": "zh-primary",
-  "notes": "Short-form copy deck for the scroll-driven homepage. One headline, one line, one telemetry strip per chapter. English is a label, not a second narrative. Voice rule (2026-10-29): names may be metaphors (纸身 / 伴读层 / 试读层 / 认领), verbs may not personify — no 醒 / 睡 / 等 / 跟着 / 长出 / 应答 / 忘 / 打扰. The companion layer is glossed in plain words at 00, the first place it appears. 2026-10-29: 云魂 renamed to 伴读层.",
+  "notes": "Short-form copy deck for the scroll-driven homepage. One headline, one line, one telemetry strip per chapter. English is a label, not a second narrative. Voice rule (2026-10-29): names may be metaphors (纸版 / 伴读层 / 试读层 / 认领), verbs may not personify — no 醒 / 睡 / 等 / 跟着 / 长出 / 应答 / 忘 / 打扰. The companion layer is glossed in plain words at 00, the first place it appears. 2026-10-29: 云魂 renamed to 伴读层; 两个身体 replaced by 两版 (paper edition + companion layer).",
   "chapters": [
     {
       "id": "arrival",
@@ -26,17 +26,17 @@
       "line": "任何一本书，第一次翻开时，都是新的。",
       "lineEn": "Every book is new the first time it is opened.",
       "meta": "NO ACCOUNT · NO POWER · 0.00 W",
-      "note": "纸身是这本书本身；伴读层是它的云端部分——讲题、音频、图谱、问答。"
+      "note": "纸版是这本书本身；伴读层是它的云端部分——讲题、音频、图谱、问答。"
     },
     {
       "id": "carry",
       "number": "01",
       "label": "CARRY",
       "labelZh": "携归",
-      "titleA": "你买下，",
-      "titleB": "两个身体。",
-      "line": "纸身进包，伴读层同单。",
-      "lineEn": "One price. Two bodies.",
+      "titleA": "买一本，",
+      "titleB": "得两版。",
+      "line": "纸版进包，伴读层同单。",
+      "lineEn": "One price. Two editions.",
       "meta": "PAID & SEALED · PREVIEW ONLY",
       "note": "收银台不绑定任何东西。认领发生在家里，在纸页上。"
     },
@@ -113,9 +113,9 @@
       "labelZh": "部署",
       "titleA": "选一本，",
       "titleB": "带走。",
-      "line": "三个版本。都是纸。",
-      "lineEn": "Three editions. All paper.",
-      "meta": "3 EDITIONS · 0 BATTERIES"
+      "line": "三个档。都是纸。",
+      "lineEn": "Three tiers. All paper.",
+      "meta": "3 TIERS · 0 BATTERIES"
     },
     {
       "id": "chain",

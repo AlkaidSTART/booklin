@@ -34,9 +34,9 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow `shelf.eyebrow` | WHERE BOOKS WAIT | 书在架上，伴读层在云上 |
-| Main title `shelf.title` | **One Book, Two Bodies.** | **一本书，两个身体。** |
-| Subtitle `shelf.subtitle` | This book has two bodies: paper here, companion layer in the cloud. | 这本书有两个身体：纸身在此处，伴读层在云上。 |
-| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸身在此，伴读层在云上。 |
+| Main title `shelf.title` | **One Book, Two Editions.** | **一本书，两个版本。** |
+| Subtitle `shelf.subtitle` | This book has two editions: paper here, companion layer in the cloud. | 这本书有两个版本：纸版在此处，伴读层在云上。 |
+| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸版在此，伴读层在云上。 |
 | Annotation `shelf.annotation` | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays at 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
@@ -46,17 +46,17 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 ---
 
-## 01 · 携归 The Carry — 买下的，是两个身体（🆕 轻章节）
+## 01 · 携归 The Carry — 买一本，得两版（🆕 轻章节）
 
 | Field | English | 中文 |
 | --- | --- | --- |
 | Eyebrow `carry.eyebrow` | THE CARRY | 携归 |
-| Main title `carry.title` | **You Buy Two Bodies.** | **买下的，是两个身体。** |
-| Subtitle `carry.subtitle` | Paper in your bag; the companion layer travels, not yet open. | 纸身装进包里，伴读层随书到家，认领前只有试读层。 |
-| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸身入包，伴读层随行。 |
+| Main title `carry.title` | **Buy One, Get Two Editions.** | **买一本，得两版。** |
+| Subtitle `carry.subtitle` | Paper in your bag; the companion layer travels, not yet open. | 纸版装进包里，伴读层随书到家，认领前只有试读层。 |
+| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸版入包，伴读层随行。 |
 | Annotation `carry.annotation` | The till binds nothing yet. The claim happens at home, on the page. | 收银台不绑定任何东西；认领发生在家里，在纸页上。 |
 
-**Telemetry:** `PAID & SEALED · TWO BODIES, ONE BAG` / `封签已烙 · 两个身体一同带走`
+**Telemetry:** `PAID & SEALED · TWO EDITIONS, ONE BAG` / `封签已烙 · 两个版本一同带走`
 
 **Motion beat:** 16–24%. 短章（约为结构章时长的 1/3）。试读层合拢 → 出口结算界碑 → 封签烙印（唯一高光，克制）→ 快剪三连（入套 / 入包 / 门口回望空位）→ 灯光由冷转暖。
 
@@ -75,7 +75,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 **Microcopy:** `Exploded view · 6 material layers · not to scale.` / `爆炸图 · 6 层结构 · 非等比展示。`
 
-**Story-bridge:** 01 → 02 · 你带走的东西，值得先看清它 / 先看清纸身的六层物理结构，再谈它的另一个身体。
+**Story-bridge:** 01 → 02 · 你带走的东西，值得先看清它 / 先看清纸版的六层物理结构，再谈它的另一个版本。
 
 **Motion beat:** 24–38%. 沿用现有实现（封面剥离、锁线绷紧、纤维微距、三指标错峰 180ms）。
 

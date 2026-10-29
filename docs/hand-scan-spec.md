@@ -64,7 +64,7 @@
 
 - 验收：任意 scroll 位置手与书零穿插；暗调侧逆光下不读作塑料；`carry` 期间书本关键帧已重排为可握朝向
 - 回退：`carry` 回退为现有的「悬空书本 + 无手」
-- **状态：正式绑定手已落地。** `public/hand/hand.OBJ`（ZBrush 雕刻）由 `scripts/build-hand.py` 重建坐标系并绑定 22 骨骼，2,832 面；双手只在翻开书本时淡入，随封面分开松手，摊平后落到左右两页停留。实现见 §5.6.2
+- **状态：正式绑定手已落地。** `public/hand/hand.OBJ`（ZBrush 雕刻）由 `scripts/build-hand.py` 重建坐标系并绑定 22 骨骼，2,832 面；双手只在翻开书本时淡入，随封面分开，在书摊平前松手消失。实现见 §5.6.2
 
 ### P2 · `binding` 合成
 
@@ -201,19 +201,20 @@
 
 ### 5.6 手部施工结论
 
+- **全部手部已下线**：翻开段、摊平段、扫码段都不再出现手，`BookScene` 里只剩书本与程序化装置；以下结论保留为模型与绑定阶段的记录。
 - **握持方向**：把手握成朝下的拳去抓书脊，手臂会横穿书本。可行解是握**下边缘**——手指沿书本宽度展开、掌在封底、手臂向下出画。glTF Y-up 后的手部局部轴：X = 握持轴，−Z = 掌心侧，−Y = 前臂；在书的坐标系里**不旋转**即可得到上述姿态。
 - **握持中心必须在原点**：导出前把网格整体平移，让人手围出的那个洞落在世界原点，运行时才能直接挂在 socket 上，不用记魔法偏移。
 - **掌心间隙**：握径约 25 mm 内圈对 30 mm 书厚，留 1 mm 余量刚好贴合；再大就会「握空气」。
 - **滚动只对 blockout 成立**：旧 blockout 用 `GRIP_ROLL ≈ −0.42 rad` 把前臂甩向镜头；换成平贴封面的扫描手后这个滚角会把掌根埋进封面，运行时已改为不滚（见 §5.6.2）。
 - **`carry` 关键帧必须提书**：原来书贴在桌面（0.772），手无处安放。改为抬到 0.945，相机目标同步抬到 0.99。
 - **材质必须运行时覆盖**：GLB 自带材质在这套暖棚 HDR 下会读成亮陶土。统一走 `skinMaterial.ts`：底色取贴图均值 `#8a5146`、roughness 0.66、sheen 0.12、envMapIntensity 0.24；`<color_fragment>` 叠两档混合的肤色斑驳（±10%），`<normal_fragment_begin>` 叠毛孔法线，`<opaque_fragment>` 加 0.2 强度的暖色菲涅尔。sheen 超过 0.24 时整只手会读成浅陶土。
-- **进场时机**：双手跟随封面的翻开动作淡入（`phase ≈ 2.42`），不再在合上的书封面上停留；`2.86–3.04` 移到左右两页，`3.0–3.72` 停留，之后淡出。
+- **进场时机**：双手跟随封面的翻开动作淡入（`phase ≈ 2.42`），不再在合上的书封面上停留；在书摊平之前完全淡出，摊开的页面上不再出现手。
 
 #### 5.6.1 手机（画面中不出现手）
 
 - **持机手已移除**：`PhoneHandRig` 与手机毫米组内的挂载整体删除，扫码段只保留程序化机身、屏幕 FBO 与后置镜头锚点。此前的握姿（绕视线轴滚、肘/腕反向弯折、`PHONE_ANCHOR` 补偿）一并删掉，`hand.glb` 不再被手机段引用。
 - **屏幕光保留**：屏幕前的点光仍按扫码透明度驱动，用来给桌面与机身补一点冷光；没有手可打，强度沿用原值即可。
-- **两个手部窗口不再冲突**：书本的双手只在翻开时出现（约 phase 2.42 → 3.72），与扫码段完全不重叠。
+- **两个手部窗口不再冲突**：书本的双手只在翻开时出现（约 phase 2.42 → 2.9，书摊平前已消失），与扫码段完全不重叠。
 - **shader 里不能用 `sample`**：GLSL ES 的保留字，ANGLE 直接编译失败，手会整块不可见。`skinMaterial.ts` 中已改为 `skinSamplePos`。
 
 #### 5.6.2 正式绑定手（`public/hand/hand.OBJ`）
@@ -238,9 +239,9 @@
 | 位置 | 变更 |
 | --- | --- |
 | `src/components/book-stage/BookStage.tsx` | 在现有 phase 推导处新增 `grip` 与 `scan` 两条权重曲线，写法与 `--handoff` 一致（窄窗口 + clamp） |
-| `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`；01 携归书本关键帧抬到 0.945，相机目标抬到 0.99；`HandRig` 挂在书的毫米组内 |
-| `src/components/book-stage/HandRig.tsx` | ✅ `HandRig` / `LeftHandRig` 分别挂 `hand.glb` 与 `hand-left.glb` 在书的毫米组两侧；`phase 2.42` 起随封面翻开淡入、分开、松手，摊平后落到左右两页 (`x −148 / 0`) 停留，`phase 3.72` 后淡出。`PhoneHandRig` 已移除 |
-| `src/components/book-stage/skinMaterial.ts`（新增） | ✅ 共享皮肤材质：暗调 PBR + 毛孔噪声 + 暖色菲涅尔；两套手共用，避免材质断档 |
+| `src/components/book-stage/BookScene.tsx` | ✅ 已接：`scanCameraSubjects`（书 / 桌 / 书架）与 `cameraAim`（`qrMarkRef`）传给 `PhoneScanner`；01 携归书本关键帧抬到 0.945，相机目标抬到 0.99；手部组件已全部摘除 |
+| ~~`src/components/book-stage/HandRig.tsx`~~ | ⏸ 已删除：`HandRig` / `LeftHandRig` 不再挂进 `BookScene`，翻开段与摊平段都不出手，场景只保留书本自身的翻页机构 |
+| ~~`src/components/book-stage/skinMaterial.ts`~~ | ⏸ 已删除：唯一调用方是 `HandRig.tsx`，随手指移除 |
 | `src/components/book-stage/ShelfStage.tsx` | ✅ 已接：`PhoneScanner` 拆成相机画面层 + chrome 层，新增 `Phone_Lens_Rear` 锚点与离屏相机、grade、手持抖动；`QrCoverMark` 新增 `markRef` 供扫描对角；扫码段驱动手机进入/对准/锁定/离场，。手机不再挂手。机身仍内联，待 P2 抽成可复用组件 |
 | `src/lib/stage/layers.ts`（新增） | ✅ 已交付：`PHONE_CAMERA_LAYER` 与 `enableLayer()` |
 | `public/models/` | `hand.glb`（22 骨骼，Draco）；`source/hand-rig.blend` 由构建脚本重写 |

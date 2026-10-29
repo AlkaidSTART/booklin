@@ -1,6 +1,6 @@
 # Asset Manifest / 资产交付清单
 
-> Generated: `2026-10-28T14:26:18.858Z`  
+> Generated: `2026-10-29T02:07:01.057Z`  
 > Source: [`assets.md`](assets.md)  
 > Machine-readable: [`../public/data/asset-manifest.json`](../public/data/asset-manifest.json)  
 > Excludes raw source masters under `public/models/source/`, `public/textures/source/`, `public/fonts/source/`, and the pre-existing `public/voice/voice.mp3` (not part of the current asset scope).

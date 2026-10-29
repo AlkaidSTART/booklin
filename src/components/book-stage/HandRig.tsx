@@ -16,8 +16,7 @@ import { createSkinMaterial } from './skinMaterial';
  * small adduction flips sign.
  *
  * The pair only appears while the board is opening: they fade in as the cover
- * starts to turn, release once it is open, and settle onto the two pages for
- * the spread.
+ * starts to turn and let go before the book lands flat.
  */
 const HAND_RIGHT_URL = '/models/hand.glb';
 const HAND_LEFT_URL = '/models/hand-left.glb';
@@ -34,17 +33,9 @@ const BOOK_HAND_Y = -12;
 const BOOK_HAND_Z = 11;
 const BOOK_HAND_OFFSET = 72;
 const BOOK_ROLL = 0;
-const BOOK_SPINE_X = -74;
 const BOOK_CURL: [number, number, number] = [0.03, 0.04, 0.02];
 const BOOK_THUMB_RIGHT: [number, number, number] = [0.24, 0, -0.08];
 const BOOK_THUMB_LEFT: [number, number, number] = [0.24, 0, 0.08];
-
-/** Flat spread, measured off the open mesh: page tops at local z ≈ 0, left half
- * x −222…−77, right half x −74…74. The palms land ~5 mm above the pages. */
-const PAGE_HAND_LEFT_X = -148;
-const PAGE_HAND_RIGHT_X = 0;
-const PAGE_HAND_Y = 100;
-const PAGE_HAND_Z = -6;
 
 const tmpCurl = new THREE.Quaternion();
 const tmpThumb = new THREE.Quaternion();
@@ -189,35 +180,25 @@ function BookHand({
     const t = performance.now() * 0.001;
     const drift = side > 0 ? 0 : 1.9;
 
-    // --- Opening beat: fade in as the cover starts to turn, part outward.
+    // Hands exist only while the cover is turning: they fade in with the page
+    // turn, part outward, and let go before the book lands flat.
     const enter = smoothstep((phase - 2.42) / 0.12);
     const spread = smoothstep((openness - 0.02) / (side > 0 ? 0.52 : 0.26));
     const release =
       side > 0
         ? 1 - smoothstep((openness - 0.35) / 0.2)
         : 1 - smoothstep((openness - 0.3) / 0.15);
-    const coverPresence = enter * release;
+    const weight = enter * release;
 
-    // --- Flat beat: once the book is spread, the hands settle onto the two
-    // pages with the fingers pointing at the spine and the forearms leaving
-    // the book's sides. They move while invisible, then fade in on the pages.
-    const settle = smoothstep((phase - 2.86) / 0.18);
-    const pagePresence =
-      smoothstep((phase - 3.0) / 0.14) * (1 - smoothstep((phase - 3.72) / 0.2));
-
-    const weight = Math.max(coverPresence, pagePresence);
     rig.mesh.visible = weight > 0.002;
     skin.opacity = weight;
 
     const anchor = anchorRef.current;
     if (!anchor) return;
 
-    const coverX = BOOK_HAND_OFFSET * side + side * 30 * spread - BOOK_SPINE_X;
-    const flatX = (side > 0 ? PAGE_HAND_RIGHT_X : PAGE_HAND_LEFT_X) - BOOK_SPINE_X;
-
-    anchor.position.x = coverX + (flatX - coverX) * settle;
-    anchor.position.y = BOOK_HAND_Y + (PAGE_HAND_Y - BOOK_HAND_Y) * settle;
-    anchor.position.z = BOOK_HAND_Z + (PAGE_HAND_Z - BOOK_HAND_Z) * settle;
+    anchor.position.x = BOOK_HAND_OFFSET * side + side * 30 * spread;
+    anchor.position.y = BOOK_HAND_Y;
+    anchor.position.z = BOOK_HAND_Z + 6 * spread;
 
     const flutter = Math.sin(t * 0.62 + (side > 0 ? 0 : 1.7)) * 0.012 * amount * weight;
     applyPose(rig, BOOK_CURL, thumb, weight, flutter);
@@ -225,10 +206,7 @@ function BookHand({
     const grip = gripRef.current;
     if (grip) {
       grip.rotation.x = BOOK_ROLL + Math.sin(t * 0.19 + drift) * 0.01 * amount;
-      grip.rotation.z =
-        (1 - settle) * -side * 0.32 * spread +
-        (settle * side * Math.PI) / 2 +
-        Math.sin(t * 0.28 + drift) * 0.008 * amount;
+      grip.rotation.z = -side * 0.32 * spread + Math.sin(t * 0.28 + drift) * 0.008 * amount;
       grip.position.y = Math.sin(t * 0.33 + drift) * 0.5 * amount;
     }
   });

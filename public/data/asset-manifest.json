@@ -1,6 +1,6 @@
 {
   "version": "2026-10-26",
-  "generatedAt": "2026-10-28T14:26:18.858Z",
+  "generatedAt": "2026-10-29T02:07:01.057Z",
   "source": "docs/assets.md",
   "statusCounts": {
     "delivered": 17,
@@ -342,7 +342,7 @@
       "label": "Rigged right hand",
       "status": "delivered",
       "role": "delivery",
-      "notes": "Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 2,832 triangles, 1,418 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh). Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the poses are driven by bone rotations at runtime: the pair fades in only while the book is being opened, releases as the cover turns, and settles onto the two flat pages. No hand is shown holding the phone. Rebuild with `blender -b --python scripts/build-hand.py`.",
+      "notes": "Final rigged hand pair built from the ZBrush sculpt in public/hand. `hand.glb` is the right hand; `hand-left.glb` is the same rig mirrored across X (mesh, weights and bones), exported from the same script. 2,832 triangles, 1,418 vertices, 22 bones (forearm, wrist, palm, four metacarpals + 4x3 phalanges, thumb x3), heat-skinned, with a 250 mm forearm grown from the cut wrist loop (shared vertices, one watertight mesh). Local frame: +Y wrist to fingertips, -Z palm, +X index to pinky; origin at the book-edge grip point. The source hand is open and relaxed, so the poses are driven by bone rotations at runtime: the pair fades in only while the book is being opened and releases before the book lands flat; no hand sits on the open spread. No hand is shown holding the phone. Rebuild with `blender -b --python scripts/build-hand.py`.",
       "files": [
         {
           "path": "public/models/hand.glb",

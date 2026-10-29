@@ -124,7 +124,7 @@ const pageDescription =
         </h1>
 
         <p class="sx-hero-zh">{chapterById.arrival.line}</p>
-        <p class="sx-hero-line">不装电池。不装 App。翻一页，就醒了。</p>
+        <p class="sx-hero-line">{chapterById.arrival.heroLine}</p>
         <p class="sx-line-en">{chapterById.arrival.lineEn}</p>
         <p class="sx-meta">{chapterById.arrival.meta}</p>
       </div>
@@ -134,8 +134,8 @@ const pageDescription =
       <div class="sx-handoff__plate">
         <span class="sx-handoff__numeral">00</span>
         <p class="sx-handoff__tag">SHELF · 停泊</p>
-        <p class="sx-handoff__line">书回到架上。</p>
-        <p class="sx-handoff__meta">0.00 W · NO ACCOUNT · ∞ BOOKS</p>
+        <p class="sx-handoff__line">书在架上。还没被翻开。</p>
+        <p class="sx-handoff__meta">0.00 W · 0 READERS · ∞ TITLES</p>
       </div>
     </section>
 
@@ -172,9 +172,11 @@ const pageDescription =
           <div class="sx-mark" data-step="1">
             <b>PAGE-EDGE MARK <small>页边码</small></b>
             <em>认领</em>
-            <p>扫一下，云魂归你。书不记名。</p>
+            <p>带回家再扫：伴读层对你开放；书不记名。</p>
           </div>
         </div>
+
+        {chapterById.shelf.note && <p class="sx-note">{chapterById.shelf.note}</p>}
       </div>
     </section>
 
@@ -203,15 +205,17 @@ const pageDescription =
         <div class="sx-module sx-bodies" data-steps>
           <div class="sx-body" data-step="0">
             <b>PAPER BODY <small>纸身</small></b>
-            <em>可借</em>
+            <em>会旧</em>
             <p>能借、能送、能丢，仍然是一本书。</p>
           </div>
           <div class="sx-body" data-step="1">
-            <b>CLOUD SOUL <small>云魂</small></b>
-            <em>随书</em>
-            <p>跟着书走，不跟着人走。</p>
+            <b>COMPANION LAYER <small>伴读层</small></b>
+            <em>不旧</em>
+            <p>随书，不随账号。</p>
           </div>
         </div>
+
+        {chapterById.carry.note && <p class="sx-note">{chapterById.carry.note}</p>}
       </div>
     </section>
 
@@ -246,7 +250,7 @@ const pageDescription =
             </div>
             <div class="sx-ribbon__step" data-step="1">
               RIBBON
-              <small>书签落下</small>
+              <small>书签停驻</small>
             </div>
             <div class="sx-ribbon__step" data-step="2">
               P.042
@@ -328,16 +332,16 @@ const pageDescription =
         <div class="sx-module sx-trio" data-steps>
           <figure data-step="0">
             <div class="sx-trio__frame">
-              <span class="sx-trio__tag">AUTOPLAY · MUTED</span>
+              <span class="sx-trio__tag">ON CALL · MUTED</span>
               <video
-                data-autoplay
+                data-on-call
                 src="/video/lesson-preview.mp4"
                 poster="/video/lesson-preview-poster.webp"
                 muted
                 loop
                 playsinline
                 preload="none"
-                aria-label="Page 042 concept lesson preview, plays automatically and silently"></video>
+                aria-label="Page 042 concept lesson preview, plays only while its step is active, silently"></video>
             </div>
             <figcaption>
               L07 LESSON
@@ -514,7 +518,7 @@ const pageDescription =
         <div class="sx-module sx-loop-map" data-steps>
           <div data-step="0">
             UNBIND
-            <small>云魂解绑</small>
+            <small>伴读层解绑</small>
           </div>
           <div data-step="1">
             FORGET
@@ -736,7 +740,7 @@ const pageDescription =
         </div>
 
         <p class="sx-table-note">
-          云魂不是凭空设定：它是书链既有 B2B 服务在读者端的化身。数据截至 {bookln.facts.asOf}。
+          伴读层不是凭空设定：它是书链既有 B2B 服务在读者端的化身。数据截至 {bookln.facts.asOf}。
         </p>
 
         <p class="sx-clients">
@@ -850,6 +854,14 @@ const pageDescription =
       }
     }
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Companion media is pull-only: a clip runs while its own step is the active
+    // one, so nothing in the margin starts on its own (worldview red line 2).
+    const onCallVideos = Array.from(
+      document.querySelectorAll<HTMLVideoElement>('video[data-on-call]'),
+    );
+
     let frame = 0;
 
     const update = () => {
@@ -940,6 +952,13 @@ const pageDescription =
           );
         }
       }
+
+      for (const video of onCallVideos) {
+        const step = video.closest<HTMLElement>('[data-step]');
+        const onCall = !reducedMotion.matches && (!step || step.classList.contains('is-on'));
+        if (onCall && video.paused) void video.play().catch(() => undefined);
+        else if (!onCall && !video.paused) video.pause();
+      }
     };
 
     const schedule = () => {
@@ -951,27 +970,6 @@ const pageDescription =
     window.addEventListener('scroll', schedule, { passive: true });
     window.addEventListener('resize', schedule);
     window.addEventListener('load', schedule);
-
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-    if (!reducedMotion.matches) {
-      const videoObserver = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            const video = entry.target as HTMLVideoElement;
-            if (entry.isIntersecting) {
-              void video.play().catch(() => undefined);
-            } else {
-              video.pause();
-            }
-          }
-        },
-        { threshold: 0.35 },
-      );
-
-      for (const video of Array.from(document.querySelectorAll<HTMLVideoElement>('video[data-autoplay]'))) {
-        videoObserver.observe(video);
-      }
-    }
+    reducedMotion.addEventListener('change', schedule);
   </script>
 </Layout>

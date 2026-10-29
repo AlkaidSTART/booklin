@@ -82,17 +82,17 @@
       "chapter": "00-shelf",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "This book has two bodies: paper here, soul in the cloud.",
-      "zh": "这本书有两个身体：纸身在此处，云魂在云上。",
-      "enMobile": "Paper here. Soul in the cloud."
+      "en": "This book has two bodies: paper here, companion layer in the cloud.",
+      "zh": "这本书有两个身体：纸身在此处，伴读层在云上。",
+      "enMobile": "Paper here. Layer in the cloud."
     },
     {
       "id": "shelf.annotation",
       "chapter": "00-shelf",
       "role": "annotation",
       "limit": "annotation",
-      "en": "Scan a spine mark: the preview layer rises — a glimpse of a soul not yet yours. Unclaimed, it stays at 0.00W.",
-      "zh": "扫一扫脊码，试读层升起——看一眼还不属于你的云魂。无人认领时，书保持 0.00W。",
+      "en": "Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W.",
+      "zh": "扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。",
       "enMobile": "Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W."
     },
     {
@@ -116,9 +116,9 @@
       "chapter": "01-carry",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "Paper in your bag; the soul follows, asleep until claimed.",
-      "zh": "纸身装进包里，云魂跟着回家，认领前一直沉睡。",
-      "enMobile": "Paper in your bag; soul in tow."
+      "en": "Paper in your bag; the companion layer travels, not yet open.",
+      "zh": "纸身装进包里，伴读层随书到家，认领前只有试读层。",
+      "enMobile": "Paper in your bag; layer in tow."
     },
     {
       "id": "carry.annotation",
@@ -260,8 +260,8 @@
       "chapter": "04-binding",
       "role": "annotation",
       "limit": "annotation",
-      "en": "The first scan is a claim — this book's soul now answers to you.",
-      "zh": "第一次扫码即认领——从此这本书的云魂只应答你。"
+      "en": "The first scan is a claim — this book's companion layer is now yours.",
+      "zh": "第一次扫码即认领——从此这本书的伴读层为你开放。"
     },
     {
       "id": "loop.eyebrow",
@@ -350,8 +350,8 @@
       "chapter": "06-return",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "The soul unbinds. The book forgets. The shelf waits.",
-      "zh": "云魂解绑，书忘了你，架子在等下一位。"
+      "en": "The layer unbinds. The book keeps no name. The slot is free.",
+      "zh": "伴读层解绑，书不记名，架上空出位置。"
     },
     {
       "id": "return.annotation",

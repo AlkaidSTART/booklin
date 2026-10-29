@@ -22,7 +22,7 @@
 ### 3D 视觉
 
 - 承接 Hero：落桌的书轻轻合上，镜头沿书脊上摇，场景过渡到书链馆内一面高大的橡木书架。环境全部虚焦：暖黄顶灯、远处读者剪影、一枚「Bookln Haven」标签灯箱掠过景深。
-- **取景始终是一本书**：书架上这一本的书脊独占画面中央，其余书脊化作暗色虚影。它的书脊透出一缕极弱的暖金微光——云魂沉睡态的呼吸光（0.00W 的视觉化）。
+- **取景始终是一本书**：书架上这一本的书脊独占画面中央，其余书脊化作暗色虚影。它的书脊透出一缕极弱的暖金微光——伴读层未开放时的呼吸光（0.00W 的视觉化）。
 - 一只手入画，手机镜头对准书脊的**脊码**（Spine Mark）——书脊上方升起一层半透明的**试读层**全息浮窗：目录、样章、讲题样例、图谱轮廓。
 - 手指在「带走它」按钮上悬停（不按下），浮窗轻晃了一下，暗示书在等一个决定。
 
@@ -30,11 +30,11 @@
 
 | Field | English | 中文 |
 | --- | --- | --- |
-| Eyebrow | WHERE BOOKS WAIT | 书在架上，魂在云上 |
+| Eyebrow | WHERE BOOKS WAIT | 书在架上，伴读层在云上 |
 | Main title | **One Book, Two Bodies.** | **一本书，两个身体。** |
-| Subtitle | This book has two bodies: paper here, soul in the cloud. | 这本书有两个身体：纸身在此处，云魂在云上。 |
-| Subtitle (mobile) | Paper here. Soul in the cloud. | 纸身在此，云魂在云上。 |
-| Annotation | Scan a spine mark: the preview layer rises — a glimpse of a soul not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的云魂。无人认领时，书保持 0.00W。 |
+| Subtitle | This book has two bodies: paper here, companion layer in the cloud. | 这本书有两个身体：纸身在此处，伴读层在云上。 |
+| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸身在此，伴读层在云上。 |
+| Annotation | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
 **Telemetry:** `ON SHELF · DORMANT · 0.00W · PREVIEW ONLY` / `架上沉睡 · 仅试读层开放`
@@ -49,7 +49,7 @@
 
 - 回到书架前，手指按下了「带走它」——试读层浮窗合拢成一枚光点，落回书脊；书从架上抽出。
 - 走向书链馆出口：结算界碑亮起，一束极简的**封签光**沿函套封口烙下一道哑金烙印（复用 A3 函套的封签细节）。馆内只完成「归属转移」，认领留给家里。
-- 快剪三连：书滑入函套 → 函套入包 → 门口回望一眼书架空出的位置（单书机位，环境虚焦）。云魂的微光此刻**跟随在书旁**，像一枚安静的伴星。
+- 快剪三连：书滑入函套 → 函套入包 → 门口回望一眼书架空出的位置（单书机位，环境虚焦）。伴读层的微光此刻**跟在书旁**，像一枚安静的伴星。
 - 灯光由冷转暖：家的方向。
 
 ### 文案编排
@@ -58,8 +58,8 @@
 | --- | --- | --- |
 | Eyebrow | THE CARRY | 携归 |
 | Main title | **You Buy Two Bodies.** | **买下的，是两个身体。** |
-| Subtitle | Paper in your bag; the soul follows, asleep until claimed. | 纸身装进包里，云魂跟着回家，认领前一直沉睡。 |
-| Subtitle (mobile) | Paper in your bag; soul in tow. | 纸身入包，云魂随行。 |
+| Subtitle | Paper in your bag; the companion layer travels, not yet open. | 纸身装进包里，伴读层随书到家，认领前只有试读层。 |
+| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸身入包，伴读层随行。 |
 
 **Telemetry:** `PAID & SEALED · TWO BODIES, ONE BAG` / `封签已烙 · 两个身体一同带走`
 
@@ -91,7 +91,7 @@
 
 - 沿用：翻开 P.042 → 俯冲聚焦页边矩阵码 → 码纹荧光激活 → 纸页半透明 → 九节点知识图谱升起。
 - 新增一个开头节拍：**这是本书第一次被扫**——手机镜头贴近时，矩阵码的荧光先**迟疑了一拍**（呼吸光变奏），随后才亮起，如同认出了这只手是「把它带回家的那只」。
-- 新增一个结尾节拍：图谱升起后，其中「PAGE 042」根节点向书签丝带垂下一条极细的金线——**云魂认了主，链结完成**。
+- 新增一个结尾节拍：图谱升起后，其中「PAGE 042」根节点向书签丝带垂下一条极细的金线——**伴读层完成链结**。
 
 ### 文案编排
 
@@ -100,8 +100,8 @@
 | Eyebrow | THE BINDING | 认领 |
 | Main title | **Analog at Heart.** | **纸端，即云端。** |
 | Subtitle | Digital in Soul. | 触感留在手里，知识延展到云端。 |
-| Annotation | The first scan is a claim — this book's soul now answers to you. | 第一次扫码即认领——从此这本书的云魂只应答你。 |
-| Annotation (mobile) | The first scan claims the soul. | 第一次扫码，即认领。 |
+| Annotation | The first scan is a claim — this book's companion layer is now yours. | 第一次扫码即认领——从此这本书的伴读层为你开放。 |
+| Annotation (mobile) | The first scan claims the companion layer. | 第一次扫码，即认领。 |
 | Feature 1 title | One-code entry | 一码入网 |
 | Feature 1 body | Scan the mark on the page to open its companion knowledge layer. | 扫描页边标记，打开与当前页对应的云端知识层。 |
 | Feature 2 title | AI study companion | AI 伴读协议 |
@@ -140,7 +140,7 @@
 
 **Telemetry:** `LOOP ACTIVE · RIBBON P.042 · MIND L.07` / `伴读运行 · 书签停 042 页 · 脑到第 7 讲`
 
-**伴读内容全家桶（D3 已拍板，云魂四件套齐上）：** 讲题视频（B3 素材复用）、音频讲解、知识图谱（`knowledge-graph.json` 复用）、AI 问答（概念 UI）。
+**伴读内容全家桶（D3 已拍板，伴读层四件套齐上）：** 讲题视频（B3 素材复用）、音频讲解、知识图谱（`knowledge-graph.json` 复用）、AI 问答（概念 UI）。
 
 **世界观红线提醒（见 [`worldview.md`](worldview.md) §10）：** 纸书的伴读界面不得出现整页正文阅读、推送、红点、弹窗；电子档内页只在 READ 章整页呈现。
 
@@ -180,7 +180,7 @@
 ### 3D 视觉
 
 - 书合拢，滑入函套；茶已凉，窗外天色微亮。
-- 书回到书架——**正是 00 章空出的那个位置**。云魂微光在书脊上缓缓熄灭（解绑），书重新沉睡。
+- 书回到书架——**正是 00 章空出的那个位置**。伴读层微光在书脊上缓缓熄灭（解绑），书回到未认领态。
 - App 界面一闪：这本书的**阅读里程**归档进读者的账户（「第 N 本 · 共读 47 夜」），然后合上。
 - **最后三秒**：镜头缓缓拉远，与 00 章开场构图重合。一只新的手伸向书架——微光在另一本书脊上**再次亮起**。黑场。
 
@@ -190,7 +190,7 @@
 | --- | --- | --- |
 | Eyebrow | THE RETURN | 传承 |
 | Main title | **Books Outlive Their Readers.** | **书比读者活得久。** |
-| Subtitle | The soul unbinds. The book forgets. The shelf waits. | 云魂解绑，书忘了你，架子在等下一位。 |
+| Subtitle | The layer unbinds. The book keeps no name. The slot is free. | 伴读层解绑，书不记名，架上空出位置。 |
 | Annotation | Your journey stays in your account, never in the book. To the next reader, this is a first encounter. | 你的阅读里程只在你自己的账户里，从不在书里。对下一位读者而言，这是一场初见。 |
 | Annotation (mobile) | Your journey lives in your account — never in the book. | 阅读里程只在你的账户里，从不在书里。 |
 
@@ -244,8 +244,8 @@
 ## 页面补充：业务与交互（2026-10-27）
 
 - **00 停泊 · 书链馆规则卡**：可购买的图书馆、随手可取、脊码公开、出口结算、认领在家（数据：`public/data/bookln.json`）。
-- **00 停泊 · 两码两义模拟器**：未认领/已认领 × 脊码/页边码 四种结果；购前扫页边码必须回落到试读层，购后第一次页边扫码才打开完整云魂（数据：`public/data/marks.json`）。
-- **01 携归 · 出口结算单**：纸身「已带走 / 封签已烙」，云魂「随行沉睡 / 0.00W」，并标注魂随书走待商务确认。
+- **00 停泊 · 两码两义模拟器**：未认领/已认领 × 脊码/页边码 四种结果；购前扫页边码必须回落到试读层，购后第一次页边扫码才打开完整伴读层（数据：`public/data/marks.json`）。
+- **01 携归 · 出口结算单**：纸身「已带走 / 封签已烙」，伴读层「随行未开放 / 0.00W」，并标注伴读层随书走待商务确认。
 - **附录 C · 书链**：真实供给数据与 B2B 映射，见上节。
 
 ---

@@ -33,11 +33,11 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 | Field | English | 中文 |
 | --- | --- | --- |
-| Eyebrow `shelf.eyebrow` | WHERE BOOKS WAIT | 书在架上，魂在云上 |
+| Eyebrow `shelf.eyebrow` | WHERE BOOKS WAIT | 书在架上，伴读层在云上 |
 | Main title `shelf.title` | **One Book, Two Bodies.** | **一本书，两个身体。** |
-| Subtitle `shelf.subtitle` | This book has two bodies: paper here, soul in the cloud. | 这本书有两个身体：纸身在此处，云魂在云上。 |
-| Subtitle (mobile) | Paper here. Soul in the cloud. | 纸身在此，云魂在云上。 |
-| Annotation `shelf.annotation` | Scan a spine mark: the preview layer rises — a glimpse of a soul not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的云魂。无人认领时，书保持 0.00W。 |
+| Subtitle `shelf.subtitle` | This book has two bodies: paper here, companion layer in the cloud. | 这本书有两个身体：纸身在此处，伴读层在云上。 |
+| Subtitle (mobile) | Paper here. Layer in the cloud. | 纸身在此，伴读层在云上。 |
+| Annotation `shelf.annotation` | Scan a spine mark: the preview layer rises — a glimpse of a companion layer not yet yours. Unclaimed, it stays at 0.00W. | 扫一扫脊码，试读层升起——看一眼还不属于你的伴读层。无人认领时，书保持 0.00W。 |
 | Annotation (mobile) | Scan a spine mark: the preview layer rises. Unclaimed, it stays at 0.00W. | 扫脊码，试读层升起。未认领，永为 0.00W。 |
 
 **Telemetry:** `ON SHELF · DORMANT · 0.00W · PREVIEW ONLY` / `架上沉睡 · 仅试读层开放`
@@ -52,8 +52,8 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | --- | --- | --- |
 | Eyebrow `carry.eyebrow` | THE CARRY | 携归 |
 | Main title `carry.title` | **You Buy Two Bodies.** | **买下的，是两个身体。** |
-| Subtitle `carry.subtitle` | Paper in your bag; the soul follows, asleep until claimed. | 纸身装进包里，云魂跟着回家，认领前一直沉睡。 |
-| Subtitle (mobile) | Paper in your bag; soul in tow. | 纸身入包，云魂随行。 |
+| Subtitle `carry.subtitle` | Paper in your bag; the companion layer travels, not yet open. | 纸身装进包里，伴读层随书到家，认领前只有试读层。 |
+| Subtitle (mobile) | Paper in your bag; layer in tow. | 纸身入包，伴读层随行。 |
 | Annotation `carry.annotation` | The till binds nothing yet. The claim happens at home, on the page. | 收银台不绑定任何东西；认领发生在家里，在纸页上。 |
 
 **Telemetry:** `PAID & SEALED · TWO BODIES, ONE BAG` / `封签已烙 · 两个身体一同带走`
@@ -107,7 +107,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | Eyebrow `binding.eyebrow`（新） | THE BINDING | 认领 |
 | Main title `neural-link.title` | **Analog at Heart.** | **纸端，即云端。** |
 | Subtitle `neural-link.subtitle` | Digital in Soul. | 触感留在手里，知识延展到云端。 |
-| Annotation `binding.annotation`（新） | The first scan is a claim — this book's soul now answers to you. | 第一次扫码即认领——从此这本书的云魂只应答你。 |
+| Annotation `binding.annotation`（新） | The first scan is a claim — this book's companion layer is now yours. | 第一次扫码即认领——从此这本书的伴读层为你开放。 |
 | Feature 1 title `neural-link.feature1Title` | One-code entry | 一码入网 |
 | Feature 1 body `neural-link.feature1Body` | Scan the mark on the page to open its companion knowledge layer. | 扫描页边标记，打开与当前页对应的云端知识层。 |
 | Feature 2 title `neural-link.feature2Title` | AI study companion | AI 伴读协议 |
@@ -122,7 +122,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 ## 05 · 伴读 The Nightly Loop — 读在纸上，懂在云端（🆕）
 
-> 云魂全家桶（D3）：讲题视频、音频讲解、知识图谱、AI 问答、学情记录。App 只作「页边的延伸」，不得遮挡正文（红线见 [`worldview.md`](worldview.md) §10）。
+> 伴读层全套能力（D3）：讲题视频、音频讲解、知识图谱、AI 问答、学情记录。App 只作「页边的延伸」，不得遮挡正文（红线见 [`worldview.md`](worldview.md) §10）。
 
 | Field | English | 中文 |
 | --- | --- | --- |
@@ -150,7 +150,7 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 | --- | --- | --- |
 | Eyebrow `return.eyebrow` | THE RETURN | 传承 |
 | Main title `return.title` | **Books Outlive Their Readers.** | **书比读者活得久。** |
-| Subtitle `return.subtitle` | The soul unbinds. The book forgets. The shelf waits. | 云魂解绑，书忘了你，架子在等下一位。 |
+| Subtitle `return.subtitle` | The layer unbinds. The book keeps no name. The slot is free. | 伴读层解绑，书不记名，架上空出位置。 |
 | Annotation `return.annotation` | Your journey stays in your account, never in the book. To the next reader, this is a first encounter. | 你的阅读里程只在你自己的账户里，从不在书里。对下一位读者而言，这是一场初见。 |
 | Annotation (mobile) | Your journey lives in your account — never in the book. | 阅读里程只在你的账户里，从不在书里。 |
 

@@ -343,6 +343,15 @@ html.is-paper .sx-rail__meta a {
   box-shadow: 0 0 8px rgba(200, 169, 109, 0.7);
 }
 
+/* Section annotation, sitting under a module row */
+.sx-note {
+  max-width: 34ch;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
 /* Hero, type first */
 .sx-hero {
   margin-top: 26px;

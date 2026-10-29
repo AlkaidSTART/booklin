@@ -36,8 +36,8 @@
       "labelZh": "试读层"
     },
     "soul": {
-      "label": "Full cloud soul",
-      "labelZh": "完整云魂"
+      "label": "Full companion layer",
+      "labelZh": "完整伴读层"
     }
   },
   "outcomes": {
@@ -62,20 +62,20 @@
       "statusZh": "未认领 · 回落试读层",
       "tone": "fallback",
       "layer": "preview",
-      "note": "Anyone may scan it, but before purchase it falls back to the preview layer. The soul is not yours yet.",
-      "noteZh": "谁都能扫，但购前只回落到试读层——云魂尚未归你。"
+      "note": "Anyone may scan it, but before purchase it falls back to the preview layer. The companion layer is not open yet.",
+      "noteZh": "谁都能扫，但购前只回落到试读层——伴读层尚未开放。"
     },
     "pageEdge:claimed": {
-      "status": "CLAIMED · SOUL ACTIVE",
-      "statusZh": "已认领 · 云魂应答",
+      "status": "CLAIMED · COMPANION ACTIVE",
+      "statusZh": "已认领 · 伴读层开放",
       "tone": "soul",
       "layer": "soul",
-      "note": "The first page-edge scan after purchase is the claim. The full cloud soul now answers.",
-      "noteZh": "购后第一次页边扫码即认领；完整云魂从此只应答你。"
+      "note": "The first page-edge scan after purchase is the claim. The full companion layer is now open.",
+      "noteZh": "购后第一次页边扫码即认领；完整伴读层从此为你开放。"
     }
   },
   "dataNotes": [
-    "Scanning a page-edge mark before purchase must never unlock the full cloud soul (worldview D1).",
+    "Scanning a page-edge mark before purchase must never unlock the full companion layer (worldview D1).",
     "The preview layer carries no reader data (worldview D4).",
     "The spine mark stays public after claiming; only the page-edge mark changes meaning."
   ]

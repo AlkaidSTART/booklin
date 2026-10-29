@@ -1357,7 +1357,7 @@ function drawPhoneScreen(ctx: CanvasRenderingContext2D, found: boolean, pick: Sh
 
   ctx.fillStyle = found ? '#e0b372' : 'rgba(232, 220, 196, 0.38)';
   ctx.font = '600 15px ui-monospace, SFMono-Regular, Menlo, monospace';
-  ctx.fillText(found ? 'CLOUD SOUL · UPLINK READY' : 'SCROLL TO UPLINK', 36, 936);
+  ctx.fillText(found ? 'COMPANION LAYER · UPLINK READY' : 'SCROLL TO UPLINK', 36, 936);
 
   ctx.fillStyle = 'rgba(232, 220, 196, 0.3)';
   ctx.font = '400 12px ui-monospace, SFMono-Regular, Menlo, monospace';
@@ -1801,10 +1801,10 @@ function drawCloudPanel(ctx: CanvasRenderingContext2D, pick: ShelfPick) {
 
   ctx.fillStyle = '#c8a96d';
   ctx.font = '600 21px ui-monospace, SFMono-Regular, Menlo, monospace';
-  ctx.fillText('CLOUD SOUL', 42, 64);
+  ctx.fillText('COMPANION LAYER', 42, 64);
   ctx.fillStyle = 'rgba(232, 220, 196, 0.46)';
   ctx.font = '400 16px ui-monospace, SFMono-Regular, Menlo, monospace';
-  ctx.fillText('云魂 · PUBLIC PREVIEW', 42, 92);
+  ctx.fillText('伴读层 · PUBLIC PREVIEW', 42, 92);
 
   ctx.fillStyle = '#e0b372';
   ctx.font = '600 18px ui-monospace, SFMono-Regular, Menlo, monospace';

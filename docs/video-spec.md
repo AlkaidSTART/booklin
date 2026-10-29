@@ -53,7 +53,7 @@ When the final instructor footage is available, replace the MP4 and poster while
 - Captions are provided in `lesson-preview.vtt`.
 - The video is silent; no audio-only information is required.
 - The poster is a static fallback for reduced-motion and low-power devices.
-- If the video is embedded in the page, provide visible play/pause controls and never autoplay with sound.
+- The clip is silent and pull-only: it runs only while its own step is the active one and pauses otherwise. Reduced-motion users get the poster alone.
 - Keep the transcript in the DOM or behind a disclosure so screen-reader users can read the same content.
 
 ---

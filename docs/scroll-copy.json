@@ -2,7 +2,7 @@
   "version": "2026-10-29",
   "status": "scroll-edition-copy",
   "language": "zh-primary",
-  "notes": "Short-form copy deck for the scroll-driven homepage. One headline, one line, one telemetry strip per chapter. English is a label, not a second narrative.",
+  "notes": "Short-form copy deck for the scroll-driven homepage. One headline, one line, one telemetry strip per chapter. English is a label, not a second narrative. Voice rule (2026-10-29): names may be metaphors (纸身 / 伴读层 / 试读层 / 认领), verbs may not personify — no 醒 / 睡 / 等 / 跟着 / 长出 / 应答 / 忘 / 打扰. The companion layer is glossed in plain words at 00, the first place it appears. 2026-10-29: 云魂 renamed to 伴读层.",
   "chapters": [
     {
       "id": "arrival",
@@ -12,6 +12,7 @@
       "titleA": "书",
       "titleB": "链",
       "line": "纸书，有魂。",
+      "heroLine": "不装电池。不用开机。翻到哪页，读哪页。",
       "lineEn": "Paper, with a cloud soul.",
       "meta": "0.00 W · 0 SCREENS · ∞ TITLES"
     },
@@ -21,10 +22,11 @@
       "label": "SHELF",
       "labelZh": "停泊",
       "titleA": "在架上，",
-      "titleB": "沉睡。",
-      "line": "任何一本书，都在等第一个读者。",
-      "lineEn": "Every book is waiting for its first reader.",
-      "meta": "NO ACCOUNT · NO POWER · 0.00 W"
+      "titleB": "待认领。",
+      "line": "任何一本书，第一次翻开时，都是新的。",
+      "lineEn": "Every book is new the first time it is opened.",
+      "meta": "NO ACCOUNT · NO POWER · 0.00 W",
+      "note": "纸身是这本书本身；伴读层是它的云端部分——讲题、音频、图谱、问答。"
     },
     {
       "id": "carry",
@@ -33,9 +35,10 @@
       "labelZh": "携归",
       "titleA": "你买下，",
       "titleB": "两个身体。",
-      "line": "纸身进包，云魂跟着回家。",
+      "line": "纸身进包，伴读层同单。",
       "lineEn": "One price. Two bodies.",
-      "meta": "ONE PRICE · TWO BODIES"
+      "meta": "PAID & SEALED · PREVIEW ONLY",
+      "note": "收银台不绑定任何东西。认领发生在家里，在纸页上。"
     },
     {
       "id": "interaction",
@@ -54,9 +57,9 @@
       "label": "BINDING",
       "labelZh": "认领",
       "titleA": "扫一次，",
-      "titleB": "书醒了。",
-      "line": "九页之外，长出一张图谱。",
-      "lineEn": "One scan. Nine nodes wake up.",
+      "titleB": "这一页有下文。",
+      "line": "页边之外，另有一张图谱。",
+      "lineEn": "One scan. Nine nodes on one page.",
       "meta": "ONE SCAN · 9 NODES"
     },
     {
@@ -66,9 +69,9 @@
       "labelZh": "伴读",
       "titleA": "卡住时，",
       "titleB": "抬头。",
-      "line": "视频、图谱、问答，都在页边。",
+      "line": "讲题、图谱、问答，都在页边。",
       "lineEn": "Video, graph, answers — all in the margin.",
-      "meta": "AUTOPLAYS · MUTED"
+      "meta": "ON CALL · 0 PUSH · 0 POPUP"
     },
     {
       "id": "read",

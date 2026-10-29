@@ -26,8 +26,8 @@
         "id": "exit",
         "label": "Settle at the exit",
         "labelZh": "出口结算",
-        "detail": "Paper and soul change hands together.",
-        "detailZh": "纸身与云魂，在出口同时归属。"
+        "detail": "Paper and companion layer change hands together.",
+        "detailZh": "纸身与伴读层，在出口同时归属。"
       },
       {
         "id": "home",
@@ -55,20 +55,20 @@
       },
       {
         "id": "soul",
-        "label": "Cloud soul",
-        "labelZh": "云魂",
-        "status": "Follows, dormant",
-        "statusZh": "随行沉睡",
+        "label": "Companion layer",
+        "labelZh": "伴读层",
+        "status": "Follows, not yet open",
+        "statusZh": "随行未开放",
         "detail": "0.00W · until claimed",
-        "detailZh": "认领前零响应，等待第一次页边扫码。"
+        "detailZh": "认领前不响应，第一次页边扫码后开放。"
       }
     ],
     "note": "Ownership moves at the till. The claim happens at home, on Page 042.",
     "noteZh": "馆内只完成归属转移；认领，留给家里的第 042 页。",
     "policy": {
       "id": "soulFollowsBook",
-      "label": "Soul travels with the book",
-      "labelZh": "魂随书走",
+      "label": "Companion layer travels with the book",
+      "labelZh": "伴读层随书走",
       "statusLabel": "Business confirmation pending",
       "statusLabelZh": "待商务确认"
     }
@@ -225,8 +225,8 @@
           "serviceZh": "音频录音",
           "detail": "Custom recording for K–12 supplementary books, developed with Alibaba DAMO Academy.",
           "detailZh": "与达摩院合作，专为中小学教辅定制音频录音",
-          "world": "Audio inside the cloud soul",
-          "worldZh": "云魂中的音频讲解"
+          "world": "Audio inside the companion layer",
+          "worldZh": "伴读层中的音频讲解"
         },
         {
           "id": "courseware",
@@ -234,8 +234,8 @@
           "serviceZh": "课件制作",
           "detail": "AI learns the book's structure and turns Word into slide decks in seconds.",
           "detailZh": "用 AI 学习图书结构，图书秒变 PPT 课件",
-          "world": "Courseware inside the cloud soul",
-          "worldZh": "云魂中的课件"
+          "world": "Courseware inside the companion layer",
+          "worldZh": "伴读层中的课件"
         },
         {
           "id": "teacher",
@@ -243,8 +243,8 @@
           "serviceZh": "名师讲题",
           "detail": "Exercise video explanations taught by frontline teachers.",
           "detailZh": "习题的视频解析，一线教学老师讲解",
-          "world": "Lesson video inside the cloud soul",
-          "worldZh": "云魂中的讲题视频"
+          "world": "Lesson video inside the companion layer",
+          "worldZh": "伴读层中的讲题视频"
         }
       ]
     },
@@ -259,8 +259,8 @@
           "serviceZh": "学转教",
           "detail": "AI converts student editions into teacher editions across all subjects and grades, backfilling answers without touching the body text.",
           "detailZh": "全学科全学段学用图书 AI 一键转换为教用图书，自动回填答案，不影响正文",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         },
         {
           "id": "book-to-word",
@@ -268,8 +268,8 @@
           "serviceZh": "书版转Word",
           "detail": "Convert book layout files in one click.",
           "detailZh": "一键转换书版文件",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         },
         {
           "id": "auto-typesetting",
@@ -277,8 +277,8 @@
           "serviceZh": "智能初排",
           "detail": "An in-house layout automation model outputs Word manuscripts in FBD format in one click.",
           "detailZh": "自研排版自动化模型，全学科 Word 稿件一键输出 FBD 格式",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         },
         {
           "id": "smart-editor",
@@ -286,8 +286,8 @@
           "serviceZh": "智能编辑器",
           "detail": "An online writing tool built for supplementary-book teams.",
           "detailZh": "教辅专用在线写稿工具",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         },
         {
           "id": "question-image-banks",
@@ -295,8 +295,8 @@
           "serviceZh": "数字化题库 / 图库",
           "detail": "Structured question banks and image libraries under one roof.",
           "detailZh": "数字化题库与图库统一管理",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         },
         {
           "id": "tagging-export",
@@ -304,8 +304,8 @@
           "serviceZh": "智能打标签 / 多格式输出",
           "detail": "Automatic tags, search and multi-format output.",
           "detailZh": "智能打标签、检索、多格式输出",
-          "world": "Cloud-soul pre-install pipeline (publisher side)",
-          "worldZh": "云魂预装管线（出版商侧）"
+          "world": "Companion-layer pre-install pipeline (publisher side)",
+          "worldZh": "伴读层预装管线（出版商侧）"
         }
       ]
     },
@@ -329,8 +329,8 @@
   "policies": [
     {
       "id": "soulFollowsBook",
-      "label": "Soul travels with the book",
-      "labelZh": "魂随书走",
+      "label": "Companion layer travels with the book",
+      "labelZh": "伴读层随书走",
       "status": "pending-business",
       "note": "Default in-world rule; awaiting commercial confirmation.",
       "noteZh": "世界观默认规则；待商务确认。"

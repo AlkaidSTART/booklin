@@ -1474,10 +1474,11 @@ html.is-handoff .sx-sec--shelf .sx-module {
 
 /* ------------------------------------------------------------------
    Prologue → chapter 00 hand-off
-   The book is carried back into its gap in plain sight. The overlay is
-   only a light falloff plus a shelf label that rides with the book, so
-   the move itself carries the transition. `--handoff` (falloff) and
-   `--handoff-type` (label) are written by the stage in phase units.
+   The book is not carried back into its gap: the stage cuts straight to
+   the shelved composition, and this layer is the plain mask that covers
+   the cut. The shelf label rides on top of the mask, so the chapter
+   still announces itself. `--handoff` (mask) and `--handoff-type`
+   (label) are written by the stage in phase units.
    ------------------------------------------------------------------ */
 
 .sx-handoff {
@@ -1492,9 +1493,7 @@ html.is-handoff .sx-sec--shelf .sx-module {
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 58% 62% at 22% 86%, rgba(10, 9, 7, 0.86), transparent 70%),
-    linear-gradient(to top, rgba(10, 9, 7, 0.72), transparent 46%);
+  background: var(--ink-0);
   opacity: var(--handoff, 0);
   will-change: opacity;
 }
@@ -1567,8 +1566,8 @@ html.is-handoff .sx-sec--shelf .sx-module {
   text-transform: uppercase;
 }
 
-/* Scroll room so the falloff and the label breathe instead of flashing past.
-   It also stretches phase 0 → 1, slowing the carry into chapter 00. */
+/* Scroll room so the mask and the label breathe instead of flashing past.
+   It also stretches phase 0 → 1, slowing the cut into chapter 00. */
 .sx-handoff-gap {
   height: 70svh;
 }

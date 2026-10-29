@@ -4,7 +4,7 @@ import { AdaptiveDpr, useProgress } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 import { createWheelScroll } from '../../lib/scroll/wheelScroll';
-import { BookScene } from './BookScene';
+import { BookScene, SHELF_CUT } from './BookScene';
 import type { StageInteractionState } from './BookScene';
 import { SHELF_PHASE_COUNT, shelfPresence } from './ShelfStage';
 import BookLoader from './BookLoader';
@@ -178,18 +178,20 @@ export default function BookStage() {
       const shelfHot = shelfPresence(progressRef.current * SHELF_PHASE_COUNT) > 0.12;
       document.documentElement.classList.toggle('is-shelf-hot', shelfHot);
 
-      // Hand-off: a light falloff comes up as the book leaves the desk, the
-      // shelf label rides with it, then both clear once the book is seated and
-      // chapter 00 owns the frame. Nothing is ever fully curtained.
-      const tint = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.34) / 0.12)),
-        Math.min(1, Math.max(0, (0.94 - phase) / 0.1)),
+      // Hand-off: the book is no longer carried back into its shelf slot, so
+      // the stage cuts straight to the shelved pose. These envelopes are the
+      // mask around that cut — closed over the switch and open again once the
+      // shelf owns the frame. `--handoff` paints the mask, `--handoff-type`
+      // the shelf label that rides on top of it.
+      const mask = Math.min(
+        Math.min(1, Math.max(0, (phase - (SHELF_CUT - 0.1)) / 0.08)),
+        Math.min(1, Math.max(0, (SHELF_CUT + 0.18 - phase) / 0.08)),
       );
       const type = Math.min(
-        Math.min(1, Math.max(0, (phase - 0.44) / 0.06)),
-        Math.min(1, Math.max(0, (0.86 - phase) / 0.06)),
+        Math.min(1, Math.max(0, (phase - (SHELF_CUT - 0.04)) / 0.06)),
+        Math.min(1, Math.max(0, (SHELF_CUT + 0.2 - phase) / 0.06)),
       );
-      document.documentElement.style.setProperty('--handoff', tint.toFixed(3));
+      document.documentElement.style.setProperty('--handoff', mask.toFixed(3));
       document.documentElement.style.setProperty('--handoff-type', type.toFixed(3));
       document.documentElement.classList.toggle('is-handoff', phase < 0.9);
     };

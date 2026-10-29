@@ -303,8 +303,10 @@ function lightEnvelope(
    Chapter 00 — shelf take-down / scan / uplink beat
    ------------------------------------------------------------------ */
 
-const SHELF_RETURN_START = 0.5;
-const SHELF_RETURN_END = 0.82;
+// Prologue -> 00 is a cut, not a carry: past this phase the book is already
+// seated in its slot, so the stage switches pose on one frame while the
+// transition mask covers the frame.
+export const SHELF_CUT = 0.6;
 const SHELF_SLIDE_END = 1.3;
 const SHELF_PICK_END = 1.56;
 const SHELF_BEAT_END = 2.3;
@@ -428,13 +430,8 @@ const SCAN_CAMERA: ShelfCameraPose = {
   fov: 40,
 };
 
-function shelfCameraPose(phase: number, mobile: boolean): ShelfCameraPose | null {
-  if (phase < 0.34 || phase >= SHELF_BEAT_END) return null;
-
-  if (phase < 0.88) {
-    const k = smoothstep((phase - 0.34) / (0.88 - 0.34));
-    return mixCameraPose(cameraKeyPose(0, 0, mobile), SHELF_WIDE_CAMERA, k);
-  }
+function shelfCameraPose(phase: number): ShelfCameraPose | null {
+  if (phase < SHELF_CUT || phase >= SHELF_BEAT_END) return null;
 
   if (phase < 1.12) return SHELF_WIDE_CAMERA;
 
@@ -461,26 +458,12 @@ function shelfCameraPose(phase: number, mobile: boolean): ShelfCameraPose | null
 }
 
 function shelfBookPose(phase: number, pick: ShelfPick): BookPose | null {
-  if (phase < SHELF_RETURN_START || phase >= SHELF_BEAT_END) return null;
+  if (phase < SHELF_CUT || phase >= SHELF_BEAT_END) return null;
 
   const shelfPose: BookPose = {
     position: [pick.x, 0.824, -1.064],
     rotation: [0.012, Math.PI / 2, 0.008],
   };
-
-  if (phase < SHELF_RETURN_END) {
-    const k = smoothstep((phase - SHELF_RETURN_START) / (SHELF_RETURN_END - SHELF_RETURN_START));
-    const from = genericBookPose(SHELF_RETURN_START);
-    const turn = smoothstep((k - 0.62) / 0.26);
-    return {
-      position: [
-        lerp(from.position[0], shelfPose.position[0], k),
-        lerp(from.position[1], shelfPose.position[1], k) + Math.sin(Math.PI * k) * 0.12,
-        lerp(from.position[2], shelfPose.position[2], k),
-      ],
-      rotation: mixVec3(from.rotation, shelfPose.rotation, turn),
-    };
-  }
 
   if (phase < 1.12) return shelfPose;
 
@@ -835,12 +818,13 @@ function CameraRig({
 }) {
   const { camera, size } = useThree();
   const currentTarget = useRef(new THREE.Vector3(-0.18, 0.86, 0));
+  const onShelfRef = useRef(false);
   const perspective = camera as THREE.PerspectiveCamera;
 
   useFrame((_, delta) => {
     const phase = clamp01(progressRef.current) * PHASE_COUNT;
     const mobile = size.width < 760;
-    const custom = shelfCameraPose(phase, mobile);
+    const custom = shelfCameraPose(phase);
     const pose = custom ?? genericCameraPose(phase, mobile);
 
     const pointerX = reducedMotion || mobile ? 0 : pointerRef.current.x;
@@ -874,7 +858,14 @@ function CameraRig({
       targetZ,
     );
 
-    const damping = 1 - Math.exp(-5.5 * delta);
+    // The prologue -> 00 hand-off is a cut, not a dolly. Crossing the cut
+    // lands the camera in the shelf framing on the same frame, so the camera
+    // never travels across the room in plain sight.
+    const onShelf = phase >= SHELF_CUT;
+    const cut = onShelf !== onShelfRef.current;
+    onShelfRef.current = onShelf;
+
+    const damping = cut ? 1 : 1 - Math.exp(-5.5 * delta);
     camera.position.lerp(desiredPosition, damping);
     currentTarget.current.lerp(desiredTarget, damping);
     camera.lookAt(currentTarget.current);
@@ -883,7 +874,9 @@ function CameraRig({
     // reads as a zoom punch on every framing change (32 → 44 → 34 → 31 → 40).
     const desiredFov = mobile ? (custom ? pose.fov + 8 : 39) : pose.fov;
     if (perspective.isPerspectiveCamera) {
-      const nextFov = THREE.MathUtils.damp(perspective.fov, desiredFov, 5.5, delta);
+      const nextFov = cut
+        ? desiredFov
+        : THREE.MathUtils.damp(perspective.fov, desiredFov, 5.5, delta);
       if (Math.abs(nextFov - perspective.fov) > 0.001) {
         perspective.fov = nextFov;
         perspective.updateProjectionMatrix();
@@ -1410,6 +1403,7 @@ function BookRig({
   const shelfGlowRef = useRef<THREE.MeshStandardMaterial | null>(null);
   const shelfBaseRef = useRef<Array<{ material: THREE.MeshStandardMaterial; color: THREE.Color }>>([]);
   const introRef = useRef(0);
+  const shelfCutRef = useRef(false);
 
   const book = useAssetGLTF('/models/book-transformed.glb');
   const desk = useAssetGLTF('/models/oak-desk.glb');
@@ -1605,6 +1599,11 @@ function BookRig({
 
   useFrame((_, delta) => {
     const { phase, index, t } = timeline(progressRef.current);
+    // Crossing the prologue -> 00 cut swaps the book onto the shelf on one
+    // frame; the mask covers the frame, so nothing has to travel in view.
+    const onShelf = phase >= SHELF_CUT;
+    const cut = onShelf !== shelfCutRef.current;
+    shelfCutRef.current = onShelf;
     const a = BOOK_KEYS[index];
     const b = BOOK_KEYS[Math.min(index + 1, BOOK_KEYS.length - 1)];
     opennessRef.current = lerp(a.open, b.open, t);
@@ -1650,37 +1649,43 @@ function BookRig({
 
       if (shelfPose) {
         const present = shelfPresentEnvelope(phase);
+        const follow = cut ? 1e6 : 8;
         bookGroupRef.current.position.set(
           THREE.MathUtils.damp(
             bookGroupRef.current.position.x,
             shelfPose.position[0] + present * SHELF_PRESENT_SHIFT_X,
-            8,
+            follow,
             delta,
           ),
           THREE.MathUtils.damp(
             bookGroupRef.current.position.y,
             shelfPose.position[1] + idle - present * SHELF_PRESENT_DROP,
-            8,
+            follow,
             delta,
           ),
-          THREE.MathUtils.damp(bookGroupRef.current.position.z, shelfPose.position[2], 8, delta),
+          THREE.MathUtils.damp(
+            bookGroupRef.current.position.z,
+            shelfPose.position[2],
+            follow,
+            delta,
+          ),
         );
         bookGroupRef.current.rotation.x = THREE.MathUtils.damp(
           bookGroupRef.current.rotation.x,
           shelfPose.rotation[0],
-          8,
+          follow,
           delta,
         );
         bookGroupRef.current.rotation.y = THREE.MathUtils.damp(
           bookGroupRef.current.rotation.y,
           shelfPose.rotation[1],
-          8,
+          follow,
           delta,
         );
         bookGroupRef.current.rotation.z = THREE.MathUtils.damp(
           bookGroupRef.current.rotation.z,
           shelfPose.rotation[2],
-          8,
+          follow,
           delta,
         );
       } else if (phase >= STOW_START && slipcaseGroupRef.current) {
@@ -1737,14 +1742,15 @@ function BookRig({
           (phase > 7.36 ? Math.min(lerpedY, plinthRideY) : lerpedY) +
           intro * 0.16 +
           scrollLanding;
+        const follow = cut ? 1e6 : 7;
 
         bookGroupRef.current.position.set(
-          THREE.MathUtils.damp(bookGroupRef.current.position.x, presentationX, 7, delta),
-          THREE.MathUtils.damp(bookGroupRef.current.position.y, deskY + idle, 7, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.x, presentationX, follow, delta),
+          THREE.MathUtils.damp(bookGroupRef.current.position.y, deskY + idle, follow, delta),
           THREE.MathUtils.damp(
             bookGroupRef.current.position.z,
             lerp(a.position[2], b.position[2], t),
-            7,
+            follow,
             delta,
           ),
         );

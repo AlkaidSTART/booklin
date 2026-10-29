@@ -188,7 +188,10 @@ function BookHand({
       side > 0
         ? 1 - smoothstep((openness - 0.35) / 0.2)
         : 1 - smoothstep((openness - 0.3) / 0.15);
-    const weight = enter * release;
+    // Hard upper bound: the book closes again in 05 Return / the epilogues, so
+    // openness alone would bring the hands back. The pair belongs to one beat.
+    const leave = 1 - smoothstep((phase - 2.86) / 0.1);
+    const weight = enter * release * leave;
 
     rig.mesh.visible = weight > 0.002;
     skin.opacity = weight;

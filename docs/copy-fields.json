@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-27",
+  "version": "2026-10-29",
   "source": "docs/script-final.md",
   "status": "concept-copy-launch-review-required",
   "language": ["en", "zh"],
@@ -368,34 +368,35 @@
       "role": "eyebrow",
       "limit": "eyebrow",
       "en": "THE CHAIN",
-      "zh": "书链"
+      "zh": "书链 · 关于我们"
     },
     {
       "id": "chain.title",
       "chapter": "07-chain",
       "role": "title",
       "limit": "title",
-      "en": "The Machine Behind the Myth.",
-      "zh": "神话背后，是真实的机器。",
-      "enMobile": "Behind the Myth."
+      "en": "The Chain Behind the Paper.",
+      "zh": "纸书背后，是书链。",
+      "enMobile": "The Chain."
     },
     {
       "id": "chain.subtitle",
       "chapter": "07-chain",
       "role": "subtitle",
       "limit": "subtitle",
-      "en": "The concept site tells the myth. bookln.cn is the machine.",
-      "zh": "概念站讲的是神话；bookln.cn 是那台机器。",
-      "enMobile": "The myth is the site. The machine is bookln.cn."
+      "en": "A full-stack technology partner for education publishing.",
+      "zh": "教育图书出版行业的全产业链技术服务商。",
+      "enMobile": "A full-stack partner for education publishing."
     },
     {
       "id": "chain.annotation",
       "chapter": "07-chain",
       "role": "annotation",
       "limit": "annotation",
-      "en": "Bookln's publisher network already exists; the cloud soul is its reader-side embodiment.",
-      "zh": "书链的出版网络已经存在；云魂只是它在读者端的化身。",
-      "enMobile": "The cloud soul is Bookln's existing publisher network, seen from the reader's side."
+      "en": "A live code in every book. Resources on every scan. A direct line from publisher to reader.",
+      "zh": "书里植入活码，读者扫码即得音视频、课件、题库与答疑；出版商实时更新，直连读者运营变现。",
+      "enMobile": "A live code. Resources on scan. A line to the reader.",
+      "zhMobile": "书里一个活码，读者扫码即得配套资源。"
     },
     {
       "id": "chain.footnote",

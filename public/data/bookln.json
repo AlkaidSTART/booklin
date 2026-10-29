@@ -1,7 +1,7 @@
 {
-  "version": "2026-10-28",
+  "version": "2026-10-29",
   "status": "concept-data",
-  "source": "bookln.cn service menu (读者服务 / 内容制作服务 / 书链出版云); docs/worldview.md#2, #7, #7.1",
+  "source": "bookln.cn service menu (读者服务 / 内容制作服务 / 书链出版云 / 书链通); company profile from docs/worldview.md#7.0; docs/worldview.md#2, #7, #7.1, #7.2",
   "haven": {
     "name": "Bookln Haven",
     "nameZh": "书链馆",
@@ -72,6 +72,61 @@
       "statusLabel": "Business confirmation pending",
       "statusLabelZh": "待商务确认"
     }
+  },
+  "company": {
+    "legalName": "湖州云梯科技有限公司",
+    "legalNameEn": "Huzhou Yunti Technology Co., Ltd.",
+    "formerName": "原杭州云梯科技有限公司",
+    "formerNameEn": "formerly Hangzhou Yunti Technology Co., Ltd.",
+    "founded": "2014",
+    "headquarters": "浙江安吉",
+    "headquartersEn": "Anji, Zhejiang",
+    "formerHeadquarters": "原杭州",
+    "founder": "周伟",
+    "founderRole": "创始人 / CEO",
+    "founderRoleEn": "Founder & CEO",
+    "positioning": "教育图书出版行业全产业链技术服务商",
+    "positioningEn": "A full-stack technology service provider for education publishing",
+    "product": "教育图书读者服务平台",
+    "productEn": "Education Book Reader Service Platform",
+    "infrastructure": "教育图书出版行业的数字化基础设施",
+    "infrastructureEn": "The digital infrastructure of education book publishing",
+    "summary": "书链连接教育图书出版商与读者：在图书中植入活码，读者扫码即可获取配套资源；出版商实时更新内容、直连读者，完成运营与增值变现。",
+    "summaryEn": "Bookln connects education publishers and readers: a live code inside each book, companion resources on every scan, and a direct line back to the reader for operations and revenue."
+  },
+  "model": {
+    "label": "How the chain works",
+    "labelZh": "这条链怎么运转",
+    "steps": [
+      {
+        "id": "code",
+        "label": "A live code in the book",
+        "labelZh": "书里植入活码",
+        "detail": "Every title carries a QR code whose content can be updated without reprinting.",
+        "detailZh": "每本教辅带一个可随时更新的二维码，不必重印。"
+      },
+      {
+        "id": "scan",
+        "label": "Reader scans, resources open",
+        "labelZh": "读者扫码即用",
+        "detail": "Audio, video, courseware, question banks, point-to-read titles and online Q&A.",
+        "detailZh": "音频、视频、课件、题库、点读书、在线答疑。"
+      },
+      {
+        "id": "operate",
+        "label": "Publisher connects directly",
+        "labelZh": "出版商直连读者",
+        "detail": "Update resources in real time, operate the audience, add courses and memberships.",
+        "detailZh": "资源实时更新，读者直连，做课程、会员等增值变现。"
+      }
+    ]
+  },
+  "clients": {
+    "label": "Selected clients",
+    "labelZh": "部分客户",
+    "items": ["新东方", "曲一线（5·3）", "万唯", "荣德基", "星火", "绿卡", "开心文化"],
+    "disclaimer": "Client names are drawn from public references; confirm usage rights before launch.",
+    "disclaimerZh": "客户名称来自公开资料；发布前须确认使用授权。"
   },
   "facts": {
     "asOf": "2023-07",
@@ -147,6 +202,15 @@
           "detailZh": "搭建用户私域流量池",
           "world": "Companion sessions / learning record (mind anchor)",
           "worldZh": "伴读会话 / 学情记录（脑锚）"
+        },
+        {
+          "id": "reader-ops",
+          "service": "Reader operations",
+          "serviceZh": "读者运营",
+          "detail": "Private-domain conversion, data dashboards and WeChat marketing.",
+          "detailZh": "私域流量转化、数据大屏、微信营销",
+          "world": "Companion sessions / reader's journey / learning dashboard",
+          "worldZh": "伴读会话 / 阅读里程 / 学情看板"
         }
       ]
     },
@@ -159,8 +223,8 @@
           "id": "audio",
           "service": "Audio recording",
           "serviceZh": "音频录音",
-          "detail": "AI recording built for K–12 supplementary books.",
-          "detailZh": "AI 智能录音，专为中小学教辅图书定制",
+          "detail": "Custom recording for K–12 supplementary books, developed with Alibaba DAMO Academy.",
+          "detailZh": "与达摩院合作，专为中小学教辅定制音频录音",
           "world": "Audio inside the cloud soul",
           "worldZh": "云魂中的音频讲解"
         },
@@ -168,8 +232,8 @@
           "id": "courseware",
           "service": "Courseware production",
           "serviceZh": "课件制作",
-          "detail": "AI learns the book's structure and turns Word into slide decks.",
-          "detailZh": "用 AI 学习图书结构，让 Word 秒变 PPT 课件",
+          "detail": "AI learns the book's structure and turns Word into slide decks in seconds.",
+          "detailZh": "用 AI 学习图书结构，图书秒变 PPT 课件",
           "world": "Courseware inside the cloud soul",
           "worldZh": "云魂中的课件"
         },
@@ -215,6 +279,49 @@
           "detailZh": "自研排版自动化模型，全学科 Word 稿件一键输出 FBD 格式",
           "world": "Cloud-soul pre-install pipeline (publisher side)",
           "worldZh": "云魂预装管线（出版商侧）"
+        },
+        {
+          "id": "smart-editor",
+          "service": "Smart editor",
+          "serviceZh": "智能编辑器",
+          "detail": "An online writing tool built for supplementary-book teams.",
+          "detailZh": "教辅专用在线写稿工具",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        },
+        {
+          "id": "question-image-banks",
+          "service": "Question & image banks",
+          "serviceZh": "数字化题库 / 图库",
+          "detail": "Structured question banks and image libraries under one roof.",
+          "detailZh": "数字化题库与图库统一管理",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        },
+        {
+          "id": "tagging-export",
+          "service": "Smart tagging & export",
+          "serviceZh": "智能打标签 / 多格式输出",
+          "detail": "Automatic tags, search and multi-format output.",
+          "detailZh": "智能打标签、检索、多格式输出",
+          "world": "Cloud-soul pre-install pipeline (publisher side)",
+          "worldZh": "云魂预装管线（出版商侧）"
+        }
+      ]
+    },
+    {
+      "id": "distribution",
+      "label": "Bookln Trade",
+      "labelZh": "书链通",
+      "items": [
+        {
+          "id": "b2b-distribution",
+          "service": "B2B distribution platform",
+          "serviceZh": "B2B 分销平台",
+          "detail": "An extension business connecting publishers with distribution channels.",
+          "detailZh": "连接出版商与分销渠道的延伸业务",
+          "world": "Supply route for the Bookln Haven shelf",
+          "worldZh": "书链馆书架的供货通路"
         }
       ]
     }

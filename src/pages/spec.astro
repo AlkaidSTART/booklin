@@ -43,7 +43,7 @@ const interaction = titleParts('interaction.title', 2);
 const neural = titleParts('neural-link.title', 1);
 const loopTitle = titleParts('loop.title', 1);
 const returnTitle = titleParts('return.title', 1);
-const chainTitle = titleParts('chain.title', 2);
+const chainTitle = titleParts('chain.title', 3);
 const benchmarkTitle = titleParts('benchmark.title', 3);
 const deployment = titleParts('deployment.title', 1);
 
@@ -181,7 +181,7 @@ const markInitialPreview = markConsoleData.layers.preview.items;
 
 const pageTitle = 'Bookln / 书链 — Every Physical Book, Connected';
 const pageDescription =
-  'A scrollytelling experience by Bookln (书链): how any physical paper book becomes a connected cognitive engine with page-edge scan-to-context, knowledge graphs, and AI study companions.';
+  'Bookln (书链) is a full-stack technology partner for education publishing. A scrollytelling concept: how a paper book becomes a connected reading object with page-edge scan-to-context, knowledge graphs and AI study companions.';
 ---
 
 <Layout title={pageTitle} description={pageDescription}>
@@ -1181,9 +1181,9 @@ const pageDescription =
       <div class="chapter__grid chapter__grid--benchmark">
         <div class="chapter__copy chapter__copy--wide">
           <div class="story-bridge reveal">
-            <span class="story-bridge__step">B → C · THE MACHINE BEHIND THE MYTH</span>
+            <span class="story-bridge__step">B → C · THE CHAIN BEHIND THE PAPER</span>
             <span class="story-bridge__zh" lang="zh-Hans">
-              概念站讲神话，bookln.cn 是机器。云魂不是凭空设定——它是书链既有 B2B 服务在读者端的化身。
+              纸书背后是书链：教育图书出版行业的全产业链技术服务商。云魂不是凭空设定——它是书链既有 B2B 服务在读者端的化身。
             </span>
           </div>
 
@@ -1209,6 +1209,59 @@ const pageDescription =
             <span class="mobile-only">{fm('chain.annotation')}</span>
             <span class="zh-block" lang="zh-Hans">{fz('chain.annotation')}</span>
           </p>
+
+          <div class="chain-company reveal" aria-label="About Bookln">
+            <div class="chain-company__head">
+              <span class="chain-company__tag">COMPANY · ABOUT BOOKLN</span>
+              <span lang="zh-Hans">书链 · 关于我们</span>
+            </div>
+            <p class="chain-company__position">
+              {bookln.company.positioning}
+              <span class="chain-company__en" lang="en">{bookln.company.positioningEn}</span>
+            </p>
+            <p class="chain-company__summary">
+              {bookln.company.summary}
+              <span class="chain-company__en" lang="en">{bookln.company.summaryEn}</span>
+            </p>
+            <dl class="chain-company__meta">
+              <div>
+                <dt>Company</dt>
+                <dd>
+                  {bookln.company.legalName}
+                  <small>{bookln.company.formerName}</small>
+                </dd>
+              </div>
+              <div>
+                <dt>Founded</dt>
+                <dd>{bookln.company.founded} · {bookln.company.headquarters}</dd>
+              </div>
+              <div>
+                <dt>Founder / CEO</dt>
+                <dd>{bookln.company.founder}<small>{bookln.company.founderRole}</small></dd>
+              </div>
+              <div>
+                <dt>Core product</dt>
+                <dd>{bookln.company.product}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="chain-model reveal">
+            <div class="chain-model__head">
+              <span class="chain-model__tag">{bookln.model.label}</span>
+              <span lang="zh-Hans">{bookln.model.labelZh}</span>
+            </div>
+            <ol class="chain-model__steps">
+              {bookln.model.steps.map((step: Record<string, string>, index: number) => (
+                <li>
+                  <span class="chain-model__num">{String(index + 1).padStart(2, '0')}</span>
+                  <b>{step.labelZh}</b>
+                  <small>{step.label}</small>
+                  <p>{step.detailZh}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
 
           <div class="chain-facts reveal" aria-label="Bookln supply figures">
             <div class="chain-facts__head">
@@ -1264,6 +1317,22 @@ const pageDescription =
                 </tbody>
               ))}
             </table>
+          </div>
+
+          <div class="chain-clients reveal" aria-label="Selected Bookln clients">
+            <span class="chain-clients__label">
+              {bookln.clients.label}
+              <small lang="zh-Hans">{bookln.clients.labelZh}</small>
+            </span>
+            <ul>
+              {bookln.clients.items.map((client: string) => (
+                <li>{client}</li>
+              ))}
+            </ul>
+            <p>
+              {bookln.clients.disclaimer}
+              <span class="zh-block" lang="zh-Hans">{bookln.clients.disclaimerZh}</span>
+            </p>
           </div>
 
           <div class="chain-policies reveal">

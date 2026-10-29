@@ -1,7 +1,7 @@
 # 循环叙事分镜草案（Loop Storyboard · Draft）
 
 > Status: **v0.3 — 页面已按循环结构重排；数据契约已落地；C1–C8 3D/视觉资产待产（书链馆与夜景暂用占位机位）**<br>
-> Version: `2026-10-28`<br>
+> Version: `2026-10-29`（附录 C 增补公司档案与客户）<br>
 > 世界观依据：[`worldview.md`](worldview.md)（设定、决定记录、术语表）<br>
 > 格式沿用：[`script-source.md`](script-source.md)（3D 视觉 + 文案编排）
 
@@ -220,18 +220,21 @@
 
 ### 内容
 
+- **公司档案**：湖州云梯科技有限公司（原杭州云梯科技有限公司），2014 年成立，总部浙江安吉，创始人 / CEO 周伟；核心产品为「教育图书读者服务平台」，定位是教育图书出版行业全产业链技术服务商。
+- **核心模式**：书里植入活码 → 读者扫码获取音频、视频、课件、题库、点读书、在线答疑 → 出版商实时更新资源、直连读者、运营变现。
 - **真实供给**：2,600+ 合作教育图书出版商、100 万+ 教育图书品种、27 亿+ 册读者访问、2.5 亿+ 读者；标注「书链官方口径 · 截至 2023-07」，并与未来式概念承诺分栏书写。
-- **B2B → 世界观映射**：服务分三组——读者服务（图书二维码 / 电子样书 / 微官网 / 流量运营）、内容制作服务（音频录音 / 课件制作 / 名师讲题）、书链出版云（学转教 / 书版转Word / 智能初排）；逐条映射见 [`worldview.md`](worldview.md) §7。
+- **B2B → 世界观映射**：服务分四组——读者服务（图书二维码 / 电子样书 / 微官网 / 流量运营 / 读者运营）、内容制作服务（音频录音·达摩院合作 / 课件制作 / 名师讲题）、书链出版云（智能编辑器 / 学转教 / 书版转Word / 智能初排 / 题库图库 / 打标签与多格式输出）、书链通（B2B 分销）；逐条映射见 [`worldview.md`](worldview.md) §7。
+- **客户**：新东方、曲一线（5·3）、万唯、荣德基、星火、绿卡、开心文化等；公开资料口径，发布前确认授权。
 - **政策状态**：魂随书走（PENDING，待商务确认）；书不存储读者（LOCKED，D4）。
 
 ### 文案编排
 
 | Field | English | 中文 |
 | --- | --- | --- |
-| Eyebrow | THE CHAIN | 书链 |
-| Main title | **The Machine Behind the Myth.** | **神话背后，是真实的机器。** |
-| Subtitle | The concept site tells the myth. bookln.cn is the machine. | 概念站讲的是神话；bookln.cn 是那台机器。 |
-| Annotation | Bookln's publisher network already exists; the cloud soul is its reader-side embodiment. | 书链的出版网络已经存在；云魂只是它在读者端的化身。 |
+| Eyebrow | THE CHAIN | 书链 · 关于我们 |
+| Main title | **The Chain Behind the Paper.** | **纸书背后，是书链。** |
+| Subtitle | A full-stack technology partner for education publishing. | 教育图书出版行业的全产业链技术服务商。 |
+| Annotation | A live code in every book. Resources on every scan. A direct line from publisher to reader. | 书里植入活码，读者扫码即得音视频、课件、题库与答疑；出版商实时更新，直连读者运营变现。 |
 | Footnote | † Illustrative concept copy. Supply figures are Bookln official figures as of 2023-07; confirm before launch. | † 概念文案。供给数据为书链 2023-07 官方口径，发布前须确认最新数值。 |
 
 **Telemetry:** `C · REAL NETWORK · 2,600+ PUBLISHERS · 1M+ TITLES` / `C · 真实网络 · 2,600+ 出版商 · 100 万+ 品种`

@@ -1,7 +1,7 @@
 # Data Contracts / 资产数据契约
 
 > Status: **concept data — commerce and CMS values pending**  
-> Version: `2026-10-28`
+> Version: `2026-10-29`
 
 The page should read its volatile content from these JSON files rather than hard-coding it into components. This keeps copy, pricing, links, graph data and benchmark evidence reviewable in one place.
 
@@ -186,19 +186,22 @@ node scripts/build-asset-manifest.mjs
 
 ## 12. `public/data/bookln.json`
 
-**Purpose:** the business layer — Bookln Haven rules, the exit receipt, real supply figures and the B2B → worldview service map.
+**Purpose:** the business layer — Bookln Haven rules, the exit receipt, company profile, operating model, real supply figures, clients and the B2B → worldview service map.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `haven.nature` / `.natureZh` | string | “A library you can buy from.” |
 | `haven.rules[]` | array | Take, public spine marks, settle at exit, claim at home. |
 | `settlement` | object | Exit receipt: paper body / cloud soul states, note and pending soul policy. |
+| `company` | object | Company dossier: legal name (湖州云梯科技有限公司 / formerly 杭州云梯科技有限公司), founded, headquarters, founder/CEO, positioning, core product, summary and English variants. |
+| `model` | object | The operating model in three steps: live code in the book → reader scans for resources → publisher connects, operates and monetises. Bilingual `label` / `labelZh` and `steps[]`. |
+| `clients` | object | Selected public client names plus a usage-rights disclaimer. Confirm authorisation before launch. |
 | `facts.asOf` | string | `2023-07` — must be displayed with the figures. |
 | `facts.items[]` | array | Publisher / title / visit / reader counts. Display the source label and disclaimer together. |
-| `services[]` | array | bookln.cn service groups (`读者服务` / `内容制作服务` / `书链出版云`); each group carries bilingual labels and `items[]` with name, description and reader-side embodiment. |
+| `services[]` | array | bookln.cn service groups (`读者服务` / `内容制作服务` / `书链出版云` / `书链通`); each group carries bilingual labels and `items[]` with name, description and reader-side embodiment. |
 | `policies[]` | array | `pending-business` or `locked`, with bilingual notes. |
 
-**Update rule:** supply figures are the Bookln official 2023-07 values. Confirm the latest numbers with business before launch and do not mix them with `†` concept claims. Commerce owns the policy status of “soul travels with the book”.
+**Update rule:** supply figures are the Bookln official 2023-07 values. Confirm the latest numbers with business before launch and do not mix them with `†` concept claims. The 90%-publisher claim and client list are public / company-stated references, not audited figures — confirm both before publishing. Commerce owns the policy status of “soul travels with the book”.
 
 ---
 

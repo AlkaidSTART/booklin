@@ -63,7 +63,7 @@ const graphNodes = graph.nodes as Array<{
 
 const pageTitle = 'Bookln / 书链 — 纸书，有魂。';
 const pageDescription =
-  'Bookln (书链) 概念体验：一本普通纸书，扫一次页边码，就连上云端知识图谱与伴读。滚动即展开，无需点击。';
+  'Bookln（书链）是教育图书出版行业的全产业链技术服务商。本站以概念体验呈现：一本普通纸书，扫一次页边码，就连上云端知识图谱与伴读。';
 ---
 
 <Layout title={pageTitle} description={pageDescription} lang="zh-Hans">
@@ -661,6 +661,70 @@ const pageDescription =
         <p class="sx-line-en">{chapterById.chain.lineEn}</p>
         <p class="sx-meta">{chapterById.chain.meta}</p>
 
+        <div class="sx-company">
+          <p class="sx-company__position">{bookln.company.positioning}</p>
+          <p class="sx-company__summary">{bookln.company.summary}</p>
+          <dl class="sx-company__meta">
+            <div>
+              <dt>公司</dt>
+              <dd>
+                {bookln.company.legalName}
+                <small>{bookln.company.formerName}</small>
+              </dd>
+            </div>
+            <div>
+              <dt>成立</dt>
+              <dd>{bookln.company.founded}</dd>
+            </div>
+            <div>
+              <dt>总部</dt>
+              <dd>{bookln.company.headquarters}</dd>
+            </div>
+            <div>
+              <dt>创始人 / CEO</dt>
+              <dd>{bookln.company.founder}</dd>
+            </div>
+            <div>
+              <dt>核心产品</dt>
+              <dd>{bookln.company.product}</dd>
+            </div>
+            <div>
+              <dt>行业位置</dt>
+              <dd>{bookln.company.infrastructure}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="sx-model" data-steps>
+          <p class="sx-model__label">{bookln.model.labelZh} · {bookln.model.label}</p>
+          <ol class="sx-model__steps">
+            {bookln.model.steps.map((step: Record<string, string>, index: number) => (
+              <li class="sx-model__step" data-step={index}>
+                <span class="sx-model__num">{String(index + 1).padStart(2, '0')}</span>
+                <b>{step.labelZh}</b>
+                <small>{step.label}</small>
+                <p>{step.detailZh}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div class="sx-services">
+          {bookln.services.map((group: Record<string, any>) => (
+            <section class="sx-service">
+              <h3>
+                {group.labelZh}
+                <small>{group.label}</small>
+              </h3>
+              <ul>
+                {group.items.map((item: Record<string, string>) => (
+                  <li>{item.serviceZh}</li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+
         <div class="sx-module sx-facts" data-steps>
           {bookln.facts.items.map((item: Record<string, string>, index: number) => (
             <div class="sx-fact" data-step={index}>
@@ -674,6 +738,12 @@ const pageDescription =
         <p class="sx-table-note">
           云魂不是凭空设定：它是书链既有 B2B 服务在读者端的化身。数据截至 {bookln.facts.asOf}。
         </p>
+
+        <p class="sx-clients">
+          <b>{bookln.clients.labelZh} · {bookln.clients.label}</b>
+          <span>{bookln.clients.items.join(' · ')}</span>
+          <small>{bookln.clients.disclaimerZh}</small>
+        </p>
       </div>
 
       <div class="sx-paper-mark" aria-hidden="true">BOOKLN</div>
@@ -683,7 +753,9 @@ const pageDescription =
   <footer class="sx-footer">
     <div class="sx-footer__brand">
       <img src="/brand/bookln-wordmark.svg" alt="Bookln" width="320" height="93" loading="lazy" />
-      <p>每一本纸书，皆可入云。一个由书链 Bookln 驱动的概念体验。</p>
+      <p>
+        书链 Bookln 是教育图书出版行业的全产业链技术服务商。每一本纸书，皆可入云——这里是它的一张概念蓝图。
+      </p>
     </div>
 
     <nav class="sx-footer__links" aria-label="Records">

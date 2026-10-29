@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-28",
+  "version": "2026-10-29",
   "status": "scroll-edition-copy",
   "language": "zh-primary",
   "notes": "Short-form copy deck for the scroll-driven homepage. One headline, one line, one telemetry strip per chapter. English is a label, not a second narrative.",
@@ -118,12 +118,12 @@
       "id": "chain",
       "number": "C",
       "label": "CHAIN",
-      "labelZh": "书链",
-      "titleA": "神话背后，",
-      "titleB": "是机器。",
-      "line": "书链已经连了 2,600+ 家出版社。",
-      "lineEn": "The myth runs on a real network.",
-      "meta": "BOOKLN.CN · LIVE"
+      "labelZh": "关于书链",
+      "titleA": "纸书背后，",
+      "titleB": "是书链。",
+      "line": "教育图书出版行业的全产业链技术服务商。",
+      "lineEn": "A full-stack technology partner for education publishing.",
+      "meta": "湖州云梯科技 · 2014 · 浙江安吉"
     }
   ]
 }

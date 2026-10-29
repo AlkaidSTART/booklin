@@ -1,7 +1,7 @@
 # Bookln / 书链 双语定稿文案（循环叙事版）
 
 > Status: **concept copy — launch review required**<br>
-> Version: `2026-10-27`<br>
+> Version: `2026-10-29`（附录 C 增补公司档案与核心模式）<br>
 > Source storyboards: [`script-source.md`](script-source.md) + [`script-loop.md`](script-loop.md)<br>
 > Worldview: [`worldview.md`](worldview.md)（决定记录 D1–D4、术语表、红线）<br>
 > Copy fields and length limits: [`copy-fields.json`](copy-fields.json)
@@ -190,15 +190,32 @@ All “zero-watt”, durability, storage, latency and competitor-comparison stat
 
 > 静态阅读章，不进入 3D 关键帧；数据见 [`../public/data/bookln.json`](../public/data/bookln.json)。
 
+本章回答一个此前缺失的问题：**书链这家公司到底做什么。** 概念站讲神话，这一章讲清机器背后的公司——定位、公司档案、核心模式、服务版图与客户。
+
 | Field | English | 中文 |
 | --- | --- | --- |
-| Eyebrow `chain.eyebrow` | THE CHAIN | 书链 |
-| Main title `chain.title` | **The Machine Behind the Myth.** | **神话背后，是真实的机器。** |
-| Subtitle `chain.subtitle` | The concept site tells the myth. bookln.cn is the machine. | 概念站讲的是神话；bookln.cn 是那台机器。 |
-| Annotation `chain.annotation` | Bookln's publisher network already exists; the cloud soul is its reader-side embodiment. | 书链的出版网络已经存在；云魂只是它在读者端的化身。 |
+| Eyebrow `chain.eyebrow` | THE CHAIN | 书链 · 关于我们 |
+| Main title `chain.title` | **The Chain Behind the Paper.** | **纸书背后，是书链。** |
+| Subtitle `chain.subtitle` | A full-stack technology partner for education publishing. | 教育图书出版行业的全产业链技术服务商。 |
+| Annotation `chain.annotation` | A live code in every book. Resources on every scan. A direct line from publisher to reader. | 书里植入活码，读者扫码即得音视频、课件、题库与答疑；出版商实时更新，直连读者运营变现。 |
 | Footnote `chain.footnote` | † Illustrative concept copy. Supply figures are Bookln official figures as of 2023-07; confirm before launch. | † 概念文案。供给数据为书链 2023-07 官方口径，发布前须确认最新数值。 |
 
-供给数据（2,600+ 出版商 / 100 万+ 品种 / 27 亿+ 册访问 / 2.5 亿+ 读者）必须与「书链官方口径 · 截至 2023-07」同屏出现，且不得与 `†` 未来式概念承诺混写。B2B → 世界观映射与政策状态见 `docs/script-loop.md` 附录 C。
+**公司档案（静态块，数据来自 `bookln.json#company`）**：
+
+| 项目 | 内容 |
+| --- | --- |
+| 公司 | 湖州云梯科技有限公司（原杭州云梯科技有限公司） |
+| 成立 / 总部 | 2014 年 / 浙江安吉 |
+| 创始人 / CEO | 周伟 |
+| 定位 | 教育图书出版行业全产业链技术服务商 |
+| 核心产品 | 教育图书读者服务平台 |
+| 一句话 | 教育图书出版行业的「数字化基础设施」 |
+
+**核心模式（`bookln.json#model`）**：书里植入活码 → 读者扫码获取音频、视频、课件、题库、点读书、在线答疑 → 出版商实时更新资源、直连读者、运营变现。
+
+**服务版图（`bookln.json#services`）**：读者服务平台（获取、连接、运营、变现；私域、数据大屏、微信营销）/ 内容制作服务（音频录音·达摩院合作、AI 课件、名师讲题）/ 书链出版云（智能编辑器、学转教、书版转Word、智能初排、题库图库、打标签与多格式输出）/ 书链通（B2B 分销）。
+
+供给数据（2,600+ 出版商 / 100 万+ 品种 / 27 亿+ 册访问 / 2.5 亿+ 读者）必须与「书链官方口径 · 截至 2023-07」同屏出现，且不得与 `†` 未来式概念承诺混写。客户名单（新东方、曲一线 5·3、万唯、荣德基、星火、绿卡、开心文化）与「约 90% 相关出版商」均为公开资料 / 公司自称口径，发布前确认授权。B2B → 世界观映射与政策状态见 `docs/script-loop.md` 附录 C。
 
 ---
 

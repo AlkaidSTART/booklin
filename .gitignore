@@ -45,3 +45,6 @@ tmp-capture-*.mjs
 
 # jetbrains setting folder
 .idea/
+
+# local video generation workspace (large source, intermediates, and exports)
+/video/
